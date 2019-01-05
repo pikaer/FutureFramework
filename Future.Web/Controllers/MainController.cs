@@ -8,8 +8,6 @@ using System.Collections.Generic;
 
 namespace Future.Web.Controllers
 {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
     public class MainController : BaseController
     {
         private readonly SysService sysService = SysService.Instance;
