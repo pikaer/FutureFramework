@@ -6,12 +6,26 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\plugins\" />
-    <Folder Include="wwwroot\scripts\" />
-    <Folder Include="Controllers\" />
+    <Folder Include="Pages\Shared\" />
+    <Folder Include="wwwroot\plugins\easyui\demo\maskedbox\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\material-teal\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\metro-blue\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\metro-gray\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\metro-green\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\metro-orange\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\metro-red\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\ui-cupertino\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\ui-dark-hive\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\ui-pepper-grinder\images\" />
+    <Folder Include="wwwroot\plugins\easyui\themes\ui-sunny\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Future.Service\Future.Service.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,100 @@
+/*想令data中json数据指定icon的方式生效icon.css必须放在这个目录下*/
+.icon {
+    background: url('icons.png') no-repeat;
+    width: 18px;
+    line-height: 18px;
+    display: inline-block;
+}
+/*icon.png background-position 坐标为对应图标的左上角,第一个x坐标,第二个y坐标,且都为负值*/
+.icon-mess{ background-position:-380px -180px;}
+.icon-set{ background-position:-20px -100px;}
+.icon-add{background-position: -20px 0px;}
+.icon-nav{background-position: -100px -20px; }
+.icon-users{background-position: -100px -480px;}
+.icon-role{background-position: -360px -200px;}
+/*.icon-set{background-position: -380px -200px;}*/
+.icon-log{background-position: -380px -80px;}
+.icon-delete{ background-position:-140px -120px;}
+.icon-edit{ background-position:-380px -320px;}
+.icon-magic{ background-position:0px -500px;}
+.icon-database{ background-position:-80px -180px;}
+/*.icon-out{ background-position:-220px -160px;}*/
+.icon-out{ background-position:-360px -300px;}
+.icon-key{ background-position:-380px -220px;}
+.icon-table{ background-position:-60px -320px;}
+.icon-develop{ background-position:-220px -340px;}
+.icon-searchR{ background-position: -60px -260px;}
+.icon-manage{ background-position: 0px -220px;}
+.icon-pick{ background-position: -40px -220px;}
+/*.icon-expand{ background:url('/images/coll2.gif') no-repeat;}
+.icon-collapse{ background:url('/images/coll3.gif') no-repeat;}*/
+
+/*合同项目管理*/
+.icon-cpManage{ background-position: -280px -300px;}
+/*合同管理/合同列表*/
+.icon-contract{ background-position: -140px -160px;}
+/*项目管理/项目列表*/
+.icon-project{ background-position: 0px -320px;}
+/*档案登记/档案查询*/
+.icon-file{ background-position: -320px -320px;}
+/*招标代理*/
+.icon-agent{ background-position: -200px -280px;}
+
+/*项目考核管理*/
+.icon-moneyManage{ background-position: -340px -320px;}
+/*项目收入/收入列表*/
+.icon-moneyTotal{ background-position: -180px -160px;}
+/*考核分配/项目结余列表*/
+.icon-moneyShare{ background-position: -320px -340px;}
+
+/*项目汇总*/
+.icon-totalManage{ background-position: -380px -80px;}
+/*个人汇总*/
+.icon-projectPersonal{ background-position: -180px -280px;}
+/*部门汇总*/
+.icon-projectDepart{ background-position: -200px -280px;}
+
+/*欢迎使用*/
+.icon-welcome{ background-position: -280px 0px;}
+
+/*业务管理*/
+.icon-BussinessManage{ background-position: -220px 0px;}
+
+/*人员配置*/
+.icon-person{ background-position: -140px -480px;}
+
+/*确定*/
+.icon-ok{ background-position: 0px 0px;}
+
+/*撤销*/
+.icon-cancel{ background-position: -180px -40px;}
+
+/*权限树*/
+.icon-tree{ background-position: -300px -80px;}
+
+/*登录*/
+.icon-login{ background-position: -320px -120px;}
+
+/*Excel表单*/
+.icon-excel{ background-position: -180px -280px;}
+
+/*评定*/
+.icon-assess{ background-position: -340px -320px;}
+
+/*表格*/
+.icon-form{ background-position: -320px -200px;}
+
+/*导入*/
+.icon-in{ background-position: -240px -300px;}
+
+/*保存*/
+.icon-save{ background-position: -360px -280px;}
+
+/*首页*/
+.icon-home{ background-position: -260px -200px;}
+
+/*总审定*/
+.icon-final{ background-position: -360px -340px;}
+
+/*项目进度*/
+.icon-dev{ background-position: -100px -180px;}

@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "系统登陆";
+    Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
+}
+
+<head>
+    <title>系统登陆</title>
+    <link type="text/css" href="@Url.Content("~/css/frame.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/scripts/main.js")"></script>
+</head>
+
+<body class="easyui-layout" id="mainLayout">
+    <noscript>
+        <div style="position: absolute; z-index: 100000; height: 2046px; top: 0px; left: 0px;
+            width: 100%; background: white; text-align: center;">
+            <img src="images/noscript.gif" alt='抱歉，请开启脚本支持！' />
+        </div>
+    </noscript>
+    <div id="northPanel" data-options="region:'north',split:true" style="overflow: hidden;">
+        <div id="header">
+            <div id="headerTitle">@ViewBag.AppTitle</div>
+            <div style="position: absolute; right: 3px; bottom: 3px;">
+                <a href="javascript:void(0);" class="easyui-linkbutton" onclick="myEmail()" data-options="plain:true,iconCls:'icon icon-mess'" id="myEmailCount">我的消息<span id="emailCount"></span></a>
+                <a href="javascript:void(0);" class="easyui-linkbutton" onclick="updatePwd()" data-options="plain:true,iconCls:'icon icon-key'">修改密码</a>
+                <a href="javascript:void(0);" class="easyui-linkbutton" onclick="logOut()" data-options="plain:true,iconCls:'icon icon-out'">退出系统</a>
+            </div>
+        </div>
+        <div id="topMenu">
+            <table id="tabTopMenu" style="position: absolute;">
+                <tr>
+                    @*<td><a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon icon-develop'">关于平台</a></td>*@
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div data-options="region:'west',split:true,title:'菜单导航'" style="width: 230px;">
+        <div id="westAccordion" class="easyui-accordion" data-options="fit:true,border:false">
+            @*
+                <div class="panel-loading">加载中...</div>
+            *@
+        </div>
+    </div>
+
+    <div data-options="region:'center'">
+        <div id="tabs" class="easyui-tabs" data-options="fit:true,border:false">
+        </div>
+    </div>
+
+</body>

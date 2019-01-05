@@ -1,0 +1,60 @@
+﻿#southPanel {
+    background-image: url(../Images/bg.gif);
+    /*border: 1px #8db2e3 solid;*/
+    line-height: 20px;
+    text-align: left;
+    height: 30px;
+    /*color: #D2E0F2;*/
+    /*font-size: 13px;*/
+    /*margin-top: 4px;
+    margin-bottom: 4px;*/
+}
+
+#northPanel {
+    height: 105px;
+    /*line-height: 100%;*/
+    color: #FFFFFF;
+    /*font-size: 25px;*/
+}
+
+#headerTitle {
+    font-size: x-large;
+    color: #FFFFFF;
+    line-height: 68px;
+    padding-left: 8px;
+    float: left;
+}
+
+#header {
+    background-position: right top;
+    height: 68px;
+    font-weight: bold;
+    background-color: #0076CD;
+    position: relative;
+    color: #FFFFFF;
+    background-image: url('../Images/logo.jpg');
+    background-repeat: no-repeat;
+}
+
+    #header a {
+        color: #FFFFFF;
+    }
+
+        #header a:hover {
+            color: #0076CD;
+        }
+
+#topMenu {
+    /*background: #7F99BE url(../images/layout-browser-hd-bg.gif) repeat-x center;*/
+    background-image: url(../images/bg.gif);
+    height: 30px; /*line-height: 30px;*/ /*border: 1px #8db2e3 solid;*/ /*margin-top: 2px;*/ /*padding-left: 10px;
+    padding-right: 10px;*/
+    font-weight: bold;
+    color: #000000;
+}
+
+    #topMenu a {
+        color: black;
+    }
+
+  
