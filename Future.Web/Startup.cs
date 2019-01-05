@@ -21,6 +21,9 @@ namespace Future.Web
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //允许访问静态文件
+            app.UseStaticFiles();
+
             app.UseMvc(routs=> 
             {
                 routs.MapRoute(name: "default", template: "{controller=Main}/{action=Index}");

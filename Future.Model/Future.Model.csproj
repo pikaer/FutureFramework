@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entity\" />
-    <Folder Include="Enum\" />
-    <Folder Include="DTO\" />
+    <Folder Include="DTO\Sys\" />
+    <Folder Include="Entity\User\" />
+    <Folder Include="Entity\Ctrl\" />
   </ItemGroup>
 
 </Project>
