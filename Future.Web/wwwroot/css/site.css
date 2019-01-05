@@ -1,0 +1,175 @@
+﻿* {
+    font-size: 12px;
+    font-family: 微软雅黑;
+    padding: 0px;
+    margin: 0px;
+}
+
+/*对应页面必须加入*/
+/*<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">*/
+/*才能使滚动条正常*/
+html, body {
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body {
+    background: #FFFFFF;
+    /*margin: 0px 0px;*/
+}
+
+h1{
+    font-size:20px;
+}
+
+a {
+    color: black;
+    /*text-decoration: none;*/
+}
+
+    a:hover {
+        color: Red;
+        /*text-decoration: underline;*/
+    }
+
+.tableNormal {
+    border-spacing: 6px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .tableNormal td {
+        padding: 6px;
+    }
+
+.searchTable {
+    margin: 2px;
+    /*border: 1px solid #0099CC;*/
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .searchTable td {
+        border: 0px solid #DDDDDD;
+        height: 25px;
+    }
+
+    .searchTable .l {
+        width: 0%;
+        text-align: right;
+        padding-right: 2px;
+        background-color: #FAFAFA;
+    }
+
+    .searchTable .v {
+        text-align: left;
+        padding-left: 2px;
+    }
+
+    .searchTable .b {
+        margin: 4px;
+        padding: 2px;
+        text-align: center;
+    }
+
+.easyui-accordion ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 5px;
+}
+
+    .easyui-accordion ul li {
+        padding: 2px;
+    }
+
+        .easyui-accordion ul li a {
+            line-height: 20px;
+        }
+
+        .easyui-accordion ul li div {
+            margin: 1px 0px;
+            padding-left: 1px;
+            padding-top: 1px;
+        }
+
+            .easyui-accordion ul li div.hover {
+                border: 1px dashed #99BBE8;
+                background: #E0ECFF;
+                cursor: pointer;
+            }
+
+                .easyui-accordion ul li div.hover a {
+                    color: #416AA3;
+                }
+
+            .easyui-accordion ul li div.selected {
+                border: 1px solid #99BBE8;
+                background: #E0ECFF;
+                cursor: default;
+            }
+
+                .easyui-accordion ul li div.selected a {
+                    color: #416AA3;
+                    font-weight: bold;
+                }
+
+.groupTable {
+    padding:10px;
+    /*border: 1px solid #0099CC;*/
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .groupTable thead tr {
+        background-color: #E0ECFF;
+        /*border: 1px solid #0099CC;*/
+        text-align: center;
+    }
+
+    .groupTable td {
+        border: 1px solid #95B8E7;
+        padding:2px;
+    }
+
+    .groupTable .title {
+        /*padding:2px;*/
+        /*border: 1px solid #0099CC;*/
+        text-align: center !important;
+        font-size: 20px;
+        font-weight: bolder;
+        color: #0E2D5F !important;
+        background-color: #F4F9FF !important;
+    }
+
+    .groupTable .g {
+        text-align: left !important;
+        padding-left: 10px !important;
+        background-color: #E0ECFF !important;
+    }
+    /*奇数*/
+    .groupTable tr td:nth-of-type(odd) {
+        text-align: right;
+        /*padding-right: 2px;*/
+        background-color: #F4F9FF;
+        /*width:25%;*/
+    }
+    /*偶数*/
+    .groupTable tr td:nth-of-type(even) {
+        text-align: left;
+        /*padding-left: 2px;*/
+        /*width:75%;*/
+    }
+
+    .groupTable .c {
+        text-align: center !important;
+    }
+
+
+.grid-fullHeight {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    height: 100%; /* DO NOT USE !important for setting the Grid height! */
+}
