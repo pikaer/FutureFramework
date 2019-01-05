@@ -8,4 +8,10 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\plugins\" />
+    <Folder Include="wwwroot\scripts\" />
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

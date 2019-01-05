@@ -1,0 +1,8 @@
+﻿using Future.Service.Interface;
+
+namespace Future.Service.ListService
+{
+    public class ListQueryService:IQuery
+    {
+    }
+}

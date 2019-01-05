@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Future.Utility\Future.Utility.csproj" />
+    <Folder Include="Entity\" />
+    <Folder Include="Enum\" />
+    <Folder Include="DTO\" />
   </ItemGroup>
 
 </Project>
