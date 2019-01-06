@@ -104,5 +104,25 @@ namespace Future.Service
             }
             return sysDal.AddFunction(req);
         }
+        
+        public bool DeleteFuncs(int id)
+        {
+            var itemList = GetFunctionsByParentId(id);
+            foreach (var item in itemList)
+            {
+                if(item.ParentId.HasValue&& item.ParentId!=null)
+                {
+                    var item1List = GetFunctionsByParentId(item.ParentId.Value);
+                    foreach (var item1 in item1List)
+                    {
+                        sysDal.DeleteFuncByParentId(item1.FuncId);
+                    }
+                }
+                sysDal.DeleteFuncByParentId(item.FuncId);
+            }
+            sysDal.DeleteFuncByParentId(id);
+            return sysDal.DeleteFuncByFuncId(id);
+        }
+        
     }
 }

@@ -90,7 +90,23 @@ namespace Future.Web.Controllers
             }
         }
 
-        
+        public JsonResult DeleteFunc(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<Function>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = sysService.DeleteFuncs(request.FuncId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+            }
+        }
 
         //public JsonResult ExChangeOrder(string aId, string bId)
         //{
@@ -103,12 +119,6 @@ namespace Future.Web.Controllers
         //    return Json(UnitOfWork.Commit());
         //}
 
-        //public JsonResult DeleteFunc(string id)
-        //{
-        //    UnitOfWork.Delete(GetAllChildren(id));
-        //    UnitOfWork.Delete(id);
-        //    return Json(UnitOfWork.Commit());
-        //}
 
         //public JsonResult Save()
         //{

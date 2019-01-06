@@ -2,6 +2,7 @@
 using Future.Model.DTO.Sys;
 using Future.Model.Entity.Sys;
 using Future.Utility;
+using System;
 using System.Collections.Generic;
 
 namespace Future.Repository
@@ -93,6 +94,24 @@ namespace Future.Repository
                                            ,@CreateUserId
                                            ,@ModifyUserId";
                 return Db.Execute(sql, req)>0;
+            }
+        }
+
+        public bool DeleteFuncByParentId(int parentId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = string.Format("Delete sys_Function where ParentId={0}", parentId);
+                return Db.Execute(sql) > 0;
+            }
+        }
+
+        public bool DeleteFuncByFuncId(int funcId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = string.Format("Delete sys_Function where FuncId={0}", funcId);
+                return Db.Execute(sql)>0;
             }
         }
     }

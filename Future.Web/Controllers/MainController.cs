@@ -1,5 +1,4 @@
 ﻿using Future.Model.DTO.Sys;
-using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
@@ -81,6 +80,5 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
-        
     }
 }
