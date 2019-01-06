@@ -8,16 +8,6 @@ namespace Future.Model.Utils
     public class ResponseContext<T>
     {
         /// <summary>
-        /// 响应头
-        /// </summary>
-        public ResponseHead Head { get; set; }
-
-        /// <summary>
-        /// 响应体
-        /// </summary>
-        public T Content { get; set; }
-
-        /// <summary>
         /// 构造函数
         /// </summary>
         public ResponseContext(T content)
@@ -26,6 +16,15 @@ namespace Future.Model.Utils
             Content = content;
         }
 
+        /// <summary>
+        /// 响应头
+        /// </summary>
+        public ResponseHead Head { get; set; }
+
+        /// <summary>
+        /// 响应体
+        /// </summary>
+        public T Content { get; set; }
     }
 
     public class ResponseHead

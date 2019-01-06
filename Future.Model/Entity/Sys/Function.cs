@@ -1,4 +1,5 @@
 ﻿using Future.Model.Enum.Sys;
+using System.Collections.Generic;
 
 namespace Future.Model.Entity.Sys
 {
@@ -38,5 +39,10 @@ namespace Future.Model.Entity.Sys
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+
+        /// <summary>
+        /// 排序字段
+        /// </summary>
+        public int OrderIndex { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 
-namespace Future.Infrastructure.Utility
+namespace Future.Utility
 {
     /// <summary>
     /// 读取Json配置文件

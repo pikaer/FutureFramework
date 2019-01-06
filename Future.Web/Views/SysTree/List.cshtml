@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "权限树管理";
+    Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
+}
+<head>
+    <title>系统登陆</title>
+    <script type="text/javascript" src="@Url.Content("~/scripts/systree.js")"></script>
+</head>
+
+
+<div id="tb">
+    <table cellpadding="0" cellspacing="0" style="width: 100%">
+        <tr>
+            <td>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addEq()">增加同级</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addSub()">增加子级</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="edit()">编辑</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="cancel()">撤销编辑</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-save" plain="true" onclick="save()">保存</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="move('up')">升序</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="move('down')">降序</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="removeit()">删除</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<table id="dg"></table>

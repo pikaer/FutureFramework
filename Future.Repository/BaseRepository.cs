@@ -1,4 +1,4 @@
-﻿using Future.Infrastructure.Utility;
+﻿using Future.Utility;
 using System;
 using System.Data;
 using System.Data.SqlClient;

@@ -1,8 +1,11 @@
-﻿using Future.Model.Entity.Sys;
+﻿using Future.Model.DTO.Sys;
+using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
 using Future.Repository;
 using Future.Utility;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Future.Service
 {
@@ -12,21 +15,94 @@ namespace Future.Service
 
         private readonly SysRepository sysDal=SysRepository.Instance;
 
-        public List<Function> GetFunctionsByPara(int id,bool isKeyId=true)
+        public List<FunctionDTO> GetFunctions()
         {
-            if (isKeyId)
-            {
-                return sysDal.GetFunctionsById(id);
-            }
-            else
-            {
-                return sysDal.GetFunctionsByParentId(id);
-            }
+            return sysDal.GetFunctions();
         }
 
-        public List<Function> GetModules(EnumFuncType type)
+        public Function GetFunctionByFuncId(int id)
         {
-            return sysDal.GetFunctionsByFuncType((int)type);
+            return sysDal.GetFunctionByFuncId(id);
+        }
+
+        public List<FunctionDTO> GetFunctionsByParentId(int id)
+        {
+            return sysDal.GetFunctionsByParentId(id);
+        }
+
+        public List<FunctionDTO> GetModules(EnumFuncType type)
+        {
+            return sysDal.GetFunctionDTOByFuncType((int)type);
+        }
+
+        public List<FunctionDTO> GetMenus()
+        {
+            var rtn = sysDal.GetFunctionDTOByFuncType((int)EnumFuncType.Module); ;
+            if(rtn==null || !rtn.Any())
+            {
+                return rtn;
+            }
+
+            foreach(var module in rtn)
+            {
+                var moduleList = GetFunctionsByParentId(module.FuncId);
+                if(moduleList != null&& moduleList.Any())
+                {
+                    foreach(var menu in moduleList)
+                    {
+                        var menuList = GetFunctionsByParentId(menu.FuncId);
+                        if(menuList!=null&& menuList.Any())
+                        {
+                            foreach(var page in menuList)
+                            {
+                                var pageList = GetFunctionsByParentId(page.FuncId);
+                                if(pageList!=null&& pageList.Any())
+                                {
+                                    foreach(var button in pageList)
+                                    {
+                                        var buttonList = GetFunctionsByParentId(button.FuncId);
+                                        button.Children = buttonList;
+                                    }
+                                }
+                                page.Children = pageList;
+                            }
+                        }
+                        menu.Children = menuList;
+                    }
+                }
+                module.Children = moduleList;
+            }
+            return rtn;
+        }
+
+        public bool AddEqFunc(Function req)
+        {
+            req.Text = "新增项";
+            req.CreateTime = DateTime.Now;
+            return sysDal.AddFunction(req);
+        }
+
+        public bool AddSubFunc(Function req)
+        {
+            var dto = new Function()
+            {
+                ParentId= req.FuncId,
+                Text = "新增项",
+                CreateTime = DateTime.Now
+            };
+            switch (req.EnumFuncType)
+            {
+                case EnumFuncType.Module:
+                    dto.EnumFuncType = EnumFuncType.Menu;
+                    break;
+                case EnumFuncType.Menu:
+                    dto.EnumFuncType = EnumFuncType.Page;
+                    break;
+                case EnumFuncType.Page:
+                    dto.EnumFuncType = EnumFuncType.Button;
+                    break;
+            }
+            return sysDal.AddFunction(req);
         }
     }
 }

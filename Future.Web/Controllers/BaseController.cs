@@ -25,30 +25,19 @@ namespace Future.Web.Controllers
 
             return json;
         }
-
+        
         /// <summary>
         /// 获取错误的返回
         /// </summary>
-        protected JsonResult ErrorJsonResult(ErrCodeEnum code)
+        protected JsonResult ErrorJsonResult(ErrCodeEnum code, Exception ex=null)
         {
+            //todo 记录ex异常日志
             var errResponse = new ResponseContext<object>(null)
             {
                 Head = new ResponseHead(false, code, code.ToDescription())
             };
             return new JsonResult(errResponse);
         }
-
-        /// <summary>
-        /// 获取成功的返回
-        /// </summary>
-        protected JsonResult SuccessJsonResult(object obj)
-        {
-            var response = new ResponseContext<object>(null)
-            {
-                Head = new ResponseHead(true, ErrCodeEnum.Success, ErrCodeEnum.Success.ToDescription()),
-                Content = obj
-            };
-            return new JsonResult(response);
-        }
+        
     }
 }

@@ -1,9 +1,11 @@
-﻿using Future.Model.Entity.Sys;
+﻿using Future.Model.DTO.Sys;
+using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
 using Future.Utility;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace Future.Web.Controllers
@@ -17,31 +19,35 @@ namespace Future.Web.Controllers
             return View();
         }
         
-        public JsonResult GetChildrenFunc()
+        public JsonResult GetChildrenFunc(string data)
         {
             try
             {
-                string json = GetInputString();
-                if (string.IsNullOrEmpty(json))
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
-                }
-                var request = json.JsonToObject<RequestContext<CommonRequest>>();
+                var request = data.JsonToObject<CommonRequest>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
-                if (request.Content == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
-                }
-                var res = sysService.GetFunctionsByPara(request.Content.Id, false);
-                var response = new ResponseContext<List<Function>>(res);
+                var res = sysService.GetFunctionsByParentId(request.Id);
+                var response = new ResponseContext<List<FunctionDTO>>(res);
                 return new JsonResult(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError);
+                return ErrorJsonResult(ErrCodeEnum.InnerError,ex);
+            }
+        }
+        
+        public JsonResult ChildrenFunc(string data)
+        {
+            try
+            {
+                var res = sysService.GetFunctionsByParentId(Convert.ToInt16(data));
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
 
@@ -50,11 +56,11 @@ namespace Future.Web.Controllers
             try
             {
                 var res = sysService.GetModules(EnumFuncType.Module);
-                return new JsonResult(new ResponseContext<List<Function>>(res));
+                return new JsonResult(new ResponseContext<List<FunctionDTO>>(res));
             }
-            catch
+            catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
         
@@ -65,43 +71,16 @@ namespace Future.Web.Controllers
                 var modules = sysService.GetModules(EnumFuncType.Module);
                 if (modules.Count > 0)
                 {
-                    var res = sysService.GetFunctionsByPara(modules[0].FuncId, false);
-                    return new JsonResult(new ResponseContext<List<Function>>(res));
+                    var res = sysService.GetFunctionsByParentId(modules[0].FuncId);
+                    return new JsonResult(new ResponseContext<List<FunctionDTO>>(res));
                 }
                 return Json("");
             }
-            catch
+            catch(Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
-
-        public JsonResult GetFunc()
-        {
-            try
-            {
-                string json = GetInputString();
-                if (string.IsNullOrEmpty(json))
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
-                }
-                var request = json.JsonToObject<RequestContext<CommonRequest>>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                if (request.Content == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
-                }
-                var res = sysService.GetFunctionsByPara(request.Content.Id, true)[0];
-                var response = new ResponseContext<Function>(res);
-                return new JsonResult(response);
-            }
-            catch
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError);
-            }
-        }
+        
     }
 }

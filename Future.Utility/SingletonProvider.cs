@@ -13,7 +13,6 @@
 
         class SingletonCreator
         {
-
             internal static readonly T instance = new T();
         }
     }

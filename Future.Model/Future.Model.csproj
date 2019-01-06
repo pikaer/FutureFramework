@@ -5,9 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\Sys\" />
     <Folder Include="Entity\User\" />
     <Folder Include="Entity\Ctrl\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Future.Utility\Future.Utility.csproj" />
   </ItemGroup>
 
 </Project>
