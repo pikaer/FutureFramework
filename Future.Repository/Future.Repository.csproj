@@ -5,13 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0-preview.18572.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0-preview.18572.1" />
+    <PackageReference Include="Dapper" Version="1.60.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Future.Infrastructure\Future.Infrastructure.csproj" />
     <ProjectReference Include="..\Future.Model\Future.Model.csproj" />
     <ProjectReference Include="..\Future.Utility\Future.Utility.csproj" />
   </ItemGroup>

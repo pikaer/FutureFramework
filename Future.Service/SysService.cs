@@ -2,7 +2,7 @@
 using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
 using Future.Repository;
-using Future.Utility;
+using Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +11,7 @@ namespace Future.Service
 {
     public class SysService
     {
-        public static SysService Instance = SingletonProvider<SysService>.Instance;
-
-        private readonly SysRepository sysDal=SysRepository.Instance;
+        private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
 
         public List<FunctionDTO> GetFunctions()
         {

@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Web", "Future.Web\Future.Web.csproj", "{30BE0AD9-CA47-4AB4-9E93-2D1336D67508}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.Web", "Future.Web\Future.Web.csproj", "{30BE0AD9-CA47-4AB4-9E93-2D1336D67508}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Service", "Future.Service\Future.Service.csproj", "{5D9D2F6B-686B-431A-B668-138F9F71F210}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.Service", "Future.Service\Future.Service.csproj", "{5D9D2F6B-686B-431A-B668-138F9F71F210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Repository", "Future.Repository\Future.Repository.csproj", "{2E32305A-C589-4FBE-87BA-A55ABB1801F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.Repository", "Future.Repository\Future.Repository.csproj", "{2E32305A-C589-4FBE-87BA-A55ABB1801F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Infrastructure", "Future.Infrastructure\Future.Infrastructure.csproj", "{03AAE6AF-B9BC-45F8-9762-1EFF932837D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.Utility", "Future.Utility\Future.Utility.csproj", "{54C44F43-D242-43A3-B339-2473BEC7F48C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Utility", "Future.Utility\Future.Utility.csproj", "{54C44F43-D242-43A3-B339-2473BEC7F48C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.Model", "Future.Model\Future.Model.csproj", "{1E7F0CDA-5F93-481B-B660-483C71DB6389}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Model", "Future.Model\Future.Model.csproj", "{1E7F0CDA-5F93-481B-B660-483C71DB6389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{1A9837D8-E42F-48E7-94AE-B1719FF947E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		{2E32305A-C589-4FBE-87BA-A55ABB1801F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E32305A-C589-4FBE-87BA-A55ABB1801F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E32305A-C589-4FBE-87BA-A55ABB1801F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03AAE6AF-B9BC-45F8-9762-1EFF932837D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03AAE6AF-B9BC-45F8-9762-1EFF932837D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03AAE6AF-B9BC-45F8-9762-1EFF932837D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03AAE6AF-B9BC-45F8-9762-1EFF932837D7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54C44F43-D242-43A3-B339-2473BEC7F48C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54C44F43-D242-43A3-B339-2473BEC7F48C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54C44F43-D242-43A3-B339-2473BEC7F48C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{1E7F0CDA-5F93-481B-B660-483C71DB6389}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E7F0CDA-5F93-481B-B660-483C71DB6389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E7F0CDA-5F93-481B-B660-483C71DB6389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A9837D8-E42F-48E7-94AE-B1719FF947E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A9837D8-E42F-48E7-94AE-B1719FF947E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A9837D8-E42F-48E7-94AE-B1719FF947E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A9837D8-E42F-48E7-94AE-B1719FF947E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

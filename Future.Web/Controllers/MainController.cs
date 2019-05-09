@@ -2,7 +2,7 @@
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
-using Future.Utility;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Future.Web.Controllers
 {
     public class MainController : BaseController
     {
-        private readonly SysService sysService = SysService.Instance;
+        private readonly SysService sysService = SingletonProvider<SysService>.Instance;
 
         public IActionResult Index()
         {

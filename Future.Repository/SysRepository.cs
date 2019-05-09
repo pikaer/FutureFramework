@@ -1,8 +1,7 @@
 ﻿using Dapper;
 using Future.Model.DTO.Sys;
 using Future.Model.Entity.Sys;
-using Future.Utility;
-using System;
+using Infrastructure;
 using System.Collections.Generic;
 
 namespace Future.Repository

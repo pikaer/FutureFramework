@@ -1,6 +1,6 @@
 ﻿using Future.Model.Enum.Sys;
 using Future.Model.Utils;
-using Future.Utility;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;

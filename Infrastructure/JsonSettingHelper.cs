@@ -5,12 +5,9 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 
-namespace Future.Utility
+namespace Infrastructure
 {
-    /// <summary>
-    /// 读取Json配置文件
-    /// </summary>
-    public class ConfigurationHelper
+    public class JsonSettingHelper
     {
 
         /// <summary>
@@ -48,6 +45,27 @@ namespace Future.Utility
         /// </summary>
         private static string _configUrlSection { get { return _configSection + "." + _configUrlPostfix; } }
 
+
+        public static NameValueCollection AppSettings { get; private set; } = new NameValueCollection();
+
+        /// <summary>
+        /// 手动刷新配置，修改配置后，请手动调用此方法，以便更新配置参数
+        /// </summary>
+        public static void RefreshConfiguration()
+        {
+            lock (FileListeners)
+            {
+                //修改配置
+                if (c_configSection != null) { _configSection = c_configSection; c_configSection = null; }
+                if (c_configUrlPostfix != null) { _configUrlPostfix = c_configUrlPostfix; c_configUrlPostfix = null; }
+                if (c_defaultPath != null) { _defaultPath = c_defaultPath; c_defaultPath = null; }
+                //释放掉全部监听响应链
+                while (FileListeners.Count > 0)
+                    FileListeners.Pop().Value.Dispose();
+                ConfigFinder(_defaultPath);
+            }
+        }
+
         private static long TimeStamp()
         {
             return (long)((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds * 100);
@@ -75,7 +93,7 @@ namespace Future.Utility
             set { c_defaultPath = value; }
         }
 
-        static ConfigurationHelper()
+        static JsonSettingHelper()
         {
             ConfigFinder(_defaultPath);
         }
@@ -83,9 +101,9 @@ namespace Future.Utility
         /// <summary>
         /// 确定配置文件路径
         /// </summary>
-        private static void ConfigFinder(string Path)
+        private static void ConfigFinder(string path)
         {
-            _configPath = Path;
+            _configPath = path;
             JObject config_json = new JObject();
             while (config_json != null)
             {
@@ -189,27 +207,6 @@ namespace Future.Utility
                         LoadConfiguration();
                     }
                 }
-            }
-        }
-
-
-        public static NameValueCollection AppSettings { get; private set; } = new NameValueCollection();
-
-        /// <summary>
-        /// 手动刷新配置，修改配置后，请手动调用此方法，以便更新配置参数
-        /// </summary>
-        public static void RefreshConfiguration()
-        {
-            lock (FileListeners)
-            {
-                //修改配置
-                if (c_configSection != null) { _configSection = c_configSection; c_configSection = null; }
-                if (c_configUrlPostfix != null) { _configUrlPostfix = c_configUrlPostfix; c_configUrlPostfix = null; }
-                if (c_defaultPath != null) { _defaultPath = c_defaultPath; c_defaultPath = null; }
-                //释放掉全部监听响应链
-                while (FileListeners.Count > 0)
-                    FileListeners.Pop().Value.Dispose();
-                ConfigFinder(_defaultPath);
             }
         }
 
