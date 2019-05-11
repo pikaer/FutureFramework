@@ -124,7 +124,7 @@ namespace Infrastructure
                                                  ,@CreateTime)";
                     return Db.Execute(sql, entity) > 0;
                 }
-                catch (Exception ex)
+                catch
                 {
                     return false;
                 }
@@ -151,7 +151,7 @@ namespace Infrastructure
                                                  ,CreateTime)";
                     return Db.Execute(sql, logTag) > 0;
                 }
-                catch (Exception ex)
+                catch 
                 {
                     return false;
                 }

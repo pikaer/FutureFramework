@@ -107,5 +107,23 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
+
+        public JsonResult UpdateAuthor(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<Function>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = sysService.UpdateAuthor(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+            }
+        }
     }
 }

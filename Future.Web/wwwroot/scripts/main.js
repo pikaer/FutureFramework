@@ -10,7 +10,7 @@
 function LoadTopTree() {
     $.post("/Main/GetModules",
         function (dataObj) {
-            if (dataObj.head.success) {
+            if (dataObj.success) {
                 $.each(dataObj.content, function (i, e) {
                     var aHtml = "<a onclick='LoadAccordTree(" + e.funcId + ")' ";
                     aHtml += "class='easyui-linkbutton' ";
@@ -32,7 +32,7 @@ function LoadAccordTree(topId) {
     };
     $.post("/Main/GetChildrenFunc", { data: $.toJSON(queryData) },
         function (dataObj) {
-            if (dataObj.head.success) {
+            if (dataObj.success) {
                 $.each(dataObj.content, function (i, e) {
                     var id = e.funcId;
                     $("#westAccordion").accordion('add', {
@@ -60,7 +60,7 @@ function LoadFirstAccordTree() {
     Clearnav();
     $.post("/Main/GetFirstMenus",
         function (dataObj) {
-            if (dataObj.head.success) {
+            if (dataObj.success) {
                 $.each(dataObj.content, function (i, e) {
                     var id = e.id;
                     $("#westAccordion").accordion('add', {

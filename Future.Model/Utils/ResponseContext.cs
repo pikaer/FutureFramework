@@ -1,7 +1,5 @@
 ﻿using Future.Model.Enum.Sys;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Infrastructure;
 
 namespace Future.Model.Utils
 {
@@ -10,41 +8,23 @@ namespace Future.Model.Utils
         /// <summary>
         /// 构造函数
         /// </summary>
-        public ResponseContext(T content)
-        {
-            Head = new ResponseHead();
-            Content = content;
-        }
-
-        /// <summary>
-        /// 响应头
-        /// </summary>
-        public ResponseHead Head { get; set; }
-
-        /// <summary>
-        /// 响应体
-        /// </summary>
-        public T Content { get; set; }
-    }
-
-    public class ResponseHead
-    {
-        /// <summary>
-        /// 默认成功
-        /// </summary>
-        public ResponseHead()
+        public ResponseContext(T data)
         {
             Success = true;
             Code = ErrCodeEnum.Success;
-            Msg = "调用接口成功";
+            ResultMessage = ErrCodeEnum.Success.ToDescription();
+            Content = data;
         }
 
-        public ResponseHead(bool success, ErrCodeEnum code, string msg)
+        public ResponseContext(bool success, ErrCodeEnum err, T data)
         {
             Success = success;
-            Code = code;
-            Msg = msg;
+            Code = err;
+            ResultMessage = err.ToDescription();
+            Content = data;
         }
+
+
 
         /// <summary>
         /// 返回值
@@ -61,9 +41,13 @@ namespace Future.Model.Utils
         public ErrCodeEnum Code { get; set; }
 
         /// <summary>
-        /// 错误信息
+        /// 返回文本
         /// </summary>
-        public string Msg { get; set; }
+        public string ResultMessage { get; set; }
 
+        /// <summary>
+        /// 响应体
+        /// </summary>
+        public T Content { get; set; }
     }
 }

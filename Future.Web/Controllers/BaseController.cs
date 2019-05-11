@@ -1,5 +1,6 @@
 ﻿using Future.Model.Enum.Sys;
 using Future.Model.Utils;
+using Future.Utility;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,11 +33,7 @@ namespace Future.Web.Controllers
         protected JsonResult ErrorJsonResult(ErrCodeEnum code, Exception ex=null)
         {
             //todo 记录ex异常日志
-            var errResponse = new ResponseContext<object>(null)
-            {
-                Head = new ResponseHead(false, code, code.ToDescription())
-            };
-            return new JsonResult(errResponse);
+            return new JsonResult(new ResponseContext<object>(false,code,null));
         }
         
     }
