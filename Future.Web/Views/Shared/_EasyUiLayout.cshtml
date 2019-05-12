@@ -9,20 +9,18 @@
     @this.RenderSection("Head_Css", false)
     @* easyui *@
     <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/jquery/jquery.json-2.4.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.easyui.all.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.json-2.4.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.easyui.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.easyui.plus.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/plugins/easyui/locale/easyui-lang-zh_CN.js")"></script>
-    <link type="text/css" href="@Url.Content("~/plugins/easyui/themes/default/easyui.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/validatebox.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/themes/bootstrap/easyui.css")"></script>
     <link type="text/css" href="@Url.Content("~/css/icon.css")" rel="stylesheet" />
-    <script type="text/javascript" src="@Url.Content("~/plugins/layer/layer.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/base.js")"></script>
 </head>
 
 <body>
     @RenderBody()
 </body>
-
-@* 尾部预留js区域 *@
-@this.RenderSection("Tail_Js", false)
 </html>
 

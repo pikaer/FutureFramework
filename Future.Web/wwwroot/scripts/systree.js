@@ -75,7 +75,7 @@ function save() {
         //row.enumFuncType = enumFuncTypeEditor.target.combobox('getValue');
 
         //ajax调用控制器action进行数据更新
-        $.post("/SysTree/UpdateAuthor",
+        $.post("/SysTree/UpdateFunc",
             { data: $.toJSON(row) },
             function (data) {
                 var info = eval('(' + data + ')');
@@ -110,7 +110,7 @@ function removeit() {
         $.messager.confirm('提示', '是否删除?', function (r) {
             if (r) {
                 //ajax调用控制器action更新数据库
-                $.post("/SysTree/DeleteAuthor",
+                $.post("/SysTree/DeleteFunc",
                     { id: row.id },
                     function (dataStr) {
                         var data = eval('(' + dataStr + ')');
@@ -131,7 +131,7 @@ function removeit() {
 function addEq() {
     var row = $('#dg').treegrid('getSelected');
     if (row) {
-        $.post("/SysTree/AddEqAuthor",
+        $.post("/SysTree/AddEqFunc",
             { data: $.toJSON(row) },
             function (dataStr) {
                 var data = eval('(' + dataStr + ')');
@@ -149,7 +149,7 @@ function addEq() {
 function addSub() {
     var row = $('#dg').treegrid('getSelected');
     if (row) {
-        $.post("/SysTree/AddSubAuthor",
+        $.post("/SysTree/AddSubFunc",
             { data: $.toJSON(row) },
             function (dataStr) {
                 var data = eval('(' + dataStr + ')');

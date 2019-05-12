@@ -80,7 +80,7 @@ namespace Future.Service
             return sysDal.AddFunction(req);
         }
 
-        public bool UpdateAuthor(Function req)
+        public bool UpdateFunc(Function req)
         {
             return true;
         }

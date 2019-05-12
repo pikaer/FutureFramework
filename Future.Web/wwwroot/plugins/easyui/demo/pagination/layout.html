@@ -16,7 +16,7 @@
 	<div class="easyui-panel">
 		<div id="pp" class="easyui-pagination" data-options="
 					total:114,
-					layout:['first','prev','next','last','info']
+					layout:['first','prev','next','last']
 				"></div>
 	</div>
 	<div style="margin-top:10px">
@@ -33,7 +33,7 @@
 			var p = $('#pp');
 			switch(parseInt(type)){
 			case 1:
-				p.pagination({layout:['first','prev','next','last','info']});
+				p.pagination({layout:['first','prev','next','last']});
 				break;
 			case 2:
 				p.pagination({
@@ -50,7 +50,7 @@
 				break;
 			case 5:
 				p.pagination({
-					layout:['first','prev','next','last','sep','links','sep','manual','info'],
+					layout:['first','prev','next','last','sep','links','sep','manual'],
 					beforePageText:'Go Page',
 					afterPageText:''
 				});

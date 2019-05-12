@@ -13,7 +13,7 @@ if ($.messager){
 	$.messager.defaults.ok = 'Ок';
 	$.messager.defaults.cancel = 'Закрыть';
 }
-$.map(['validatebox','textbox','passwordbox','filebox','searchbox',
+$.map(['validatebox','textbox','filebox','searchbox',
 		'combo','combobox','combogrid','combotree',
 		'datebox','datetimebox','numberbox',
 		'spinner','numberspinner','timespinner','datetimespinner'], function(plugin){

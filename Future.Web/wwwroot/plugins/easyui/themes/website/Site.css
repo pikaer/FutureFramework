@@ -1,0 +1,198 @@
+﻿* {
+    font-size: 12px;
+    font-family: 微软雅黑;
+    padding: 0px;
+    margin: 0px;
+}
+
+/*对应页面必须加入*/
+/*<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">*/
+/*才能使滚动条正常*/
+html, body {
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body {
+    background: #FFFFFF;
+    /*margin: 0px 0px;*/
+}
+
+a {
+    color: black;
+    /*text-decoration: none;*/
+}
+
+    a:hover {
+        color: Red;
+        /*text-decoration: underline;*/
+    }
+
+.tableNormal {
+    border-spacing: 6px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .tableNormal td {
+        padding: 6px;
+    }
+
+.groupTable {
+    /*padding:2px;*/
+    /*border: 1px solid #0099CC;*/
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .groupTable thead tr{
+        background-color: #E0ECFF;
+        /*border: 1px solid #0099CC;*/
+        height: 23px;
+        text-align:center;
+    }
+
+    .groupTable td {
+        border: 1px solid #95B8E7;
+        height: 23px;
+    }
+
+    .groupTable .title {
+        /*padding:2px;*/
+        /*border: 1px solid #0099CC;*/
+        text-align: center;
+        font-size:15px;
+        font-weight:bolder;
+        color:#0E2D5F;
+        background-color:#F4F9FF;
+    }
+
+    .groupTable .g {
+        text-align: left;
+        padding-left: 10px;
+        background-color: #E0ECFF;
+    }
+
+    .groupTable .l {
+        text-align: right;
+        padding-right: 2px;
+        background-color: #F4F9FF;
+    }
+
+    .groupTable .c {
+        text-align:center;
+    }
+
+    .groupTable .v {
+        text-align: left;
+        padding-left: 2px;
+    }
+
+    .searchTable {
+    margin:2px;
+    /*border: 1px solid #0099CC;*/
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .searchTable td {
+        border: 0px solid #DDDDDD;
+        height: 25px;
+    }
+
+    .searchTable .l {
+        width: 0%;
+        text-align: right;
+        padding-right: 2px;
+        background-color: #FAFAFA;
+    }
+
+    .searchTable .v {
+        text-align: left;
+        padding-left: 2px;
+    }
+
+    .searchTable .b {
+        margin:4px;
+        padding:2px;
+        text-align: center;
+    }
+
+.easyui-accordion ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 5px;
+}
+
+    .easyui-accordion ul li {
+        padding: 2px;
+    }
+
+        .easyui-accordion ul li a {
+            line-height: 20px;
+        }
+
+        .easyui-accordion ul li div {
+            margin: 1px 0px;
+            padding-left: 1px;
+            padding-top: 1px;
+        }
+
+            .easyui-accordion ul li div.hover {
+                border: 1px dashed #99BBE8;
+                background: #E0ECFF;
+                cursor: pointer;
+            }
+
+                .easyui-accordion ul li div.hover a {
+                    color: #416AA3;
+                }
+
+            .easyui-accordion ul li div.selected {
+                border: 1px solid #99BBE8;
+                background: #E0ECFF;
+                cursor: default;
+            }
+
+                .easyui-accordion ul li div.selected a {
+                    color: #416AA3;
+                    font-weight: bold;
+                }
+
+/*ckeditor编辑器的表单样式*/
+.ckeditorTableMB *{
+     font-size:12px;
+     font-family:"Times New Roman",Georgia,Serif !important;
+}
+
+.ckeditorTableMB table{
+    line-height: 2;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+/*内表*/
+.ckeditorTableMB table table{
+    border-collapse: collapse;
+    border-width:0px; 
+    border-style:hidden;
+    margin:0px;
+    padding:0px;
+    width:100%;
+}
+
+.ckeditorTableMB table td{
+    margin:0px;
+    padding:0px;
+}
+
+.ckeditorTableMB table tr td{
+    border:1px solid !important;
+}
+
+.commonTextArea{
+    /*text-indent:2em;*/
+    width:99%
+}

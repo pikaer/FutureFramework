@@ -108,7 +108,7 @@ namespace Future.Web.Controllers
             }
         }
 
-        public JsonResult UpdateAuthor(string data)
+        public JsonResult UpdateFunc(string data)
         {
             try
             {
@@ -117,7 +117,25 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
-                var res = sysService.UpdateAuthor(request);
+                var res = sysService.UpdateFunc(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+            }
+        }
+
+        public JsonResult ExChangeOrder(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<Function>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = sysService.UpdateFunc(request);
                 return new JsonResult(res);
             }
             catch (Exception ex)

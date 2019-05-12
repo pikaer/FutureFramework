@@ -1,14 +1,14 @@
-/**
- * EasyUI for jQuery 1.5.3
+﻿/**
+ * jQuery EasyUI 1.4.5
  * 
- * Copyright (c) 2009-2017 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2016 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
  *
  */
 /**
- * form - EasyUI for jQuery
+ * form - jQuery EasyUI
  * 
  */
 (function($){
@@ -27,41 +27,15 @@
 		input.triggerHandler('blur');
 		input.focus();
 
-		var disabledFields = null;	// the fields to be disabled
-		if (opts.dirty){
-			var ff = [];	// all the dirty fields
-			$.map(opts.dirtyFields, function(f){
-				if ($(f).hasClass('textbox-f')){
-					$(f).next().find('.textbox-value').each(function(){
-						ff.push(this);
-					});
-				} else {
-					ff.push(f);
-				}
-			});
-			disabledFields = $(target).find('input[name]:enabled,textarea[name]:enabled,select[name]:enabled').filter(function(){
-				return $.inArray(this, ff) == -1;
-			});
-			disabledFields.attr('disabled', 'disabled');
-		}
-
-		if (opts.ajax){
-			if (opts.iframe){
-				submitIframe(target, param);
-			} else {
-				if (window.FormData !== undefined){
-					submitXhr(target, param);
-				} else {
-					submitIframe(target, param);
-				}
-			}
+		if (opts.iframe){
+			submitIframe(target, param);
 		} else {
-			$(target).submit();
-		}
-
-		if (opts.dirty){
-			disabledFields.removeAttr('disabled');
-		}
+			if (window.FormData !== undefined){
+				submitXhr(target, param);
+			} else {
+				submitIframe(target, param);
+			}
+		}		
 	}
 
 	function submitIframe(target, param){
@@ -284,7 +258,6 @@
 	 */
 	function clear(target){
 		$('input,select,textarea', target).each(function(){
-			if ($(this).hasClass('textbox-value')){return;}
 			var t = this.type, tag = this.tagName.toLowerCase();
 			if (t == 'text' || t == 'hidden' || t == 'password' || tag == 'textarea'){
 				this.value = '';
@@ -308,15 +281,13 @@
 			
 		});
 		
-		var tmp = $();
 		var form = $(target);
 		var opts = $.data(target, 'form').options;
-		for(var i=0; i<opts.fieldTypes.length; i++){
+		for(var i=opts.fieldTypes.length-1; i>=0; i--){
 			var type = opts.fieldTypes[i];
-			var field = form.find('.'+type+'-f').not(tmp);
+			var field = form.find('.'+type+'-f');
 			if (field.length && field[type]){
 				field[type]('clear');
-				tmp = tmp.add(field);
 			}
 		}
 		form.form('validate');
@@ -351,16 +322,10 @@
 			});
 		}
 		$(target).bind('_change.form', function(e, t){
-			if ($.inArray(t, options.dirtyFields) == -1){
-				options.dirtyFields.push(t);
-			}
 			options.onChange.call(this, t);
 		}).bind('change.form', function(e){
 			var t = e.target;
 			if (!$(t).hasClass('textbox-text')){
-				if ($.inArray(t, options.dirtyFields) == -1){
-					options.dirtyFields.push(t);
-				}
 				options.onChange.call(this, t);
 			}
 		});
@@ -451,32 +416,23 @@
 			return jq.each(function(){
 				$(this).find('.validatebox-text:not(:disabled)').validatebox('resetValidation');
 			});
-		},
-		resetDirty: function(jq){
-			return jq.each(function(){
-				$(this).form('options').dirtyFields = [];
-			});
 		}
 	};
 	
 	$.fn.form.parseOptions = function(target){
 		var t = $(target);
-		return $.extend({}, $.parser.parseOptions(target, [
-			{ajax:'boolean',dirty:'boolean'}
-		]), {
+		return $.extend({}, $.parser.parseOptions(target, [{ajax:'boolean'}]), {
 			url: (t.attr('action') ? t.attr('action') : undefined)
 		});
 	};
 	
 	$.fn.form.defaults = {
-		fieldTypes: ['tagbox','combobox','combotree','combogrid','combotreegrid','datetimebox','datebox','combo',
+		fieldTypes: ['combobox','combotree','combogrid','datetimebox','datebox','combo',
 		        'datetimespinner','timespinner','numberspinner','spinner',
-		        'slider','searchbox','numberbox','passwordbox','filebox','textbox','switchbutton'],
+		        'slider','searchbox','numberbox','textbox','switchbutton'],
 		novalidate: false,
 		ajax: true,
 		iframe: true,
-		dirty: false,
-		dirtyFields: [],
 		url: null,
 		queryParams: {},
 		onSubmit: function(param){return $(this).form('validate');},

@@ -1,14 +1,14 @@
-/**
- * EasyUI for jQuery 1.5.3
+﻿/**
+ * jQuery EasyUI 1.4.5
  * 
- * Copyright (c) 2009-2017 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2016 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
  *
  */
 /**
- * draggable - EasyUI for jQuery
+ * draggable - jQuery EasyUI
  * 
  */
 (function($){
@@ -77,8 +77,8 @@
 		
 		var state = $.data(e.data.target, 'draggable');
 		var opts = state.options;
-
-		var droppables = $('.droppable:visible').filter(function(){
+		
+		var droppables = $('.droppable').filter(function(){
 			return e.data.target != this;
 		}).filter(function(){
 			var accept = $.data(this, 'droppable').options.accept;
@@ -158,7 +158,6 @@
 		var state = $.data(e.data.target, 'draggable');
 		var proxy = state.proxy;
 		var opts = state.options;
-		opts.onEndDrag.call(e.data.target, e);
 		if (opts.revert){
 			if (checkDrop() == true){
 				$(e.data.target).css({
@@ -227,7 +226,7 @@
 							top:e.data.startTop
 						});
 					}
-					$(this).triggerHandler('_drop', [e.data.target]);
+					$(this).trigger('_drop', [e.data.target]);
 					removeProxy();
 					dropped = true;
 					this.entered = false;
@@ -305,8 +304,6 @@
 					top: position.top,
 					startX: e.pageX,
 					startY: e.pageY,
-					width: $(e.data.target).outerWidth(),
-					height: $(e.data.target).outerHeight(),
 					offsetWidth: (e.pageX - offset.left),
 					offsetHeight: (e.pageY - offset.top),
 					target: e.data.target,
@@ -390,7 +387,6 @@
 		onBeforeDrag: function(e){},
 		onStartDrag: function(e){},
 		onDrag: function(e){},
-		onEndDrag: function(e){},
 		onStopDrag: function(e){}
 	};
 	
