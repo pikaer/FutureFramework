@@ -8,7 +8,7 @@ namespace Future.Model.Entity.Sys
         /// <summary>
         /// 唯一标示
         /// </summary>
-        public int FuncId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// 父级Id

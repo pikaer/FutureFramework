@@ -12,7 +12,7 @@ function LoadTopTree() {
         function (dataObj) {
             if (dataObj.success) {
                 $.each(dataObj.content, function (i, e) {
-                    var aHtml = "<a onclick='LoadAccordTree(" + e.funcId + ")' ";
+                    var aHtml = "<a onclick='LoadAccordTree(" + e.id + ")' ";
                     aHtml += "class='easyui-linkbutton' ";
                     aHtml += "data-options='plain:true,iconCls:\"" + e.iconCls + "\"'>" + e.text + "</a>";
                     var tdHtml = "<td>" + aHtml + "</td>";
@@ -34,7 +34,7 @@ function LoadAccordTree(topId) {
         function (dataObj) {
             if (dataObj.success) {
                 $.each(dataObj.content, function (i, e) {
-                    var id = e.funcId;
+                    var id = e.id;
                     $("#westAccordion").accordion('add', {
                         title: e.text,
                         content: "<ul id='tree" + id + "'></ul>",

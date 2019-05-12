@@ -70,7 +70,7 @@ namespace Future.Web.Controllers
                 var modules = sysService.GetModules(EnumFuncType.Module);
                 if (modules.Count > 0)
                 {
-                    var res = sysService.GetFunctionsByParentId(modules[0].FuncId);
+                    var res = sysService.GetFunctionsByParentId(modules[0].Id);
                     return new JsonResult(new ResponseContext<List<FunctionDTO>>(res));
                 }
                 return Json("");

@@ -4,14 +4,15 @@
 
 function InitGrid() {
     $("#dg").treegrid({
-        title: "权限列表",
+        title: "权限树",
         rownumbers: true,
         fit: true,
         singleSelect: true,
         nowrap: true,
+        sortOrder: 'asc',
+        sortName: 'order',
         remoteSort: false,//前台排序 true则为后台排序 需要传参
-        idField: 'funcId',
-        animate: false,  //定义在节点展开或折叠的时候是否显示动画效果。
+        idField: 'id',
         treeField: 'text',
         striped: true,
         border: false,
@@ -19,8 +20,10 @@ function InitGrid() {
         url: '/SysTree/GetFuncTreeJson',//获取列表数据
         method: 'post',
         autoRowHeight: false,
+        pagination: false,
         lines: true,
         columns: [[
+            { field: 'id', width: 100, title: "Id" },//sortable:true  动态排序
             { field: 'text', width: 200, title: "名称", halign: 'center' },
             { field: 'url', width: 250, title: "链接", halign: 'center' },
             { field: 'iconCls', width: 170, title: "图标", halign: 'center' },
@@ -78,8 +81,8 @@ function save() {
         $.post("/SysTree/UpdateFunc",
             { data: $.toJSON(row) },
             function (data) {
-                var info = eval('(' + data + ')');
-                if (info.Success) {
+               
+                if (data.Success) {
                     //成功后调用reload刷新界面数据
                     $('#dg').treegrid('reload');
                     //reload之后行会退出编辑状态，因此当前的编辑行要重新设置为undefined
@@ -112,8 +115,8 @@ function removeit() {
                 //ajax调用控制器action更新数据库
                 $.post("/SysTree/DeleteFunc",
                     { id: row.id },
-                    function (dataStr) {
-                        var data = eval('(' + dataStr + ')');
+                    function (data) {
+                     
                         if (data.Success) {
                             //成功后刷新界面
                             $("#dg").treegrid('reload');
@@ -133,8 +136,8 @@ function addEq() {
     if (row) {
         $.post("/SysTree/AddEqFunc",
             { data: $.toJSON(row) },
-            function (dataStr) {
-                var data = eval('(' + dataStr + ')');
+            function (data) {
+              
                 if (data.Success) {
                     $("#dg").treegrid('reload');
                 }
@@ -151,8 +154,8 @@ function addSub() {
     if (row) {
         $.post("/SysTree/AddSubFunc",
             { data: $.toJSON(row) },
-            function (dataStr) {
-                var data = eval('(' + dataStr + ')');
+            function (data) {
+               
                 if (data.Success) {
                     $("#dg").treegrid('reload');
                 }

@@ -43,22 +43,22 @@ namespace Future.Service
 
             foreach(var module in rtn)
             {
-                var moduleList = GetFunctionsByParentId(module.FuncId);
+                var moduleList = GetFunctionsByParentId(module.Id);
                 if(moduleList != null&& moduleList.Any())
                 {
                     foreach(var menu in moduleList)
                     {
-                        var menuList = GetFunctionsByParentId(menu.FuncId);
+                        var menuList = GetFunctionsByParentId(menu.Id);
                         if(menuList!=null&& menuList.Any())
                         {
                             foreach(var page in menuList)
                             {
-                                var pageList = GetFunctionsByParentId(page.FuncId);
+                                var pageList = GetFunctionsByParentId(page.Id);
                                 if(pageList!=null&& pageList.Any())
                                 {
                                     foreach(var button in pageList)
                                     {
-                                        var buttonList = GetFunctionsByParentId(button.FuncId);
+                                        var buttonList = GetFunctionsByParentId(button.Id);
                                         button.Children = buttonList;
                                     }
                                 }
@@ -89,7 +89,7 @@ namespace Future.Service
         {
             var dto = new Function()
             {
-                ParentId= req.FuncId,
+                ParentId= req.Id,
                 Text = "新增项",
                 CreateTime = DateTime.Now
             };
@@ -118,10 +118,10 @@ namespace Future.Service
                     var item1List = GetFunctionsByParentId(item.ParentId.Value);
                     foreach (var item1 in item1List)
                     {
-                        sysDal.DeleteFuncByParentId(item1.FuncId);
+                        sysDal.DeleteFuncByParentId(item1.Id);
                     }
                 }
-                sysDal.DeleteFuncByParentId(item.FuncId);
+                sysDal.DeleteFuncByParentId(item.Id);
             }
             sysDal.DeleteFuncByParentId(id);
             return sysDal.DeleteFuncByFuncId(id);

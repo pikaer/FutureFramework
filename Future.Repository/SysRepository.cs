@@ -10,7 +10,7 @@ namespace Future.Repository
     {
         public static SysRepository Instance = SingletonProvider<SysRepository>.Instance;
 
-        private readonly string SELECT_FUNCTION = "SELECT FuncId,ParentId,Text,Url,IconCls,EnumFuncType,Remark,CreateTime,ModifyTime,CreateUserId,ModifyUserId FROM dbo.sys_Function";
+        private readonly string SELECT_FUNCTION = "SELECT Id,ParentId,Text,Url,IconCls,EnumFuncType,Remark,CreateTime,ModifyTime,CreateUserId,ModifyUserId FROM dbo.sys_Function";
 
         protected override DbEnum GetDbEnum()
         {
@@ -47,7 +47,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = string.Format("{0} where FuncId={1}", SELECT_FUNCTION, id);
+                var sql = string.Format("{0} where Id={1}", SELECT_FUNCTION, id);
                 return Db.QueryFirstOrDefault<Function>(sql);
             }
         }
@@ -109,7 +109,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = string.Format("Delete sys_Function where FuncId={0}", funcId);
+                string sql = string.Format("Delete sys_Function where Id={0}", funcId);
                 return Db.Execute(sql)>0;
             }
         }

@@ -99,7 +99,7 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
-                var res = sysService.DeleteFuncs(request.FuncId);
+                var res = sysService.DeleteFuncs(request.Id);
                 return new JsonResult(res);
             }
             catch (Exception ex)
