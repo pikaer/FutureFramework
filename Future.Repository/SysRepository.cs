@@ -51,10 +51,7 @@ namespace Future.Repository
                 return Db.QueryFirstOrDefault<Function>(sql);
             }
         }
-
-        /// <summary>
-        /// 通过FuncType获取Function列表
-        /// </summary>
+        
         public List<FunctionDTO> GetFunctionDTOByFuncType(int type)
         {
             using (var Db = GetDbConnection())
@@ -91,7 +88,7 @@ namespace Future.Repository
                                            ,@CreateTime
                                            ,@ModifyTime
                                            ,@CreateUserId
-                                           ,@ModifyUserId";
+                                           ,@ModifyUserId)";
                 return Db.Execute(sql, req)>0;
             }
         }
@@ -111,6 +108,22 @@ namespace Future.Repository
             {
                 string sql = string.Format("Delete sys_Function where Id={0}", funcId);
                 return Db.Execute(sql)>0;
+            }
+        }
+
+        public bool UpdateFunc(Function func)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.sys_Function
+                               SET Text =@Text
+                                  ,Url= @Url
+                                  ,IconCls = @IconCls
+                                  ,Remark = @Remark
+                                  ,ModifyTime = @ModifyTime
+                                  ,ModifyUserId = @ModifyUserId
+                             WHERE Id=@Id";
+                return Db.Execute(sql, func) > 0;
             }
         }
     }

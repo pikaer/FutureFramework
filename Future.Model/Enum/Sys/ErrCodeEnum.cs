@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace Future.Model.Enum.Sys
 {
     public enum ErrCodeEnum
     {
-        [Description("接口调用成功")]
+        [Description("操作成功")]
         Success = 10000,
 
-        [Description("接口调用失败")]
+        [Description("操作失败")]
         Failure = 9000,
 
         [Description("无权限")]

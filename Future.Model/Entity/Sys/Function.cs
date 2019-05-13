@@ -1,5 +1,4 @@
 ﻿using Future.Model.Enum.Sys;
-using System.Collections.Generic;
 
 namespace Future.Model.Entity.Sys
 {

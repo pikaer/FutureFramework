@@ -3,8 +3,199 @@
     Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
 }
 <head>
-    <title>系统登陆</title>
-    <script type="text/javascript" src="@Url.Content("~/scripts/systree.js")"></script>
+    <title>权限树管理</title>
+    <script type="text/javascript">
+        $(function () {
+            $('#dlg').dialog('close');
+            InitGrid();
+        });
+
+        function InitGrid() {
+            $("#dg").treegrid({
+                title: "权限树",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                nowrap: true,
+                sortName: 'order',
+                idField: 'id',
+                treeField: 'text',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/SysTree/GetFuncTreeJson',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                pagination: false,
+                lines: true,
+                columns: [[
+                    { field: 'text', width: 200, title: "名称", halign: 'center' },
+                    { field: 'url', width: 250, title: "链接", halign: 'center' },
+                    { field: 'iconCls', width: 170, title: "图标", halign: 'center' },
+                    { field: 'funcType', width: 180, title: "类型", halign: 'center' }
+                ]],
+                toolbar: "#tb",
+                onLoadsuccess: function () {
+                    $('#dg').treegrid('collapseAll');
+                }
+            });
+        }
+
+
+        //删除
+        function removeit() {
+            //获取当前选中行
+            var row = $('#dg').treegrid('getSelected');
+            //如果不为空
+            if (row) {
+                $.messager.confirm('提示', '是否删除?', function (r) {
+                    if (r) {
+                        //ajax调用控制器action更新数据库
+                        $.post("/SysTree/DeleteFunc",
+                            { data: row.id },
+                            function (data) {
+                                if (data.success) {
+                                    //成功后刷新界面
+                                    $("#dg").treegrid('reload');
+                                }
+                                else {
+                                    $.messager.alert("提示", data.ResultMessage);
+                                }
+                            });
+                    }
+                });
+            }
+        }
+
+        //编辑
+        function editItem() {
+            var row = $('#dg').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            } 
+            $('#txtText').val(row.text);
+            $('#hiddenId').val(row.id);
+            $('#txtUrl').val(row.url);
+            $('#txtIconCls').val(row.iconCls);
+            $('#dlg').dialog('open');
+        }
+
+        function reloadGrid() {
+            $('#dg').datagrid('reload');
+        }
+
+        //提交
+        function submit() {
+            var queryData = {
+                Id: $("#hiddenId").val(),
+                Text: $("#txtText").val(),
+                Url: $("#txtUrl").val(),
+                IconCls: $("#txtIconCls").val()
+            };
+            
+            $.post("/SysTree/UpdateFunc",
+                { data: $.toJSON(queryData) },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        $('#dlg').dialog('close');
+                        $("#dg").treegrid('reload');
+                    }
+                    else {
+                        $.messager.alert("提示", data.ResultMessage);
+                    }
+                });
+        }
+
+
+        //增加同级
+        function addEq() {
+            var row = $('#dg').treegrid('getSelected');
+            if (row) {
+                $.post("/SysTree/AddEqFunc",
+                    { data: $.toJSON(row) },
+                    function (data) {
+                        if (data.success) {
+                            $("#dg").treegrid('reload');
+                        }
+                        else {
+                            $.messager.alert("提示", data.ResultMessage);
+                        }
+                    });
+            }
+        }
+
+        //增加子级
+        function addSub() {
+            var row = $('#dg').treegrid('getSelected');
+            if (row) {
+                if (row.enumFuncType == 4) {
+                    $.messager.alert("提示", "该模块下没有子级啦！");
+                    return;
+                }
+
+                $.post("/SysTree/AddSubFunc",
+                    { data: $.toJSON(row) },
+                    function (data) {
+                        if (data.success) {
+                            $("#dg").treegrid('reload');
+                        }
+                        else {
+                            $.messager.alert(data.ResultMessage);
+                        }
+                    });
+            }
+        }
+        
+
+        function up() {
+            var selectedRow = $("#dg").datagrid('getSelected');
+            if (!selectedRow) {
+                $.messager.alert('提示', '请选择要升序的行!', 'info');
+                return;
+            }
+            var pre = selectedRow.prev();
+            var selectedRowIndex = $("#dg").datagrid('getRowIndex', selectedRow);
+            var rows = $("#dg").datagrid('getRows');
+            if (selectedRowIndex != 0) {
+                var rowToExchange = rows[selectedRowIndex - 1];
+                $.post("/SysTree/ExChangeOrder",
+                    { aId: selectedRow.Id, bId: rowToExchange.Id },
+                    function (info) {
+                        var data = eval('(' + info + ')');
+                        if (data.success) {
+                            $("#dg").datagrid('reload');
+                        }
+                    });
+            }
+        }
+
+        function down() {
+            var selectedRow = $('#dg').datagrid('getSelected');
+            if (!selectedRow) {
+                $.messager.alert('提示', '请选择要降序的行!', 'info');
+                return;
+            }
+
+            var selectedRowIndex = $('#dg').datagrid('getRowIndex', selectRow);
+            var rows = $('#dg').datagrid('getRows');
+            if (selectedRowIndex != rows.length - 1) {
+                var rowToExchange = rows[selectedRowIndex + 1];
+                $.post("/SysTree/ExChangeOrder",
+                    { aId: selectedRow.Id, bId: rowToExchange.Id },
+                    function (info) {
+                        var data = eval('(' + info + ')');
+                        if (data.success) {
+                            $('#dg').datagrid('reload');
+                        }
+                    });
+            }
+        }
+
+    </script>
+
+
 </head>
 
 
@@ -14,14 +205,46 @@
             <td>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addEq()">增加同级</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addSub()">增加子级</a>
-                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="edit()">编辑</a>
-                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="cancel()">撤销编辑</a>
-                <a href="#" class="easyui-linkbutton" iconcls="icon icon-save" plain="true" onclick="save()">保存</a>
-                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="move('up')">升序</a>
-                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="move('down')">降序</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editItem()">编辑</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="up()">升序</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="down()">降序</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="removeit()">删除</a>
             </td>
         </tr>
     </table>
 </div>
+
+<input id="hiddenId" type="hidden" />
+
 <table id="dg"></table>
+
+@*编辑框*@
+<div id="dlg" hidden class="easyui-dialog" title="Basic Dialog" data-options="iconCls:'icon-save'" style="width:400px;height:200px;padding:10px;">
+    <div style="padding: 5px">
+        <form id="ff" method="post">
+            <table class="groupTable">
+                <tr>
+                    <td class="l">名称:</td>
+                    <td class="v" colspan="3">
+                        <input id="txtText" class="easyui-validatebox textbox" type="text" style="width: 120px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="l">连接:</td>
+                    <td class="v" colspan="3">
+                        <input id="txtUrl" class="easyui-validatebox textbox" type="text" style="width: 120px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="l">图标:</td>
+                    <td class="v" colspan="3">
+                        <input id="txtIconCls" class="easyui-validatebox textbox" type="text" style="width: 120px" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br />
+        <div align="center"><a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" onclick="submit()">确定</a></div>
+    </div>
+</div>
+

@@ -17,7 +17,7 @@ namespace Future.Web.Controllers
             return View();
         }
 
-        public IActionResult Item()
+        public IActionResult AddOrEdit()
         {
             return View();
         }
@@ -40,12 +40,8 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<CommonRequest>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                var res = sysService.GetFunctionByFuncId(request.Id);
+                var id = Convert.ToInt16(data);
+                var res = sysService.GetFunctionByFuncId(id);
                 return new JsonResult(res);
             }
             catch (Exception ex)
@@ -94,12 +90,8 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<Function>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                var res = sysService.DeleteFuncs(request.Id);
+                int id = Convert.ToInt16(data);
+                var res = sysService.DeleteFuncs(id);
                 return new JsonResult(res);
             }
             catch (Exception ex)

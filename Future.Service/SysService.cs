@@ -1,6 +1,7 @@
 ﻿using Future.Model.DTO.Sys;
 using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
+using Future.Model.Utils;
 using Future.Repository;
 using Infrastructure;
 using System;
@@ -18,9 +19,10 @@ namespace Future.Service
             return sysDal.GetFunctions();
         }
 
-        public Function GetFunctionByFuncId(int id)
+        public ResponseContext<Function> GetFunctionByFuncId(int id)
         {
-            return sysDal.GetFunctionByFuncId(id);
+            var func= sysDal.GetFunctionByFuncId(id);
+            return new ResponseContext<Function>(func);
         }
 
         public List<FunctionDTO> GetFunctionsByParentId(int id)
@@ -73,24 +75,30 @@ namespace Future.Service
             return rtn;
         }
 
-        public bool AddEqFunc(Function req)
+        public ResponseContext<bool> AddEqFunc(Function req)
         {
             req.Text = "新增项";
             req.CreateTime = DateTime.Now;
-            return sysDal.AddFunction(req);
+            var success= sysDal.AddFunction(req);
+            return new ResponseContext<bool>(success);
         }
 
-        public bool UpdateFunc(Function req)
+        public ResponseContext<bool> UpdateFunc(Function req)
         {
-            return true;
+            req.ModifyTime = DateTime.Now;
+
+            var success = sysDal.UpdateFunc(req);
+
+            return new ResponseContext<bool>(success);
         }
 
-        public bool AddSubFunc(Function req)
+        public ResponseContext<bool> AddSubFunc(Function req)
         {
             var dto = new Function()
             {
                 ParentId= req.Id,
                 Text = "新增项",
+                IconCls= req.IconCls,
                 CreateTime = DateTime.Now
             };
             switch (req.EnumFuncType)
@@ -105,10 +113,12 @@ namespace Future.Service
                     dto.EnumFuncType = EnumFuncType.Button;
                     break;
             }
-            return sysDal.AddFunction(req);
+            var success= sysDal.AddFunction(dto);
+
+            return new ResponseContext<bool>(success);
         }
         
-        public bool DeleteFuncs(int id)
+        public ResponseContext<bool> DeleteFuncs(int id)
         {
             var itemList = GetFunctionsByParentId(id);
             foreach (var item in itemList)
@@ -124,7 +134,9 @@ namespace Future.Service
                 sysDal.DeleteFuncByParentId(item.Id);
             }
             sysDal.DeleteFuncByParentId(id);
-            return sysDal.DeleteFuncByFuncId(id);
+            var success=sysDal.DeleteFuncByFuncId(id);
+
+            return new ResponseContext<bool>(success);
         }
         
     }

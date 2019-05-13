@@ -167,6 +167,31 @@ function Clearnav() {
 }
 
 
+var RefreshCallBack;
+var Redirect;
 
+//在home的dialog 可以跳出tab显示
+function ShowDialog(urlOrHtml, source, h, w, tit, callBack, redirect) {
+    //if (window.frames["ctrl"].location.href != url) {
+    //if (urlOrHtml) {
+    //    window.frames["dlgFrame"].location.href = source;
+    //    $('#dlgHtml').html('');
+    //}
+    //else {
+    //    window.frames["dlgFrame"].document.body.innerText = "";
+    //    $('#dlgHtml').html(source);
+    //}
+
+    RefreshCallBack = callBack;
+    Redirect = redirect;
+    $('#openDlg').dialog({ height: h, width: w, title: tit, resizable: true, maximizable: true, minimizable: true });
+    $('#openDlg').dialog('open');
+    $('#openDlg').window('center');
+}
+
+function RefreshAfterDialogConfirm(res) {
+    if (RefreshCallBack)
+        RefreshCallBack(res);
+}
 
 
