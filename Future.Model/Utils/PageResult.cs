@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Future.Model.Utils
 {
@@ -9,7 +8,7 @@ namespace Future.Model.Utils
     {
         public PageResult(List<T> list,int count=0)
         {
-            if(list!=null&& list.Any())
+            if(list.NotEmpty())
             {
                 rows = list;
 
@@ -23,6 +22,13 @@ namespace Future.Model.Utils
                 }
             }
         }
+
+        public PageResult()
+        {
+            total = 0;
+            rows = null;
+        }
+
         public int total { get; set; }
 
         public List<T> rows { get; set; }

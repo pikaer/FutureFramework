@@ -1,16 +1,16 @@
 ﻿using Dapper;
 using Future.Model.DTO.Sys;
 using Future.Model.Entity.Sys;
-using Infrastructure;
 using System.Collections.Generic;
 
 namespace Future.Repository
 {
     public class SysRepository : BaseRepository
     {
-        public static SysRepository Instance = SingletonProvider<SysRepository>.Instance;
-
         private readonly string SELECT_FUNCTION = "SELECT Id,ParentId,Text,Url,IconCls,EnumFuncType,Remark,CreateTime,ModifyTime,CreateUserId,ModifyUserId FROM dbo.sys_Function";
+
+        private readonly string SELECT_STAFF = "SELECT StaffId, StaffName, Gender, Role, Mobile, Email, PassWord, CreateTime, ModifyTime FROM dbo.sys_Staff ";
+        
 
         protected override DbEnum GetDbEnum()
         {
@@ -43,12 +43,12 @@ namespace Future.Repository
         /// <summary>
         /// 通过FuncId获取Function列表
         /// </summary>
-        public Function GetFunctionByFuncId(int id)
+        public FunctionEntity GetFunctionByFuncId(int id)
         {
             using (var Db = GetDbConnection())
             {
                 var sql = string.Format("{0} where Id={1}", SELECT_FUNCTION, id);
-                return Db.QueryFirstOrDefault<Function>(sql);
+                return Db.QueryFirstOrDefault<FunctionEntity>(sql);
             }
         }
         
@@ -61,7 +61,7 @@ namespace Future.Repository
             }
         }
 
-        public bool AddFunction(Function req)
+        public bool AddFunction(FunctionEntity req)
         {
             using (var Db = GetDbConnection())
             {
@@ -111,7 +111,7 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdateFunc(Function func)
+        public bool UpdateFunc(FunctionEntity func)
         {
             using (var Db = GetDbConnection())
             {
@@ -124,6 +124,35 @@ namespace Future.Repository
                                   ,ModifyUserId = @ModifyUserId
                              WHERE Id=@Id";
                 return Db.Execute(sql, func) > 0;
+            }
+        }
+
+        public StaffEntity Staff(long userId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = string.Format("{0} where StaffId={0}", SELECT_STAFF,userId);
+                return Db.QueryFirstOrDefault<StaffEntity>(sql);
+            }
+        }
+
+        public List<StaffEntity>StaffList(int pageIndex, int pageSize)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = $@"{SELECT_STAFF} order by CreateTime desc OFFSET @OFFSETCount ROWS FETCH NEXT @TakeCount ROWS ONLY";
+
+                return Db.Query<StaffEntity>(sql, new { OFFSETCount = (pageIndex - 1) * pageSize, TakeCount = pageSize }).AsList();
+            }
+        }
+
+        public int StaffListCount()
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = "select count(1) from dbo.sys_Staff";
+
+                return Db.QueryFirstOrDefault<int>(sql);
             }
         }
     }

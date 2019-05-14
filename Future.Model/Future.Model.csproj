@@ -5,8 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entity\User\" />
-    <Folder Include="Entity\Ctrl\" />
+    <Compile Remove="Entity\Ctrl\**" />
+    <Compile Remove="Entity\User\**" />
+    <EmbeddedResource Remove="Entity\Ctrl\**" />
+    <EmbeddedResource Remove="Entity\User\**" />
+    <None Remove="Entity\Ctrl\**" />
+    <None Remove="Entity\User\**" />
   </ItemGroup>
 
   <ItemGroup>

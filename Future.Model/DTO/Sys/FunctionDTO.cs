@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Future.Model.DTO.Sys
 {
-    public class FunctionDTO: Function
+    public class FunctionDTO: FunctionEntity
     {
         public string FuncType
         {

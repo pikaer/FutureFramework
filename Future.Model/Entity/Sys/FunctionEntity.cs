@@ -1,8 +1,9 @@
 ﻿using Future.Model.Enum.Sys;
+using System;
 
 namespace Future.Model.Entity.Sys
 {
-    public class Function: BaseEntity
+    public class FunctionEntity
     {
         /// <summary>
         /// 唯一标示
@@ -43,5 +44,25 @@ namespace Future.Model.Entity.Sys
         /// 排序字段
         /// </summary>
         public int OrderIndex { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime CreateTime { get; set; }
+
+        /// <summary>
+        /// 修改时间
+        /// </summary>
+        public DateTime? ModifyTime { get; set; }
+
+        /// <summary>
+        /// 创建人ID
+        /// </summary>
+        public int CreateUserId { get; set; }
+
+        /// <summary>
+        /// 修改人ID
+        /// </summary>
+        public int? ModifyUserId { get; set; }
     }
 }

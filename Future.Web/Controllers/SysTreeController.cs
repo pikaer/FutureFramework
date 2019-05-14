@@ -16,12 +16,7 @@ namespace Future.Web.Controllers
         {
             return View();
         }
-
-        public IActionResult AddOrEdit()
-        {
-            return View();
-        }
-
+        
         public JsonResult GetFuncTreeJson()
         {
             try
@@ -54,7 +49,7 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<Function>();
+                var request = data.JsonToObject<FunctionEntity>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
@@ -72,7 +67,7 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<Function>();
+                var request = data.JsonToObject<FunctionEntity>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
@@ -104,7 +99,7 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<Function>();
+                var request = data.JsonToObject<FunctionEntity>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
@@ -122,7 +117,7 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<Function>();
+                var request = data.JsonToObject<FunctionEntity>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);

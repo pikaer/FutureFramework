@@ -19,10 +19,10 @@ namespace Future.Service
             return sysDal.GetFunctions();
         }
 
-        public ResponseContext<Function> GetFunctionByFuncId(int id)
+        public ResponseContext<FunctionEntity> GetFunctionByFuncId(int id)
         {
             var func= sysDal.GetFunctionByFuncId(id);
-            return new ResponseContext<Function>(func);
+            return new ResponseContext<FunctionEntity>(func);
         }
 
         public List<FunctionDTO> GetFunctionsByParentId(int id)
@@ -75,7 +75,7 @@ namespace Future.Service
             return rtn;
         }
 
-        public ResponseContext<bool> AddEqFunc(Function req)
+        public ResponseContext<bool> AddEqFunc(FunctionEntity req)
         {
             req.Text = "新增项";
             req.CreateTime = DateTime.Now;
@@ -83,7 +83,7 @@ namespace Future.Service
             return new ResponseContext<bool>(success);
         }
 
-        public ResponseContext<bool> UpdateFunc(Function req)
+        public ResponseContext<bool> UpdateFunc(FunctionEntity req)
         {
             req.ModifyTime = DateTime.Now;
 
@@ -92,9 +92,9 @@ namespace Future.Service
             return new ResponseContext<bool>(success);
         }
 
-        public ResponseContext<bool> AddSubFunc(Function req)
+        public ResponseContext<bool> AddSubFunc(FunctionEntity req)
         {
-            var dto = new Function()
+            var dto = new FunctionEntity()
             {
                 ParentId= req.Id,
                 Text = "新增项",
@@ -138,6 +138,28 @@ namespace Future.Service
 
             return new ResponseContext<bool>(success);
         }
-        
+
+        public PageResult<StaffDTO> GetTextList(int pageIndex, int pageSize)
+        {
+            var rtn = new PageResult<StaffDTO>();
+            var entityList = sysDal.StaffList(pageIndex, pageSize);
+            if (entityList.NotEmpty())
+            {
+                var staffList = entityList.Select(a => new StaffDTO()
+                {
+                    StaffId = a.StaffId,
+                    StaffName = a.StaffName.Trim(),
+                    Gender = a.Gender.ToDescription(),
+                    Role = a.Role.ToDescription(),
+                    Mobile =a.Mobile.Trim(),
+                    Email = a.Email.Trim(),
+                    CreateTimeDesc = a.CreateTime.ToString(),
+                    ModifyTimeDesc = a.ModifyTime.ToString(),
+                }).ToList();
+                rtn.rows = staffList;
+                rtn.total = sysDal.StaffListCount();
+            }
+            return rtn;
+        }
     }
 }
