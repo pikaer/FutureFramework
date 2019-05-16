@@ -71,8 +71,8 @@
                 function (data) {
                     if (data.success) {
                         //成功后刷新界面
-                        $('#dlg').dialog('close');
-                        reloadGrid()
+                        cancel();
+                        reloadGrid();
                     }
                     else {
                         $.messager.alert("提示", data.ResultMessage);
