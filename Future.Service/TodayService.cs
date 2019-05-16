@@ -1,7 +1,10 @@
 ﻿using Future.Model.DTO.Today;
+using Future.Model.Entity.Today;
+using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
 using Infrastructure;
+using System;
 using System.Linq;
 
 namespace Future.Service
@@ -46,6 +49,47 @@ namespace Future.Service
                 return string.Empty;
             }
             return entity.StaffName;
+        }
+
+        public object DeleteText(long textId)
+        {
+            bool success= todayDal.DeleteText(textId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> AddOrUpdateText(TextGalleryEntity req)
+        {
+            bool success = true;
+            if (req.TextId <= 0)
+            {
+                req.CreateTime = DateTime.Now;
+                req.CreateUserId = 1;
+                req.ModifyTime = DateTime.Now;
+                req.ModifyUserId = 1;
+                success = todayDal.IndertTextGallery(req);
+            }
+            else
+            {
+                req.ModifyTime = DateTime.Now;
+                req.ModifyUserId = 1;
+                success = todayDal.UpdateTextGallery(req);
+            }
+
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Future.Model.Entity.Today;
+using System;
 using System.Collections.Generic;
 
 namespace Future.Repository
@@ -52,6 +53,58 @@ namespace Future.Repository
                 var sql = "select count(1) from dbo.gallery_TextGallery";
 
                 return Db.QueryFirstOrDefault<int>(sql);
+            }
+        }
+
+        public bool DeleteText(long textId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("DELETE FROM dbo.gallery_TextGallery WHERE TextId={0}", textId);
+
+                return Db.Execute(sql) > 0;
+            }
+        }
+
+        public bool IndertTextGallery(TextGalleryEntity req)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.gallery_TextGallery
+                                  (TextSource
+                                  ,TextContent
+                                  ,Author
+                                  ,Remark
+                                  ,CreateUserId
+                                  ,ModifyUserId
+                                  ,CreateTime
+                                  ,ModifyTime)
+                            VALUES
+                                  (@TextSource
+                                  ,@TextContent
+                                  ,@Author
+                                  ,@Remark
+                                  ,@CreateUserId
+                                  ,@ModifyUserId
+                                  ,@CreateTime
+                                  ,@ModifyTime)";
+                return Db.Execute(sql, req) >0;
+            }
+        }
+
+        public bool UpdateTextGallery(TextGalleryEntity req)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.gallery_TextGallery
+                               SET TextSource = @TextSource
+                                  , TextContent = @TextContent
+                                  , Author = @Author
+                                  , Remark = @Remark
+                                  , ModifyUserId = @ModifyUserId
+                                  , ModifyTime = @ModifyTime
+                             WHERE TextId = @TextId";
+                return Db.Execute(sql, req) > 0;
             }
         }
     }

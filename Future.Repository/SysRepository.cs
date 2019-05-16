@@ -131,7 +131,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = string.Format("{0} where StaffId={0}", SELECT_STAFF,userId);
+                string sql = string.Format("{0} where StaffId={1}", SELECT_STAFF,userId);
                 return Db.QueryFirstOrDefault<StaffEntity>(sql);
             }
         }

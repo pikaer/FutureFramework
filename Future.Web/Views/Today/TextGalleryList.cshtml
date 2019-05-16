@@ -6,10 +6,12 @@
     <title>权限树管理</title>
     <script type="text/javascript">
         $(function () {
+            $('#dlg').dialog('close');
             InitGrid();
         });
+
         function InitGrid() {
-            $("#datagrid1").datagrid({
+            $("#datagrid").datagrid({
                 title: "图片素材库列表",
                 rownumbers: true,
                 fit: true,
@@ -26,15 +28,15 @@
                 pagination: true,
                 pageSize: 10,
                 columns: [[
-                    { field: 'textId', width: 120, title: "文本Id", sortable: true },
-                    { field: 'textContent', width: 120, title: "文本内容", sortable: true },
+                    { field: 'textId', width: 40, title: "文本Id", sortable: true },
+                    { field: 'textContent', width: 200, title: "文本内容", sortable: true },
                     { field: 'textSource', width: 120, title: "文本来源", sortable: true },
                     { field: 'author', width: 120, title: "作者", sortable: true },
                     { field: 'remark', width: 120, title: "备注", sortable: true },
                     { field: 'createUser', width: 120, title: "创建人", sortable: true },
                     { field: 'modifyUser', width: 120, title: "最近修改人", sortable: true },
                     { field: 'createTimeDesc', width: 120, title: "创建时间", sortable: true },
-                    { field: 'modifyTimeDesc', width: 120, title: "最近修改时间", sortable: true },
+                    { field: 'modifyTimeDesc', width: 120, title: "最近修改时间", sortable: true }
                 ]],
                 toolbar: "#tb"
             });
@@ -43,38 +45,81 @@
 
         //添加
         function addItem() {
-            parent.ShowDialog(true, '/ZuJuan/CanShuManage/AddorEditCityView', 250, 350, '增加省/市', reloadGrid);
+            $('#addType').val(1);
+            $('#textContentInput').val("");
+            $('#textSourceInput').val("");
+            $('#authorInput').val("");
+            $('#remarkInput').val("");
+            $('#dlg').dialog('open');
+        }
+
+        //提交
+        function submit() {
+            var textId = $('#hiddenId').val();
+            if ($('#addType').val() ==="1") {
+                textId = 0;
+            } 
+            var queryData = {
+                TextContent: $("#textContentInput").val(),
+                TextSource: $("#textSourceInput").val(),
+                Author: $("#authorInput").val(),
+                Remark: $("#remarkInput").val(),
+                TextId: textId
+            };
+            $.post("/Today/AddOrUpdateText",
+                { data: $.toJSON(queryData) },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        $('#dlg').dialog('close');
+                        reloadGrid()
+                    }
+                    else {
+                        $.messager.alert("提示", data.ResultMessage);
+                    }
+                });
+        }
+
+        //取消
+        function cancel() {
+            $('#dlg').dialog('close');
         }
 
         //编辑
         function editItem() {
-            var row = $('#datagrid1').datagrid('getSelected');
+
+            $('#addType').val(2);
+
+            var row = $('#datagrid').datagrid('getSelected');
             if (!row) {
                 $.messager.alert('提示', '请选择要编辑的行!', 'info');
                 return;
             }
-            parent.ShowDialog(true, '/ZuJuan/CanShuManage/AddorEditCityView?id=' + row.Id, 250, 350, '编辑省/市', reloadGrid);
+            $('#hiddenId').val(row.textId);
+            $('#textContentInput').val(row.textContent);
+            $('#textSourceInput').val(row.textSource);
+            $('#authorInput').val(row.author);
+            $('#remarkInput').val(row.remark);
+            $('#dlg').dialog('open');
         }
+
         function del() {
-            var row = $('#datagrid1').datagrid('getSelected');
+            var row = $('#datagrid').datagrid('getSelected');
             if (!row) {
                 $.messager.alert('提示', '请选择要删除的行!', 'info');
                 return;
             }
             $.messager.confirm('提示', '是否删除?', function (r) {
                 if (r) {
-                    //ajax删除
-                    $.post("/ZuJuan/CanShuManage/DeleteCity",
-                        { id: $.toJSON(row.Id) },
+                    $.post("/Today/DeleteText",
+                        { data: $.toJSON(row.textId) },
                         function (data) {
-                            var info = eval('(' + data + ')');
-                            if (info) {
-                                $.messager.alert('提示', info.Message, 'info');
+                            if (data.success) {
+                                //成功后刷新界面
                                 reloadGrid();
                             }
                             else {
-                                $.messager.alert('提示', info.Message, 'info');
-                                reloadGrid();
+                                $.messager.alert("提示", data.ResultMessage);
                             }
                         });
                 }
@@ -84,12 +129,13 @@
             });
         }
         function reloadGrid() {
-            $('#datagrid1').datagrid('reload');
+            $('#datagrid').datagrid('reload');
         }
     </script>
 </head>
 <input id="hiddenId" type="hidden" />
-<table id="datagrid1"></table>
+<input id="addType" type="hidden" />
+<table id="datagrid"></table>
 
 <div id="tb">
     <table cellpadding="0" cellspacing="0" style="width: 100%">
@@ -101,4 +147,34 @@
             </td>
         </tr>
     </table>
+</div>
+
+
+@*编辑框*@
+<div id="dlg"  class="easyui-dialog" title="Basic Dialog" data-options="iconCls:'icon-save'" style="width:600px;height:330px;padding:10px;display:none">
+    <div style="padding: 5px">
+        <form id="ff">
+            <table class="groupTable">
+                <tr>
+                    <td>文本内容:</td>
+                    <td><textarea id="textContentInput" style="height:60px;width: 100%"></textarea> </td>
+                </tr>
+                <tr>
+                    <td>文本来源:</td>
+                    <td> <input id="textSourceInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
+                </tr>
+                <tr>
+                    <td>作者:</td>
+                    <td><input id="authorInput" class="easyui-validatebox textbox" type="text" style="height:30px;width: 100%" /></td>
+                </tr>
+                <tr>
+                    <td>备注:</td>
+                    <td><textarea id="remarkInput" style="height:60px;width: 100%"></textarea> </td>
+                </tr>
+            </table>
+        </form>
+        <br />
+        <div align="center" style="float:left;margin-left:200px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" onclick="cancel()">取消</a></div>
+        <div align="center" style="float:right;margin-right:200px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" onclick="submit()">确定</a></div>
+    </div>
 </div>

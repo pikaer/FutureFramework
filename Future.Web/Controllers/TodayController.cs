@@ -1,4 +1,5 @@
-﻿using Future.Model.Enum.Sys;
+﻿using Future.Model.Entity.Today;
+using Future.Model.Enum.Sys;
 using Future.Service;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,37 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
-        
+
+        public JsonResult AddOrUpdateText(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<TextGalleryEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = todayService.AddOrUpdateText(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+            }
+        }
+
+        public JsonResult DeleteText(string data)
+        {
+            try
+            {
+                long textId = Convert.ToInt16(data);
+                var res = todayService.DeleteText(textId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+            }
+        }
     }
 }
