@@ -21,7 +21,8 @@ namespace Future.Repository
         protected enum DbEnum
         {
             FutureFramework,
-            TodayHappy
+            TodayHappy,
+            LogService
         }
 
         /// <summary>

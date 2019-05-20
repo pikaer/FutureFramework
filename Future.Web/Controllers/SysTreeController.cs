@@ -12,6 +12,8 @@ namespace Future.Web.Controllers
     public class SysTreeController : BaseController
     {
         private readonly SysService sysService = SingletonProvider<SysService>.Instance;
+
+        #region 权限树
         public IActionResult List()
         {
             return View();
@@ -130,5 +132,27 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
+        #endregion
+
+        #region 日志系统
+        public IActionResult SysLogIndex()
+        {
+            return View();
+        }
+
+        public JsonResult GetLogList(int page = 1, int rows = 10)
+        {
+            try
+            {
+                var res = sysService.GetLogList(page, rows);
+                var rtn = new PageResult<LogDTO>(res);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+            }
+        }
+        #endregion
     }
 }

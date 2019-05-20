@@ -63,7 +63,7 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
-
+        
         public ResponseContext<bool> AddOrUpdateText(TextGalleryEntity req)
         {
             bool success = true;
@@ -91,5 +91,6 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
+        
     }
 }

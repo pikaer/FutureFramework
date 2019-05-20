@@ -7,6 +7,7 @@ using Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Future.Service
 {
@@ -139,7 +140,68 @@ namespace Future.Service
             return new ResponseContext<bool>(success);
         }
 
-        public PageResult<StaffDTO> GetTextList(int pageIndex, int pageSize)
+        public PageResult<LogDTO>GetLogList(int pageIndex, int pageSize)
+        {
+            var dto = new List<LogDTO>();
+            var list = sysDal.GetLogList(pageIndex,pageSize);
+            if (list.NotEmpty())
+            {
+                foreach(var item in list)
+                {
+                    var content = new StringBuilder();
+                    if (!item.LogContent.IsNullOrEmpty())
+                    {
+                        content.AppendFormat("LogContent={0}", item.LogContent);
+                        content.AppendLine();
+                    }
+                    if (item.UId > 0)
+                    {
+                        content.AppendFormat("UId={0}", item.UId);
+                        content.AppendLine();
+                    }
+                    if (item.LogId != Guid.Empty)
+                    {
+                        content.AppendFormat("LogId={0}", item.LogId);
+                        content.AppendLine();
+                    }
+                    if (!item.Platform.IsNullOrEmpty())
+                    {
+                        content.AppendFormat("Platform={0}", item.Platform);
+                        content.AppendLine();
+                    }
+                    if (!item.ServiceName.IsNullOrEmpty())
+                    {
+                        content.AppendFormat("ServiceName={0}", item.ServiceName);
+                        content.AppendLine();
+                    }
+                    if (item.TransactionID!=Guid.Empty)
+                    {
+                        content.AppendFormat("TransactionID={0}", item.TransactionID);
+                        content.AppendLine();
+                    }
+                    var logTagList = sysDal.LogTagList(item.LogId);
+                    if (logTagList.NotEmpty())
+                    {
+                        foreach(var tag in logTagList)
+                        {
+                            content.AppendFormat("{0}={1}", tag.LogKey, tag.LogValue);
+                            content.AppendLine();
+                        }
+                    }
+                    dto.Add(new LogDTO()
+                    {
+                        LogId=item.LogId,
+                        LogTitle=item.LogTitle,
+                        LogContent= content.ToString(),
+                        LogLevel=item.LogLevel.ToString(),
+                        CreateTime=item.ToString()
+                    });
+                }
+            }
+            return new PageResult<LogDTO>(dto, sysDal.LogListCount());
+        }
+
+        public PageResult<StaffDTO> GetStaffList(int pageIndex, int pageSize)
         {
             var rtn = new PageResult<StaffDTO>();
             var entityList = sysDal.StaffList(pageIndex, pageSize);

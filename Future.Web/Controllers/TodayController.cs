@@ -11,6 +11,7 @@ namespace Future.Web.Controllers
     {
         private readonly TodayService todayService = SingletonProvider<TodayService>.Instance;
 
+        #region TextGallery
         public IActionResult TextGalleryList()
         {
             return View();
@@ -60,5 +61,7 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
             }
         }
+        #endregion
+        
     }
 }
