@@ -21,16 +21,16 @@
                 striped: true,
                 border: false,
                 iconCls: 'icon icon-tree',
-                url: '/Today/GetTextGalleryList',//获取列表数据
+                url: '/Today/GetImageGalleryList',//获取列表数据
                 method: 'post',
                 autoRowHeight: false,
                 nowrap: false,   //换行
                 pagination: true,
                 pageSize: 10,
                 columns: [[
-                    { field: 'textId', width: 40, title: "文本Id", sortable: true },
-                    { field: 'textContent', width: 300, title: "文本内容", sortable: true },
-                    { field: 'textSource', width: 120, title: "文本来源", sortable: true },
+                    { field: 'imgId', width: 40, title: "图片Id", sortable: true },
+                    { field: 'imgName', width: 300, title: "图片名", sortable: true },
+                    { field: 'imgSource', width: 120, title: "图片来源", sortable: true },
                     { field: 'author', width: 120, title: "作者", sortable: true },
                     { field: 'remark', width: 160, title: "备注", sortable: true },
                     { field: 'createUser', width: 80, title: "创建人", sortable: true },

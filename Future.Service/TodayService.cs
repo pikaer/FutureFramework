@@ -3,6 +3,7 @@ using Future.Model.Entity.Today;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
+using Future.Utility;
 using Infrastructure;
 using System;
 using System.Linq;
@@ -29,10 +30,10 @@ namespace Future.Service
                     CreateUser = GetStaffName(a.CreateUserId),
                     ModifyUser = GetStaffName(a.ModifyUserId),
                     CreateTimeDesc = a.CreateTime.ToString(),
-                    ModifyTimeDesc = a.ModifyTime.ToString(),
+                    ModifyTimeDesc = a.ModifyTime.ToString()
                 }).ToList();
-                rtn.rows = txtList;
-                rtn.total = todayDal.TextGalleryListCount();
+                rtn.Rows = txtList;
+                rtn.Total = todayDal.TextGalleryListCount();
             }
             return rtn;
         }
@@ -64,6 +65,7 @@ namespace Future.Service
             }
         }
         
+
         public ResponseContext<bool> AddOrUpdateText(TextGalleryEntity req)
         {
             bool success = true;
@@ -91,6 +93,71 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
-        
+
+        public PageResult<ImgGalleryDTO> GetImageGalleryList(int pageIndex, int pageSize)
+        {
+            var rtn = new PageResult<ImgGalleryDTO>();
+            var entityList = todayDal.ImgGalleryList(pageIndex, pageSize);
+            if (entityList.NotEmpty())
+            {
+                var imageList = entityList.Select(a => new ImgGalleryDTO()
+                {
+                    ImgId=a.ImgId,
+                    ImgName=a.ImgName,
+                    ImgSource=a.ImgSource,
+                    Url=a.ShortUrl.GetImgPath(),
+                    Author =a.Author,
+                    Remark=a.Remark,
+                    CreateUser = GetStaffName(a.CreateUserId),
+                    ModifyUser = GetStaffName(a.ModifyUserId),
+                    CreateTimeDesc = a.CreateTime.ToString(),
+                    ModifyTimeDesc = a.ModifyTime.ToString(),
+                }).ToList();
+                rtn.Rows = imageList;
+                rtn.Total = todayDal.ImgGalleryListCount();
+            }
+            return rtn;
+        }
+
+        public object DeleteImage(long imageId)
+        {
+            bool success = todayDal.DeleteImage(imageId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public object AddOrUpdateImage(ImgGalleryEntity request)
+        {
+            bool success = true;
+            if (request.ImgId <= 0)
+            {
+                request.CreateTime = DateTime.Now;
+                request.CreateUserId = 1;
+                request.ModifyTime = DateTime.Now;
+                request.ModifyUserId = 1;
+                success = todayDal.IndertImageGallery(request);
+            }
+            else
+            {
+                request.ModifyTime = DateTime.Now;
+                request.ModifyUserId = 1;
+                success = todayDal.UpdateImageGallery(request);
+            }
+
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetFuncTreeJson", ex);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetFunc", ex);
             }
         }
 
@@ -61,7 +61,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddEqFunc", ex);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddSubFunc", ex);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteFunc", ex);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateFunc", ex);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ExChangeOrder", ex);
             }
         }
         #endregion
@@ -145,12 +145,11 @@ namespace Future.Web.Controllers
             try
             {
                 var res = sysService.GetLogList(page, rows);
-                var rtn = new PageResult<LogDTO>(res);
-                return new JsonResult(rtn);
+                return new JsonResult(res);
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetLogList", ex);
             }
         }
         #endregion

@@ -30,9 +30,13 @@ namespace Future.Web.Controllers
         /// <summary>
         /// 获取错误的返回
         /// </summary>
-        protected JsonResult ErrorJsonResult(ErrCodeEnum code, Exception ex=null)
+        protected JsonResult ErrorJsonResult(ErrCodeEnum code, string title = null, Exception ex = null)
         {
             //todo 记录ex异常日志
+            if (string.IsNullOrEmpty(title) || ex != null)
+            {
+                Log.Error(title, code.ToDescription(), ex);
+            }
             return new JsonResult(new ResponseContext<object>(false,code,null));
         }
         

@@ -1,9 +1,9 @@
 ﻿@{
-    ViewBag.Title = "权限树管理";
+    ViewBag.Title = "系统日志";
     Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
 }
 <head>
-    <title>权限树管理</title>
+    <title>系统日志</title>
     <script type="text/javascript">
         $(function () {
             InitGrid();
@@ -27,9 +27,9 @@
                 pagination: true,
                 pageSize: 10,
                 columns: [[
-                    { field: 'createTime', width: 120, title: "", sortable: true },
-                    { field: 'logLevel', width: 100, title: "", sortable: true },
-                    { field: 'logContent', width: 500, title: "", sortable: true }
+                    //{ field: 'createTime', width: 120, title: "创建时间", sortable: true },
+                    //{ field: 'logLevel', width: 100, title: "日志级别", sortable: true },
+                    { field: 'logContent', width: 1000, title: "日志内容", sortable: true }
                 ]],
                 queryParams: {
                     name: 'easyui',

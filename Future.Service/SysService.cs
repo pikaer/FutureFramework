@@ -15,6 +15,8 @@ namespace Future.Service
     {
         private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
 
+        private readonly LogRepository logDal = SingletonProvider<LogRepository>.Instance;
+
         public List<FunctionDTO> GetFunctions()
         {
             return sysDal.GetFunctions();
@@ -143,17 +145,16 @@ namespace Future.Service
         public PageResult<LogDTO>GetLogList(int pageIndex, int pageSize)
         {
             var dto = new List<LogDTO>();
-            var list = sysDal.GetLogList(pageIndex,pageSize);
+            var list = logDal.GetLogList(pageIndex,pageSize);
             if (list.NotEmpty())
             {
                 foreach(var item in list)
                 {
                     var content = new StringBuilder();
-                    if (!item.LogContent.IsNullOrEmpty())
-                    {
-                        content.AppendFormat("LogContent={0}", item.LogContent);
-                        content.AppendLine();
-                    }
+
+                    content.AppendFormat("CreateTime={0}", item.CreateTime.ToString());
+                    content.AppendLine();
+
                     if (item.UId > 0)
                     {
                         content.AppendFormat("UId={0}", item.UId);
@@ -179,7 +180,7 @@ namespace Future.Service
                         content.AppendFormat("TransactionID={0}", item.TransactionID);
                         content.AppendLine();
                     }
-                    var logTagList = sysDal.LogTagList(item.LogId);
+                    var logTagList = logDal.LogTagList(item.LogId);
                     if (logTagList.NotEmpty())
                     {
                         foreach(var tag in logTagList)
@@ -188,17 +189,23 @@ namespace Future.Service
                             content.AppendLine();
                         }
                     }
+
+                    if (!item.LogContent.IsNullOrEmpty())
+                    {
+                        content.AppendFormat("LogContent={0}", item.LogContent);
+                        content.AppendLine();
+                    }
                     dto.Add(new LogDTO()
                     {
                         LogId=item.LogId,
                         LogTitle=item.LogTitle,
                         LogContent= content.ToString(),
                         LogLevel=item.LogLevel.ToString(),
-                        CreateTime=item.ToString()
+                        CreateTime=item.CreateTime.ToString()
                     });
                 }
             }
-            return new PageResult<LogDTO>(dto, sysDal.LogListCount());
+            return new PageResult<LogDTO>(dto, logDal.LogListCount());
         }
 
         public PageResult<StaffDTO> GetStaffList(int pageIndex, int pageSize)
@@ -218,8 +225,8 @@ namespace Future.Service
                     CreateTimeDesc = a.CreateTime.ToString(),
                     ModifyTimeDesc = a.ModifyTime.ToString(),
                 }).ToList();
-                rtn.rows = staffList;
-                rtn.total = sysDal.StaffListCount();
+                rtn.Rows = staffList;
+                rtn.Total = sysDal.StaffListCount();
             }
             return rtn;
         }

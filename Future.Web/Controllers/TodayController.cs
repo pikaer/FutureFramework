@@ -26,7 +26,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetTextGalleryList", ex);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateText", ex);
             }
         }
 
@@ -58,10 +58,61 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteText", ex);
             }
         }
         #endregion
-        
+
+        #region ImageGallery
+        public IActionResult ImageGalleryList()
+        {
+            return View();
+        }
+
+        public JsonResult GetImageGalleryList(int page = 1, int rows = 10)
+        {
+            try
+            {
+                var rtn = todayService.GetImageGalleryList(page, rows);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetImageGalleryList", ex);
+            }
+        }
+
+        public JsonResult AddOrUpdateImage(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<ImgGalleryEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = todayService.AddOrUpdateImage(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateImage", ex);
+            }
+        }
+
+        public JsonResult DeleteImage(string data)
+        {
+            try
+            {
+                long imageId = Convert.ToInt16(data);
+                var res = todayService.DeleteImage(imageId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteImage", ex);
+            }
+        }
+        #endregion
     }
 }

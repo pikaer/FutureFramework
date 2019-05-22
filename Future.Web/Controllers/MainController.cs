@@ -33,7 +33,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError,ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetChildrenFunc", ex);
             }
         }
         
@@ -46,7 +46,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ChildrenFunc", ex);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Future.Web.Controllers
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetModules", ex);
             }
         }
         
@@ -77,7 +77,7 @@ namespace Future.Web.Controllers
             }
             catch(Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetFirstMenus", ex);
             }
         }
     }

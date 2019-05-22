@@ -10,27 +10,27 @@ namespace Future.Model.Utils
         {
             if(list.NotEmpty())
             {
-                rows = list;
+                Rows = list;
 
                 if (count > 0)
                 {
-                    total = count;
+                    Total = count;
                 }
                 else
                 {
-                    total = rows.Count();
+                    Total = Rows.Count();
                 }
             }
         }
 
         public PageResult()
         {
-            total = 0;
-            rows = null;
+            Total = 0;
+            Rows = null;
         }
 
-        public int total { get; set; }
+        public int Total { get; set; }
 
-        public List<T> rows { get; set; }
+        public List<T> Rows { get; set; }
     }
 }

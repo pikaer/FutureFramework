@@ -12,9 +12,7 @@ namespace Future.Repository
 
         private readonly string SELECT_STAFF = "SELECT StaffId, StaffName, Gender, Role, Mobile, Email, PassWord, CreateTime, ModifyTime FROM dbo.sys_Staff ";
 
-        private readonly string SELECT_LOG = "SELECT LogId,LogLevel,TransactionID,UId,Platform,LogTitle,LogContent,ServiceName,CreateTime FROM dbo.sys_Log ";
-
-        private readonly string SELECT_LOGTAG = "SELECT TagId,LogId,LogKey,LogValue,CreateTime FROM dbo.sys_LogTag ";
+       
 
         protected override DbEnum GetDbEnum()
         {
@@ -140,15 +138,7 @@ namespace Future.Repository
             }
         }
 
-        public List<LogEntity> GetLogList(int pageIndex, int pageSize)
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = $@"{SELECT_LOG} order by CreateTime desc OFFSET @OFFSETCount ROWS FETCH NEXT @TakeCount ROWS ONLY";
-
-                return Db.Query<LogEntity>(sql, new { OFFSETCount = (pageIndex - 1) * pageSize, TakeCount = pageSize }).AsList();
-            }
-        }
+     
 
         public List<StaffEntity>StaffList(int pageIndex, int pageSize)
         {
@@ -165,25 +155,6 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql = "select count(1) from dbo.sys_Staff";
-
-                return Db.QueryFirstOrDefault<int>(sql);
-            }
-        }
-
-        public List<LogTag> LogTagList(Guid tagId)
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = @SELECT_LOGTAG + " Where TagId=@TagId";
-                return Db.Query<LogTag>(sql,new{ TagId = tagId }).AsList();
-            }
-        }
-
-        public int LogListCount()
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = "select count(1) from dbo.sys_Log";
 
                 return Db.QueryFirstOrDefault<int>(sql);
             }

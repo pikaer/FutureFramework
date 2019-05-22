@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Future.Model.Entity.Today;
-using System;
 using System.Collections.Generic;
 
 namespace Future.Repository
@@ -66,6 +65,16 @@ namespace Future.Repository
             }
         }
 
+        public bool DeleteImage(long imgId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("DELETE FROM dbo.gallery_ImgGallery WHERE ImgId={0}", imgId);
+
+                return Db.Execute(sql) > 0;
+            }
+        }
+
         public bool IndertTextGallery(TextGalleryEntity req)
         {
             using (var Db = GetDbConnection())
@@ -104,6 +113,50 @@ namespace Future.Repository
                                   , ModifyUserId = @ModifyUserId
                                   , ModifyTime = @ModifyTime
                              WHERE TextId = @TextId";
+                return Db.Execute(sql, req) > 0;
+            }
+        }
+
+        public bool IndertImageGallery(ImgGalleryEntity req)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.gallery_ImgGallery
+                                   (ImgName
+                                   ,ShortUrl
+                                   ,ImgSource
+                                   ,Author
+                                   ,Remark
+                                   ,CreateUserId
+                                   ,ModifyUserId
+                                   ,CreateTime
+                                   ,ModifyTime)
+                             VALUES
+                                   (@ImgName
+                                   ,@ShortUrl
+                                   ,@ImgSource
+                                   ,@Author
+                                   ,@Remark
+                                   ,@CreateUserId
+                                   ,@ModifyUserId
+                                   ,@CreateTime
+                                   ,@ModifyTime)";
+                return Db.Execute(sql, req) > 0;
+            }
+        }
+
+        public bool UpdateImageGallery(ImgGalleryEntity req)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.gallery_ImgGallery
+                               SET ImgName = @ImgName
+                                  , ImgSource = @ImgSource
+                                  , Author = @Author
+                                  , Remark = @Remark
+                                  , ModifyUserId = @ModifyUserId
+                                  , ModifyTime = @ModifyTime
+                             WHERE ImgId = @ImgId";
                 return Db.Execute(sql, req) > 0;
             }
         }
