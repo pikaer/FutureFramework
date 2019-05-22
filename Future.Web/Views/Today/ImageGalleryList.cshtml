@@ -49,8 +49,8 @@
         //添加
         function addItem() {
             $('#addType').val(1);
-            $('#textContentInput').val("");
-            $('#textSourceInput').val("");
+            $('#imgNameInput').val("");
+            $('#imgSourceInput').val("");
             $('#authorInput').val("");
             $('#remarkInput').val("");
             $('#dlg').dialog('open');
@@ -58,18 +58,18 @@
 
         //提交
         function submit() {
-            var textId = $('#hiddenId').val();
+            var imgId = $('#hiddenId').val();
             if ($('#addType').val() ==="1") {
-                textId = 0;
+                imgId = 0;
             }
             var queryData = {
-                TextContent: $("#textContentInput").val(),
-                TextSource: $("#textSourceInput").val(),
+                ImgName: $("#imgNameInput").val(),
+                ImgSource: $("#imgSourceInput").val(),
                 Author: $("#authorInput").val(),
                 Remark: $("#remarkInput").val(),
-                TextId: textId
+                ImgId: imgId
             };
-            $.post("/Today/AddOrUpdateText",
+            $.post("/Today/AddOrUpdateImage",
                 { data: $.toJSON(queryData) },
                 function (data) {
                     if (data.success) {
@@ -98,9 +98,9 @@
                 $.messager.alert('提示', '请选择要编辑的行!', 'info');
                 return;
             }
-            $('#hiddenId').val(row.textId);
-            $('#textContentInput').val(row.textContent);
-            $('#textSourceInput').val(row.textSource);
+            $('#hiddenId').val(row.imgId);
+            $('#imgNameInput').val(row.imgName);
+            $('#imgSourceInput').val(row.imgSource);
             $('#authorInput').val(row.author);
             $('#remarkInput').val(row.remark);
             $('#dlg').dialog('open');
@@ -114,8 +114,8 @@
             }
             $.messager.confirm('提示', '是否删除?', function (r) {
                 if (r) {
-                    $.post("/Today/DeleteText",
-                        { data: $.toJSON(row.textId) },
+                    $.post("/Today/DeleteImage",
+                        { data: $.toJSON(row.imgId) },
                         function (data) {
                             if (data.success) {
                                 //成功后刷新界面
@@ -154,17 +154,17 @@
 
 
 @*编辑框*@
-<div id="dlg" class="easyui-dialog" title="Basic Dialog" data-options="iconCls:'icon-save'" style="width:600px;height:330px;padding:10px;display:none">
+<div id="dlg" class="easyui-dialog" title="图片素材" data-options="iconCls:'icon-save'" style="width:600px;height:330px;padding:10px;display:none">
     <div style="padding: 5px">
         <form id="ff">
             <table class="groupTable">
                 <tr>
-                    <td>文本内容:</td>
-                    <td><textarea id="textContentInput" style="height:60px;width: 100%"></textarea> </td>
+                    <td>图片名:</td>
+                    <td> <input id="imgNameInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
                 </tr>
                 <tr>
-                    <td>文本来源:</td>
-                    <td> <input id="textSourceInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
+                    <td>图片来源:</td>
+                    <td> <input id="imgSourceInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
                 </tr>
                 <tr>
                     <td>作者:</td>
