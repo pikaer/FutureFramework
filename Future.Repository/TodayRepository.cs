@@ -25,6 +25,16 @@ namespace Future.Repository
             }
         }
 
+        public ImgGalleryEntity ImgGallery(long imageId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} where ImgId={1}", SELECT_IMGGALLERY, imageId);
+
+                return Db.QueryFirstOrDefault<ImgGalleryEntity>(sql);
+            }
+        }
+
         public List<TextGalleryEntity> TextGalleryList(int pageIndex, int pageSize)
         {
             using (var Db = GetDbConnection())
@@ -154,6 +164,19 @@ namespace Future.Repository
                                   , ImgSource = @ImgSource
                                   , Author = @Author
                                   , Remark = @Remark
+                                  , ModifyUserId = @ModifyUserId
+                                  , ModifyTime = @ModifyTime
+                             WHERE ImgId = @ImgId";
+                return Db.Execute(sql, req) > 0;
+            }
+        }
+
+        public bool UpdateShortUrl(ImgGalleryEntity req)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.gallery_ImgGallery
+                               SET ShortUrl = @ShortUrl
                                   , ModifyUserId = @ModifyUserId
                                   , ModifyTime = @ModifyTime
                              WHERE ImgId = @ImgId";

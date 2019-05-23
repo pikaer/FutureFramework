@@ -1,9 +1,11 @@
 ﻿using Future.Model.Entity.Today;
 using Future.Model.Enum.Sys;
+using Future.Model.Utils;
 using Future.Service;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 
 namespace Future.Web.Controllers
 {
@@ -111,6 +113,99 @@ namespace Future.Web.Controllers
             catch (Exception ex)
             {
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteImage", ex);
+            }
+        }
+
+        public JsonResult UploadLoadImageFlile()
+        {
+            try
+            {
+                var response = new ResponseContext<string>(string.Empty);
+
+                var uploadfile = Request.Form.Files[0];
+
+                var filePath = JsonSettingHelper.AppSettings["SetImgPath"];
+
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+
+                if (uploadfile == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InnerError, "UploadLoadImageFlile");
+                }
+
+                //文件后缀
+                var fileExtension = Path.GetExtension(uploadfile.FileName);
+
+                //判断后缀是否是图片
+                const string fileFilt = "|.gif|.jpg|.php|.jsp|.jpeg|.png|";
+                if (fileExtension == null)
+                {
+                    response = new ResponseContext<string>(string.Empty)
+                    {
+                        Code = ErrCodeEnum.InnerError,
+                        ResultMessage = "上传的文件没有后缀"
+                    };
+                    return new JsonResult(response);
+                }
+                if (!fileFilt.Contains(fileExtension))
+                {
+                    response = new ResponseContext<string>(string.Empty)
+                    {
+                        Code = ErrCodeEnum.Failure,
+                        ResultMessage = "上传的文件不是图片"
+                    };
+                    return new JsonResult(response);
+                }
+
+                //判断文件大小    
+                long length = uploadfile.Length;
+                if (length > 1024 * 1024 * 10) //1M
+                {
+                    response = new ResponseContext<string>(string.Empty)
+                    {
+                        Code = ErrCodeEnum.Failure,
+                        ResultMessage = "上传的文件不能大于10M"
+                    };
+                    return new JsonResult(response);
+                }
+
+                var strDateTime = DateTime.Now.ToString("yyyyMMdd"); //取得时间字符串
+                var strRan = Guid.NewGuid().ToString(); //生成随机数
+                var saveName = string.Format("{0}_{1}_{2}{3}", strDateTime, length, strRan, fileExtension);
+
+                using (FileStream fs = System.IO.File.Create(filePath + saveName))
+                {
+                    uploadfile.CopyTo(fs);
+                    fs.Flush();
+                }
+
+                response = new ResponseContext<string>(saveName);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpLoadImg", ex);
+            }
+        }
+
+        public JsonResult UpdateShortUrl(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<ImgGalleryEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = todayService.UpdateShortUrl(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateShortUrl", ex);
             }
         }
         #endregion

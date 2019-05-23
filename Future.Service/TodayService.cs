@@ -6,6 +6,7 @@ using Future.Repository;
 using Future.Utility;
 using Infrastructure;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Future.Service
@@ -52,7 +53,7 @@ namespace Future.Service
             return entity.StaffName;
         }
 
-        public object DeleteText(long textId)
+        public ResponseContext<bool> DeleteText(long textId)
         {
             bool success= todayDal.DeleteText(textId);
             if (success)
@@ -119,7 +120,7 @@ namespace Future.Service
             return rtn;
         }
 
-        public object DeleteImage(long imageId)
+        public ResponseContext<bool> DeleteImage(long imageId)
         {
             bool success = todayDal.DeleteImage(imageId);
             if (success)
@@ -132,7 +133,7 @@ namespace Future.Service
             }
         }
 
-        public object AddOrUpdateImage(ImgGalleryEntity request)
+        public ResponseContext<bool> AddOrUpdateImage(ImgGalleryEntity request)
         {
             bool success = true;
             if (request.ImgId <= 0)
@@ -149,6 +150,31 @@ namespace Future.Service
                 request.ModifyUserId = 1;
                 success = todayDal.UpdateImageGallery(request);
             }
+
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> UpdateShortUrl(ImgGalleryEntity request)
+        {
+            var entity = todayDal.ImgGallery(request.ImgId);
+            if(entity!=null&& !entity.ShortUrl.IsNullOrEmpty()&&
+                !string.IsNullOrWhiteSpace(entity.ShortUrl))
+            {
+                //删除原本图片
+                string path = JsonSettingHelper.AppSettings["SetImgPath"] + entity.ShortUrl;
+                File.Delete(path);
+            }
+
+            request.ModifyTime = DateTime.Now;
+            request.ModifyUserId = 1;
+            bool success = todayDal.UpdateShortUrl(request);
 
             if (success)
             {

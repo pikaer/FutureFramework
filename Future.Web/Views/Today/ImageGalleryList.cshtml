@@ -4,10 +4,13 @@
 }
 <head>
     <title>权限树管理</title>
+
+    <script type="text/javascript" src="@Url.Content("~/scripts/ajaxfileupload.js")"></script>
     <script type="text/javascript">
         $(function () {
             $('#dlg').dialog('close');
             InitGrid();
+
         });
 
         function InitGrid() {
@@ -41,7 +44,7 @@
                 toolbar: "#tb",
                 onDblClickCell: function () {
                     editItem();
-              }
+                }
             });
         }
 
@@ -59,7 +62,7 @@
         //提交
         function submit() {
             var imgId = $('#hiddenId').val();
-            if ($('#addType').val() ==="1") {
+            if ($('#addType').val() === "1") {
                 imgId = 0;
             }
             var queryData = {
@@ -131,13 +134,75 @@
                 }
             });
         }
+
         function reloadGrid() {
             $('#datagrid').datagrid('reload');
         }
+
+        //添加
+        function upLoadImage() {
+            var row = $('#datagrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            }
+
+            $("#imageFlile").click();
+        }
+
+        function upLoadFile() {
+            if ($("#imageFlile").val().length > 0) {
+                $.ajaxFileUpload(
+                    {
+                        url: '/Today/UploadLoadImageFlile', //用于文件上传的服务器端请求地址
+                        secureuri: false, //一般设置为false
+                        fileElementId: 'imageFlile', //文件上传空间的id属性
+                        dataType: 'json', //返回值类型 一般设置为json
+                        success: function (data)  //服务器成功响应处理函数
+                        {
+                            if (data.success) {
+                                updateShortImageUrl(data.content);
+                            } else {
+                                $.messager.alert("提示", data.ResultMessage);
+                            }
+
+                        },
+                        error: function (data)//服务器响应失败处理函数
+                        {
+                            $.messager.alert("提示1", data.ResultMessage);
+                        }
+                    });
+            }
+        }
+
+        function updateShortImageUrl(url) {
+            var row = $('#datagrid').datagrid('getSelected');
+
+            var queryData = {
+                ImgId: row.imgId,
+                ShortUrl: url
+            };
+
+            $.post("/Today/UpdateShortUrl",
+                { data: $.toJSON(queryData) },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        reloadGrid();
+                    }
+                    else {
+                        $.messager.alert("提示", data.ResultMessage);
+                    }
+                });
+        }
+
     </script>
 </head>
+
 <input id="hiddenId" type="hidden" />
 <input id="addType" type="hidden" />
+<input type="file" id="imageFlile" name="imageFlile" onchange='upLoadFile()' style="display:none" />
+
 <table id="datagrid" style="width: 100%"></table>
 
 <div id="tb">
@@ -146,6 +211,7 @@
             <td>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addItem()">增加</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editItem()">编辑</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="upLoadImage()">上传图片</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="del()">删除</a>
             </td>
         </tr>
