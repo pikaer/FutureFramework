@@ -209,5 +209,14 @@ namespace Future.Web.Controllers
             }
         }
         #endregion
+
+        #region TodayHappyIndex
+        public IActionResult TodayHappyIndex()
+        {
+            return View();
+        }
+
+
+        #endregion
     }
 }

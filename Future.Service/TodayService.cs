@@ -122,6 +122,7 @@ namespace Future.Service
 
         public ResponseContext<bool> DeleteImage(long imageId)
         {
+            DeleteLocalImage(imageId);
             bool success = todayDal.DeleteImage(imageId);
             if (success)
             {
@@ -163,15 +164,7 @@ namespace Future.Service
 
         public ResponseContext<bool> UpdateShortUrl(ImgGalleryEntity request)
         {
-            var entity = todayDal.ImgGallery(request.ImgId);
-            if(entity!=null&& !entity.ShortUrl.IsNullOrEmpty()&&
-                !string.IsNullOrWhiteSpace(entity.ShortUrl))
-            {
-                //删除原本图片
-                string path = JsonSettingHelper.AppSettings["SetImgPath"] + entity.ShortUrl;
-                File.Delete(path);
-            }
-
+            DeleteLocalImage(request.ImgId);
             request.ModifyTime = DateTime.Now;
             request.ModifyUserId = 1;
             bool success = todayDal.UpdateShortUrl(request);
@@ -183,6 +176,24 @@ namespace Future.Service
             else
             {
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        /// <summary>
+        /// 删除本地图片
+        /// </summary>
+        /// <param name="imgId"></param>
+        private void DeleteLocalImage(long imgId)
+        {
+            if (imgId <= 0)
+            {
+                return;
+            }
+            var entity = todayDal.ImgGallery(imgId);
+            if (entity != null && !entity.ShortUrl.IsNullOrEmpty() &&!string.IsNullOrWhiteSpace(entity.ShortUrl))
+            {
+                string path = JsonSettingHelper.AppSettings["SetImgPath"] + entity.ShortUrl;
+                File.Delete(path);
             }
         }
     }

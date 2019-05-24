@@ -110,19 +110,6 @@ function tabClose() {
         var subtitle = $(this).children(".tabs-closable").text();
         $('#tabs').tabs('close', subtitle);
     });
-    /* 为选项卡绑定右键 */
-    $(".tabs-inner").bind('contextmenu', function (e) {
-        $('#mm').menu('show', {
-            left: e.pageX,
-            top: e.pageY
-        });
-
-        var subtitle = $(this).children(".tabs-closable").text();
-
-        $('#mm').data("currtab", subtitle);
-        $('#tabs').tabs('select', subtitle);
-        return false;
-    });
 }
 
 // 初始化左侧
@@ -165,33 +152,4 @@ function Clearnav() {
         $('#westAccordion').accordion('remove', title);
     }
 }
-
-
-var RefreshCallBack;
-var Redirect;
-
-//在home的dialog 可以跳出tab显示
-function ShowDialog(urlOrHtml, source, h, w, tit, callBack, redirect) {
-    //if (window.frames["ctrl"].location.href != url) {
-    //if (urlOrHtml) {
-    //    window.frames["dlgFrame"].location.href = source;
-    //    $('#dlgHtml').html('');
-    //}
-    //else {
-    //    window.frames["dlgFrame"].document.body.innerText = "";
-    //    $('#dlgHtml').html(source);
-    //}
-
-    RefreshCallBack = callBack;
-    Redirect = redirect;
-    $('#openDlg').dialog({ height: h, width: w, title: tit, resizable: true, maximizable: true, minimizable: true });
-    $('#openDlg').dialog('open');
-    $('#openDlg').window('center');
-}
-
-function RefreshAfterDialogConfirm(res) {
-    if (RefreshCallBack)
-        RefreshCallBack(res);
-}
-
 

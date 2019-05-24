@@ -166,13 +166,13 @@ jQuery.extend({
         data = type == "xml" || data ? r.responseXML : r.responseText;
         // If the type is "script", eval it in global context
         if (type == "script")
-            jQuery.globalEval(data);
+            return jQuery.globalEval(data);
         // Get the JavaScript object, if JSON is used.
         if (type == "json")
-            eval("data = " + data);
+            return eval('(' + r.responseXML.all[0].innerText + ')');
         // evaluate scripts within html
         if (type == "html")
-            jQuery("<div>").html(data).evalScripts();
+            return r.responseText;
 
         return data;
     }
