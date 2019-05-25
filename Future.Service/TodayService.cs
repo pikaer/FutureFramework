@@ -196,5 +196,10 @@ namespace Future.Service
                 File.Delete(path);
             }
         }
+
+        public PageResult<HomeInfoDTO> GetHomeInfoist(int page, int rows)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

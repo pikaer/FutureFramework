@@ -215,7 +215,18 @@ namespace Future.Web.Controllers
         {
             return View();
         }
-
+        public JsonResult GetHomeInfoist(int page = 1, int rows = 10)
+        {
+            try
+            {
+                var rtn = todayService.GetHomeInfoist(page, rows);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetHomeInfoist", ex);
+            }
+        }
 
         #endregion
     }
