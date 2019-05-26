@@ -10,6 +10,7 @@ namespace Future.Web.Controllers
 {
     public class BaseController : Controller
     {
+        private readonly LogHelper LogHelper = SingletonProvider<LogHelper>.Instance;
         /// <summary>
         /// 处理请求数据流
         /// </summary>
