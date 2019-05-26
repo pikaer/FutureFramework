@@ -477,7 +477,8 @@ namespace Future.Service
 
         public ResponseContext<GetHomeInfoResponse> GetHomeInfo(RequestContext<GetHomeInfoRequest> request)
         {
-
+            var response = new ResponseContext<GetHomeInfoResponse>();
+            
         }
     }
 }

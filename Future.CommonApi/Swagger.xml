@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Future.CommonApi</name>
+    </assembly>
+    <members>
+        <member name="M:Future.CommonApi.Controllers.BaseController.GetInputString">
+            <summary>
+            处理请求数据流
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Future.CommonApi.Controllers.BaseController.ErrorJsonResult(Future.Model.Enum.Sys.ErrCodeEnum,System.String,System.Exception)">
+            <summary>
+            获取错误的返回
+            </summary>
+        </member>
+        <member name="M:Future.CommonApi.Controllers.BaseController.WriteServiceLog(System.String,System.String,Future.Model.Utils.RequestHead,Future.Model.Enum.Sys.ErrCodeEnum,System.String,System.Object,System.Object)">
+            <summary>
+            写入服务接口调用日志到数据库,用作接口性能检测
+            </summary>
+        </member>
+    </members>
+</doc>

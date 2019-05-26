@@ -8,12 +8,12 @@ namespace Future.Model.Utils
         /// <summary>
         /// 构造函数
         /// </summary>
-        public ResponseContext(T data)
+        public ResponseContext()
         {
             Success = true;
             Code = ErrCodeEnum.Success;
             ResultMessage = ErrCodeEnum.Success.ToDescription();
-            Content = data;
+            Content = default(T);
         }
 
         public ResponseContext(bool success, ErrCodeEnum err, T data)
