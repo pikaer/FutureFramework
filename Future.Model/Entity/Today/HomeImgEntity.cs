@@ -20,7 +20,7 @@ namespace Future.Model.Entity.Today
         public long ImgId { get; set; }
 
         /// <summary>
-        /// 排序值
+        /// 排序值(默认从小到大排序）
         /// </summary>
         public int SortNum { get; set; }
 

@@ -23,9 +23,7 @@ namespace Future.Model.Utils
             ResultMessage = err.ToDescription();
             Content = data;
         }
-
-
-
+        
         /// <summary>
         /// 返回值
         /// true:成功

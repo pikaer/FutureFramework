@@ -6,6 +6,7 @@ using Future.Repository;
 using Future.Utility;
 using Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -66,7 +67,6 @@ namespace Future.Service
             }
         }
         
-
         public ResponseContext<bool> AddOrUpdateText(TextGalleryEntity req)
         {
             bool success = true;
@@ -178,11 +178,7 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
-
-        /// <summary>
-        /// 删除本地图片
-        /// </summary>
-        /// <param name="imgId"></param>
+        
         private void DeleteLocalImage(long imgId)
         {
             if (imgId <= 0)
@@ -197,9 +193,285 @@ namespace Future.Service
             }
         }
 
-        public PageResult<HomeInfoDTO> GetHomeInfoist(int page, int rows)
+        public PageResult<HomeInfoDTO> GetHomeInfoList(int pageIndex, int pageSize)
         {
-            throw new NotImplementedException();
+            var rtn = new PageResult<HomeInfoDTO>();
+            var entityList = todayDal.HomeInfoList(pageIndex, pageSize);
+            if (entityList.NotEmpty())
+            {
+                var list = entityList.Select(a => new HomeInfoDTO()
+                {
+                    HomeInfoId = a.HomeInfoId,
+                    DisplayDate = a.DisplayDate.ToString("D"),
+                    Remark = a.Remark,
+                    CreateUser = GetStaffName(a.CreateUserId),
+                    ModifyUser = GetStaffName(a.ModifyUserId),
+                    CreateTimeDesc = a.CreateTime.ToString(),
+                    ModifyTimeDesc = a.ModifyTime.ToString()
+                }).ToList();
+                rtn.Rows = list;
+                rtn.Total = todayDal.HomeInfoCount();
+            }
+            return rtn;
+        }
+
+        public PageResult<HomeTextDTO> GetHomeTextList(long homeInfoId)
+        {
+            var rtn = new PageResult<HomeTextDTO>();
+            var entityList = todayDal.HomeTextList(homeInfoId);
+            if (entityList.NotEmpty())
+            {
+                var list = new List<HomeTextDTO>();
+                foreach (var item in entityList)
+                {
+                    var textEntity = todayDal.TextGallery(item.TextId);
+                    if (textEntity == null)
+                    {
+                        continue;
+                    }
+
+                    list.Add(new HomeTextDTO()
+                    {
+                        HomeTextId = item.HomeTextId,
+                        HomeInfoId = item.HomeInfoId,
+                        TextId = item.TextId,
+                        TextContent = textEntity.TextContent,
+                        TextSource = textEntity.TextSource,
+                        Author = textEntity.Author,
+                        Remark = textEntity.Remark,
+                        CreateUser = GetStaffName(item.CreateUserId),
+                        CreateTimeDesc = item.CreateTime.ToString()
+                    });
+                }
+
+                rtn.Rows = list;
+                rtn.Total = todayDal.HomeTextCount();
+            }
+            return rtn;
+        }
+
+        public PageResult<HomeImgDTO> GetHomeImgList(long homeInfoId)
+        {
+            var rtn = new PageResult<HomeImgDTO>();
+            var entityList = todayDal.HomeImgList(homeInfoId);
+            if (entityList.NotEmpty())
+            {
+                var list = new List<HomeImgDTO>();
+                foreach (var item in entityList)
+                {
+                    var imgEntity = todayDal.ImgGallery(item.ImgId);
+                    if (imgEntity == null)
+                    {
+                        continue;
+                    }
+
+                    list.Add(new HomeImgDTO()
+                    {
+                        HomeImgId = item.HomeImgId,
+                        HomeInfoId = item.HomeInfoId,
+                        ImgId = item.ImgId,
+                        ImgUrl = imgEntity.ShortUrl.GetImgPath(),
+                        ImgSource = imgEntity.ImgSource,
+                        Author = imgEntity.Author,
+                        Remark = imgEntity.Remark,
+                        CreateUser = GetStaffName(item.CreateUserId),
+                        CreateTimeDesc = item.CreateTime.ToString()
+                    });
+                }
+
+                rtn.Rows = list;
+                rtn.Total = todayDal.HomeTextCount();
+            }
+            return rtn;
+        }
+
+        public ResponseContext<bool> AddOrUpdateHomeInfo(HomeInfoEntity req)
+        {
+            bool success = true;
+            if (req.HomeInfoId <= 0)
+            {
+                req.CreateTime = DateTime.Now;
+                req.CreateUserId = 1;
+                req.ModifyTime = DateTime.Now;
+                req.ModifyUserId = 1;
+                success = todayDal.IndertHomeInfo(req);
+            }
+            else
+            {
+                req.ModifyTime = DateTime.Now;
+                req.ModifyUserId = 1;
+                success = todayDal.UpdateHomeInfo(req);
+            }
+
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> MoveHomeText(long homeTextId, bool toUp)
+        {
+            var homeTextEntity = todayDal.HomeText(homeTextId);
+            if (homeTextEntity == null)
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.DataIsnotExist, false);
+            }
+
+            var textList= todayDal.HomeTextList(homeTextEntity.HomeInfoId);
+            if (textList.IsNullOrEmpty())
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.DataIsnotExist, false);
+            }
+
+            HomeTextEntity oldTextEntity = null;
+            if (toUp)
+            {
+                oldTextEntity = textList.Where(a => a.SortNum < homeTextEntity.SortNum).OrderByDescending(a => a.SortNum).FirstOrDefault();
+                
+            }
+            else
+            {
+                oldTextEntity = textList.Where(a => a.SortNum > homeTextEntity.SortNum).OrderBy(a => a.SortNum).FirstOrDefault();
+            }
+
+            if (oldTextEntity != null)
+            {
+                int oldSortNum = oldTextEntity.SortNum;
+                oldTextEntity.SortNum = homeTextEntity.SortNum;
+                homeTextEntity.SortNum = oldSortNum;
+
+                todayDal.UpdateHomeTextSortNum(oldTextEntity);
+                todayDal.UpdateHomeTextSortNum(homeTextEntity);
+            }
+            return new ResponseContext<bool>(true);
+        }
+
+        public ResponseContext<bool> MoveHomeImg(long homeImgId, bool toUp)
+        {
+            var homeImgEntity = todayDal.HomeImg(homeImgId);
+            if (homeImgEntity == null)
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.DataIsnotExist, false);
+            }
+
+            var imgList = todayDal.HomeImgList(homeImgEntity.HomeInfoId);
+            if (imgList.IsNullOrEmpty())
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.DataIsnotExist, false);
+            }
+
+            HomeImgEntity oldImgEntity = null;
+            if (toUp)
+            {
+                oldImgEntity = imgList.Where(a => a.SortNum < homeImgEntity.SortNum).OrderByDescending(a => a.SortNum).FirstOrDefault();
+
+            }
+            else
+            {
+                oldImgEntity = imgList.Where(a => a.SortNum > homeImgEntity.SortNum).OrderBy(a => a.SortNum).FirstOrDefault();
+            }
+
+            if (oldImgEntity != null)
+            {
+                int oldSortNum = oldImgEntity.SortNum;
+                oldImgEntity.SortNum = homeImgEntity.SortNum;
+                homeImgEntity.SortNum = oldSortNum;
+
+                todayDal.UpdateHomeImgSortNum(oldImgEntity);
+                todayDal.UpdateHomeImgSortNum(homeImgEntity);
+            }
+            return new ResponseContext<bool>(true);
+        }
+
+        public ResponseContext<bool> IndertHomeText(HomeTextEntity request)
+        {
+            int currentSortNum = 1;
+            var list = todayDal.HomeTextList(request.HomeInfoId);
+            if (list.NotEmpty())
+            {
+                currentSortNum = list.OrderByDescending(a => a.SortNum).First().SortNum+1;
+            }
+
+            request.SortNum = currentSortNum;
+            request.CreateTime = DateTime.Now;
+            request.CreateUserId = 1;
+            bool success = todayDal.IndertHomeText(request);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> IndertHomeImg(HomeImgEntity request)
+        {
+            int currentSortNum = 1;
+            var list = todayDal.HomeImgList(request.HomeInfoId);
+            if (list.NotEmpty())
+            {
+                currentSortNum = list.OrderByDescending(a => a.SortNum).First().SortNum + 1;
+            }
+
+            request.SortNum = currentSortNum;
+            request.CreateTime = DateTime.Now;
+            request.CreateUserId = 1;
+            bool success = todayDal.IndertHomeImg(request);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> DeleteHomeInfo(long homeInfoId)
+        {
+            todayDal.DeleteHomeTextByHomeInfoId(homeInfoId);
+            todayDal.DeleteHomeImgByHomeInfoId(homeInfoId);
+            bool success = todayDal.DeleteHomeInfo(homeInfoId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+        
+        public ResponseContext<bool> DeleteHomeText(long homeTextId)
+        {
+            bool success = todayDal.DeleteHomeTextByHomeTextId(homeTextId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> DeleteHomeImg(long homeImgId)
+        {
+            bool success = todayDal.DeleteHomeImgByHomeImgId(homeImgId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
         }
     }
 }
