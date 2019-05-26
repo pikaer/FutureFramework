@@ -199,10 +199,11 @@ namespace Future.Service
             var entityList = todayDal.HomeInfoList(pageIndex, pageSize);
             if (entityList.NotEmpty())
             {
-                var list = entityList.Select(a => new HomeInfoDTO()
+                var list = entityList.OrderByDescending(x=>x.DisplayStartDateTime).Select(a => new HomeInfoDTO()
                 {
                     HomeInfoId = a.HomeInfoId,
-                    DisplayDate = a.DisplayDate.ToString("D"),
+                    DisplayStartDateTime = a.DisplayStartDateTime.ToString(),
+                    DisplayEndDateTime = a.DisplayEndDateTime.ToString(),
                     Remark = a.Remark,
                     CreateUser = GetStaffName(a.CreateUserId),
                     ModifyUser = GetStaffName(a.ModifyUserId),
@@ -222,7 +223,7 @@ namespace Future.Service
             if (entityList.NotEmpty())
             {
                 var list = new List<HomeTextDTO>();
-                foreach (var item in entityList)
+                foreach (var item in entityList.OrderBy(a=>a.SortNum))
                 {
                     var textEntity = todayDal.TextGallery(item.TextId);
                     if (textEntity == null)
@@ -257,7 +258,7 @@ namespace Future.Service
             if (entityList.NotEmpty())
             {
                 var list = new List<HomeImgDTO>();
-                foreach (var item in entityList)
+                foreach (var item in entityList.OrderBy(a => a.SortNum))
                 {
                     var imgEntity = todayDal.ImgGallery(item.ImgId);
                     if (imgEntity == null)

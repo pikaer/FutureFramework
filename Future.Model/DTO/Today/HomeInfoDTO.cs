@@ -8,9 +8,14 @@
         public long HomeInfoId { get; set; }
 
         /// <summary>
-        /// 展示日期(2019-05-01)
+        /// 展示开始时间
         /// </summary>
-        public string DisplayDate { get; set; }
+        public string DisplayStartDateTime { get; set; }
+
+        /// <summary>
+        /// 展示结束时间
+        /// </summary>
+        public string DisplayEndDateTime { get; set; }
 
         /// <summary>
         /// 备注

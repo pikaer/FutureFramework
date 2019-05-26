@@ -10,9 +10,14 @@ namespace Future.Model.Entity.Today
         public long HomeInfoId { get; set; }
 
         /// <summary>
-        /// 展示日期
+        /// 展示开始时间
         /// </summary>
-        public DateTime DisplayDate { get; set; }
+        public DateTime DisplayStartDateTime { get; set; }
+
+        /// <summary>
+        /// 展示结束时间
+        /// </summary>
+        public DateTime DisplayEndDateTime { get; set; }
 
         /// <summary>
         /// 备注

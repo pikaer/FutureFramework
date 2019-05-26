@@ -5,6 +5,7 @@
 <head>
     <title>权限树管理</title>
     <script type="text/javascript">
+
         $(function () {
             cancelHomeInfo();
             cancelHomeImg();
@@ -32,9 +33,9 @@
                 pagination: true,
                 pageSize: 10,
                 columns: [[
-                    { field: 'displayDate', width: 95, title: "展示日期", sortable: true },
-                    { field: 'createUser', width: 50, title: "创建人", sortable: true },
-                    { field: 'remark', width: 130, title: "备注", sortable: true }
+                    { field: 'displayStartDateTime', width: 130, title: "展示开始日期", sortable: true },
+                    { field: 'displayEndDateTime', width: 130, title: "展示结束日期", sortable: true },
+                    { field: 'createUser', width: 80, title: "创建人", sortable: true }
                 ]],
                 toolbar: "#tb",
                 onSelect: function (index, row) {
@@ -63,12 +64,12 @@
                 pagination: false,
                 columns: [[
                     {
-                        field: 'formatter', width: 700, title: "今日份言论", sortable: true,
+                        field: 'formatter', width: '95%', title: "今日份言论", sortable: true,
                         formatter: function (value, row) {
                             var str = "";
                             if (value != "" || value != null) {
-                                str = "<div style='font-size:14px'>" + row.textContent + "<br/><br/>";
-                                str += "来自：" + row.author + "<br/><br/>";
+                                str = "<div style='font-size:14px'>" + row.textContent + "</div><br/>";
+                                str += "<div style='font-size:10px;flote:right'>来自：" + row.author + "</div>";
                             }
                             return str;
                         }
@@ -76,7 +77,6 @@
                 ]],
                 toolbar: "#tbText",
                 onDblClickCell: function () {
-                    editItem();
                 }
             });
         }
@@ -100,10 +100,10 @@
                 pagination: false,
                 columns: [[
                     {
-                        field: 'imgUrl', width: 300, title: "缩略图", sortable: true,
+                        field: 'imgUrl', width: 200, title: "缩略图", sortable: true,
                         formatter: function (value) {
                             if (value != "" || value != null) {
-                                return "<img style=\"height: 150px;width: 150px;\" src=\"" + value + "\"/>";
+                                return "<img style=\"height: 200px;width: 200px;\" src=\"" + value + "\"/>";
                             }
                         }
                     }
@@ -206,14 +206,17 @@
 
         function reloadGrid() {
             $('#datagrid').datagrid('reload');
+            $('#datagrid').datagrid('clearSelections');
         }
 
         function reloadTextGrid() {
             $('#textGrid').datagrid('reload');
+            $('#textGrid').datagrid('clearSelections');
         }
 
         function reloadImgGrid() {
             $('#imgGrid').datagrid('reload');
+            $('#imgGrid').datagrid('clearSelections');
         }
 
         function cancelHomeInfo() {
@@ -264,7 +267,8 @@
                 return;
             }
             $('#hiddenHomeInfoId').val(row.homeInfoId);
-            $('#displayDate').datebox('setValue', row.displayDate);
+            $('#displayStartDateTime').datetimebox('setValue', row.displayStartDateTime);
+            $('#displayEndDateTime').datetimebox('setValue', row.displayEndDateTime);
             $('#remarkInput').val(row.remark);
             $('#dlg').dialog('open');
         }
@@ -275,7 +279,8 @@
                 homeInfoId = 0;
             }
             var queryData = {
-                DisplayDate: $('#displayDate').datebox('getValue'),
+                DisplayStartDateTime: $('#displayStartDateTime').datetimebox('getValue'),
+                DisplayEndDateTime: $('#displayEndDateTime').datetimebox('getValue'),
                 Remark: $("#remarkInput").val(),
                 HomeInfoId: homeInfoId
             };
@@ -328,7 +333,7 @@
             var homeInfoId = $('#hiddenHomeInfoId').val();
 
             var queryData = {
-                TextId: row.textId,
+                ImgId: row.imgId,
                 HomeInfoId: homeInfoId
             };
             $.post("/Today/IndertHomeImg",
@@ -370,6 +375,99 @@
                 }
             });
         }
+
+        function delHomeText() {
+            var row = $('#textGrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择要删除的行!', 'info');
+                return;
+            }
+            $.messager.confirm('提示', '是否删除?', function (r) {
+                if (r) {
+                    $.post("/Today/DeleteHomeText",
+                        { data: $.toJSON(row.homeTextId) },
+                        function (data) {
+                            if (data.success) {
+                                //成功后刷新界面
+                                reloadTextGrid();
+                            }
+                            else {
+                                $.messager.alert("提示", data.ResultMessage);
+                            }
+                        });
+                }
+                else {
+                    return;
+                }
+            });
+        }
+
+        function delHomeImg() {
+            var row = $('#imgGrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择要删除的行!', 'info');
+                return;
+            }
+            $.messager.confirm('提示', '是否删除?', function (r) {
+                if (r) {
+                    $.post("/Today/DeleteHomeImg",
+                        { data: $.toJSON(row.homeImgId) },
+                        function (data) {
+                            if (data.success) {
+                                //成功后刷新界面
+                                reloadImgGrid();
+                            }
+                            else {
+                                $.messager.alert("提示", data.ResultMessage);
+                            }
+                        });
+                }
+                else {
+                    return;
+                }
+            });
+        }
+
+        function textMove(up) {
+            var row = $('#textGrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            }
+
+            $.post("/Today/MoveHomeText",
+                { homeTextId: row.homeTextId, toUp: up },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        reloadTextGrid();
+                    }
+                    else {
+                        $.messager.alert("提示", data.ResultMessage);
+                    }
+                });
+        }
+
+
+        function imgMove(up) {
+            var row = $('#imgGrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            }
+
+            $.post("/Today/MoveHomeImg",
+                { homeImgId: row.homeImgId, toUp: up },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        reloadImgGrid();
+                    }
+                    else {
+                        $.messager.alert("提示", data.ResultMessage);
+                    }
+                });
+        }
     </script>
 </head>
 
@@ -379,17 +477,17 @@
     <input id="addHomeInfoType" type="hidden" />
 
     @*今日份*@
-    <div data-options="region:'west',split:true,collapsible:false" style="width: 26%">
+    <div data-options="region:'west',split:true,collapsible:false" style="width: 32%">
         <table id="datagrid"></table>
     </div>
 
     @*今日份言论列表*@
-    <div data-options="region:'center',split:true,collapsible:false" style="width:37%;">
+    <div data-options="region:'center',split:true,collapsible:false" style="width:43%;">
         <table id="textGrid"></table>
     </div>
 
     @*今日份沙雕图*@
-    <div data-options="region:'east',split:true,collapsible:false" style="width:37%;">
+    <div data-options="region:'east',split:true,collapsible:false" style="width:25%;">
         <table id="imgGrid"></table>
     </div>
 
@@ -414,7 +512,7 @@
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addText()">增加</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="textMove(true)">升序</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="textMove(false)">降序</a>
-                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="del()">删除</a>
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="delHomeText()">删除</a>
                 </td>
             </tr>
         </table>
@@ -428,7 +526,7 @@
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addImg()">增加</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="imgMove(true)">升序</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="imgMove(false)">降序</a>
-                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="delImg()">删除</a>
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="delHomeImg()">删除</a>
                 </td>
             </tr>
         </table>
@@ -441,7 +539,8 @@
                 <table class="groupTable">
                     <tr>
                         <td>展示日期:</td>
-                        <td> <input id="displayDate" type="text" class="easyui-datebox" style="height:30px;width: 120px" required="required"></td>
+                        <td> <input id="displayStartDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required">
+                         至<input id="displayEndDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required"></td>
                     </tr>
                     <tr>
                         <td>备注:</td>

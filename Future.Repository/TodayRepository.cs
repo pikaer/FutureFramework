@@ -15,7 +15,7 @@ namespace Future.Repository
 
         private readonly string SELECT_TEXTGALLERY = "SELECT TextId ,TextSource ,TextContent,Author ,Remark,CreateUserId ,ModifyUserId,CreateTime,ModifyTime FROM dbo.gallery_TextGallery ";
 
-        private readonly string SELECT_HOMEINFO = "SELECT HomeInfoId,DisplayDate,Remark ,CreateUserId,ModifyUserId,CreateTime,ModifyTime FROM dbo.home_HomeInfo ";
+        private readonly string SELECT_HOMEINFO = "SELECT HomeInfoId,DisplayStartDateTime,DisplayEndDateTime,Remark ,CreateUserId,ModifyUserId,CreateTime,ModifyTime FROM dbo.home_HomeInfo ";
 
         private readonly string SELECT_HOMETEXT = "SELECT HomeTextId,HomeInfoId,TextId,SortNum ,CreateUserId,CreateTime FROM dbo.home_HomeText ";
 
@@ -210,14 +210,16 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql = @"INSERT INTO dbo.home_HomeInfo
-                                  (DisplayDate
+                                  (DisplayStartDateTime
+                                  ,DisplayEndDateTime
                                   ,Remark
                                   ,CreateUserId
                                   ,ModifyUserId
                                   ,CreateTime
                                   ,ModifyTime)
                             VALUES
-                                  (@DisplayDate
+                                  (@DisplayStartDateTime
+                                  ,@DisplayEndDateTime
                                   ,@Remark
                                   ,@CreateUserId
                                   ,@ModifyUserId
@@ -317,7 +319,8 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql = @"UPDATE dbo.home_HomeInfo
-                               SET DisplayDate = @DisplayDate
+                               SET DisplayStartDateTime = @DisplayStartDateTime
+                                  ,DisplayEndDateTime = @DisplayEndDateTime
                                   ,Remark = @Remark
                                   ,ModifyUserId= @ModifyUserId
                                   ,ModifyTime = @ModifyTime
