@@ -20,27 +20,13 @@ namespace Future.Utility
             //默认前缀
             string defaultPath = JsonSettingHelper.AppSettings["GetImgPath"];
 
-
-            return GetPath(defaultPath, shortPath);
-        }
-        
-
-        /// <summary>
-        /// 获取绝对路径
-        /// </summary>
-        private static string GetPath(string defaultPath, string shortPath)
-        {
-            string rtn = string.Empty;
-
             string host = JsonSettingHelper.AppSettings["ApiHost"];
 
-            if (!string.IsNullOrEmpty(defaultPath))
+            if (!string.IsNullOrEmpty(defaultPath)&& !string.IsNullOrEmpty(host))
             {
                 rtn = string.Format("{0}{1}{2}", host, defaultPath, shortPath);
             }
             return rtn;
         }
-
-
     }
 }
