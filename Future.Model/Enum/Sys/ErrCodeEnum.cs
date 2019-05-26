@@ -9,7 +9,7 @@ namespace Future.Model.Enum.Sys
 
         [Description("操作失败")]
         Failure = 9000,
-
+        
         [Description("无权限")]
         PermissionDenied = 9990,
 
@@ -51,5 +51,11 @@ namespace Future.Model.Enum.Sys
 
         [Description("请求体不合法")]
         InvalidRequestBody = 10009,
+
+        [Description("请求头不合法")]
+        InvalidRequestHead = 10009,
+
+        [Description("该用户不存在")]
+        UserNoExist = 80001,
     }
 }

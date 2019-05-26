@@ -474,5 +474,10 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
+
+        public ResponseContext<GetHomeInfoResponse> GetHomeInfo(RequestContext<GetHomeInfoRequest> request)
+        {
+
+        }
     }
 }

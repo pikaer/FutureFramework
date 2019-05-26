@@ -1,42 +1,62 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using Future.Model.Enum.Sys;
+using Future.Model.Utils;
+using Future.Service;
+using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Future.TodayApi.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// 主接口集合
+    /// </summary>
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class MainController : ControllerBase
+    public class MainController : BaseController
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        private readonly string MODULE = "MainController";
+        private readonly TodayService api = SingletonProvider<TodayService>.Instance;
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
+        /// <summary>
+        /// 获取聊天列表
+        /// </summary>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public JsonResult GetHomeInfo()
         {
+            RequestContext<GetHomeInfoRequest> request = null;
+            ResponseContext<GetHomeInfoResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<GetHomeInfoRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.GetHomeInfo(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetHomeInfo", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "GetHomeInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

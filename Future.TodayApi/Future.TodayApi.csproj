@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Future.Model\Future.Model.csproj" />
+    <ProjectReference Include="..\Future.Service\Future.Service.csproj" />
     <ProjectReference Include="..\Future.Utility\Future.Utility.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
