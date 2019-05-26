@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Future.Model\Future.Model.csproj" />
+    <ProjectReference Include="..\Future.Repository\Future.Repository.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 

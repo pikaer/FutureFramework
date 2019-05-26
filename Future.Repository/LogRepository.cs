@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Future.Model.Entity.Sys;
+using Infrastructure;
 using System;
 using System.Collections.Generic;
 
@@ -44,6 +45,84 @@ namespace Future.Repository
                 var sql = "select count(1) from dbo.sys_Log";
 
                 return Db.QueryFirstOrDefault<int>(sql);
+            }
+        }
+        public bool InsertLogs(LogEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                try
+                {
+                    var sql = @"INSERT INTO dbo.sys_Log
+                                                 (LogId
+                                                 ,LogLevel
+                                                 ,TransactionID
+                                                 ,UId
+                                                 ,Platform
+                                                 ,LogTitle
+                                                 ,LogContent
+                                                 ,ServiceName
+                                                 ,CreateTime)
+                                           VALUES
+                                                 (@LogId
+                                                 ,@LogLevel
+                                                 ,@TransactionID
+                                                 ,@UId
+                                                 ,@Platform
+                                                 ,@LogTitle
+                                                 ,@LogContent
+                                                 ,@ServiceName
+                                                 ,@CreateTime)";
+                    return Db.Execute(sql, entity) > 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool InsertTags(LogTag logTag)
+        {
+            using (var Db = GetDbConnection())
+            {
+                try
+                {
+                    var sql = @"INSERT INTO dbo.sys_LogTag
+                                                 (TagId
+                                                 ,LogId
+                                                 ,LogKey
+                                                 ,LogValue
+                                                 ,CreateTime)
+                                           VALUES
+                                                 (@TagId
+                                                 ,@LogId
+                                                 ,@LogKey
+                                                 ,@LogValue
+                                                 ,CreateTime)";
+                    return Db.Execute(sql, logTag) > 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        public void WriteServiceLog(ServiceLogEntity serviceLogEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                try
+                {
+                    var sql = @"INSERT INTO dbo.sys_ServiceLog(ServiceLogId,ServiceName,Module,Method,Request,Response,UId,Code,Msg,Platform,TransactionId,CreateTime)
+                                     VALUES (@ServiceLogId,@ServiceName,@Module,@Method,@Request,@Response,@UId,@Code,@Msg,@Platform,@TransactionId,@CreateTime)";
+                    Db.Execute(sql, serviceLogEntity);
+                }
+                catch
+                {
+                    return;
+                }
             }
         }
     }

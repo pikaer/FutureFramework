@@ -35,7 +35,7 @@ namespace Future.Web.Controllers
             //todo 记录ex异常日志
             if (string.IsNullOrEmpty(title) || ex != null)
             {
-                Log.Error(title, code.ToDescription(), ex);
+                LogHelper.Error(title, code.ToDescription(), ex);
             }
             return new JsonResult(new ResponseContext<object>(false,code,null));
         }
