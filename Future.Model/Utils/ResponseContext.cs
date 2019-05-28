@@ -16,6 +16,14 @@ namespace Future.Model.Utils
             Content = default(T);
         }
 
+        public ResponseContext(T data)
+        {
+            Success = true;
+            Code = ErrCodeEnum.Success;
+            ResultMessage = ErrCodeEnum.Success.ToDescription();
+            Content = data;
+        }
+
         public ResponseContext(bool success, ErrCodeEnum err, T data)
         {
             Success = success;

@@ -477,8 +477,56 @@ namespace Future.Service
 
         public ResponseContext<GetHomeInfoResponse> GetHomeInfo(RequestContext<GetHomeInfoRequest> request)
         {
-            var response = new ResponseContext<GetHomeInfoResponse>();
-            
+            var response = new ResponseContext<GetHomeInfoResponse>
+            {
+                Content = new GetHomeInfoResponse()
+                {
+                    TodayImgList=new List<TodayContentType>(),
+                    TodayTextList=new List<TodayContentType>()
+                }
+            };
+            var homeInfo= todayDal.HomeInfo(DateTime.Now);
+            if (homeInfo == null)
+            {
+                return response;
+            }
+
+            var textList= todayDal.HomeTextList(homeInfo.HomeInfoId);
+            if (textList.NotEmpty())
+            {
+               foreach(var item in textList)
+               {
+                    var text= todayDal.TextGallery(item.TextId);
+                    if (text == null)
+                    {
+                        continue;
+                    }
+                    response.Content.TodayTextList.Add(new TodayContentType()
+                    {
+                        Author = text.Author.Trim(),
+                        Content = text.TextContent.Trim()
+                    });
+               }
+            }
+
+            var imgList= todayDal.HomeImgList(homeInfo.HomeInfoId);
+            if (imgList.NotEmpty())
+            {
+                foreach (var item in imgList)
+                {
+                    var img = todayDal.ImgGallery(item.ImgId);
+                    if (img == null)
+                    {
+                        continue;
+                    }
+                    response.Content.TodayImgList.Add(new TodayContentType()
+                    {
+                        Author = img.Author.Trim(),
+                        Content = img.ShortUrl.GetImgPath()
+                    });
+                }
+            }
+            return response;
         }
     }
 }

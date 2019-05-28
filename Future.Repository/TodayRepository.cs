@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Future.Model.Entity.Today;
+using System;
 using System.Collections.Generic;
 
 namespace Future.Repository
@@ -108,6 +109,16 @@ namespace Future.Repository
                 var sql = string.Format("{0} Where HomeInfoId={1}", SELECT_HOMEIMG, homeInfoId);
 
                 return Db.Query<HomeImgEntity>(sql).AsList();
+            }
+        }
+
+        public HomeInfoEntity HomeInfo(DateTime dateTime)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = $@"{SELECT_HOMEINFO} Where DisplayStartDateTime<@CurrentTime and @CurrentTime<=DisplayEndDateTime";
+
+                return Db.QueryFirstOrDefault<HomeInfoEntity>(sql, new { CurrentTime= dateTime });
             }
         }
 

@@ -14,40 +14,32 @@ namespace Future.Model.Utils
     public class GetHomeInfoResponse
     {
         /// <summary>
-        /// 内容合集
+        /// 今日份言论
         /// </summary>
-        public List<HomeInfoType> HomeInfoList { get; set; }
-    }
-
-    public class HomeInfoType
-    {
-        /// <summary>
-        /// 大标题（今日份言论，今日份沙雕）
-        /// </summary>
-        public string HeadLine { get; set; }
+        public List<TodayContentType> TodayTextList { get; set; }
 
         /// <summary>
-        /// 内容集合
+        /// 今日份沙雕
         /// </summary>
-        public List<ContentType> ContentList { get; set; }
+        public List<TodayContentType> TodayImgList { get; set; }
     }
+    
 
-    public class ContentType
+    /// <summary>
+    /// 今日份言论/沙雕图
+    /// </summary>
+    public class TodayContentType
     {
         /// <summary>
         /// 文本内容
         /// </summary>
-        public string TextContent { get; set; }
+        public string Content { get; set; }
 
         /// <summary>
         /// 作者
         /// </summary>
         public string Author { get; set; }
-
-        /// <summary>
-        /// 图片内容集合
-        /// </summary>
-        public List<string> ImgList { get; set; }
     }
+    
     #endregion
 }

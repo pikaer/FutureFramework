@@ -20,7 +20,7 @@ namespace Future.Utility
             //默认前缀
             string defaultPath = JsonSettingHelper.AppSettings["GetImgPath"];
 
-            string host = JsonSettingHelper.AppSettings["ApiHost"];
+            string host = JsonSettingHelper.AppSettings["CommonApiHost"];
 
             if (!string.IsNullOrEmpty(defaultPath)&& !string.IsNullOrEmpty(host))
             {
