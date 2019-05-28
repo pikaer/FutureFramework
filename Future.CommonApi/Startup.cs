@@ -61,7 +61,7 @@ namespace Future.CommonApi
             app.UseSwaggerUI(action =>
             {
                 action.ShowExtensions();
-                action.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+                action.SwaggerEndpoint("/commonapi/swagger/v1/swagger.json", "V1 Docs");
                 action.RoutePrefix = string.Empty; ;
             });
         }

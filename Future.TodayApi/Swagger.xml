@@ -20,5 +20,15 @@
             写入服务接口调用日志到数据库,用作接口性能检测
             </summary>
         </member>
+        <member name="T:Future.TodayApi.Controllers.MainController">
+            <summary>
+            主接口集合
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.MainController.GetHomeInfo">
+            <summary>
+            获取聊天列表
+            </summary>
+        </member>
     </members>
 </doc>
