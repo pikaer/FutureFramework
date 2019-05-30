@@ -234,6 +234,8 @@
         function addHomeInfo() {
             $('#addHomeInfoType').val(1);
             $('#remarkInput').val("");
+            $('#displayStartDateTime').datetimebox('setValue', '');
+            $('#displayEndDateTime').datetimebox('setValue', '');
             $('#dlg').dialog('open');
         }
 
@@ -467,6 +469,21 @@
                     }
                 });
         }
+
+        //重置
+        function resetSearch() {
+            $('#searchStartDateTime').datetimebox('setValue', '');
+            $('#searchEndDateTime').datetimebox('setValue', '');
+        }
+
+        //搜索
+        function doSearch() {
+            var queryData = {
+                StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
+            };
+            InitGrid(queryData);
+        }
     </script>
 </head>
 
@@ -494,10 +511,20 @@
     <div id="tb">
         <table cellpadding="0" cellspacing="0" style="width: 100%">
             <tr>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
+                <td style="float:left">
+                    <input id="searchStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                    至
+                    <input id="searchEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                </td>
+            </tr>
+            <tr>
                 <td>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addHomeInfo()">增加</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editHomeInfo()">编辑</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="delHomeInfo()">删除</a>
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:right;margin-left: 10px" onclick="doSearch()">搜索</a>
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:right;margin-left: 10px" onclick="resetSearch()">重置</a>
                 </td>
             </tr>
         </table>
@@ -538,8 +565,8 @@
                 <table class="groupTable">
                     <tr>
                         <td>展示日期:</td>
-                        <td> <input id="displayStartDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required">
-                         至<input id="displayEndDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required"></td>
+                        <td> <input id="displayStartDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required" editable="fasle">
+                         至<input id="displayEndDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required" editable="fasle"></td>
                     </tr>
                     <tr>
                         <td>备注:</td>
