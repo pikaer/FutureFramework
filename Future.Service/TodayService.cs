@@ -289,6 +289,18 @@ namespace Future.Service
 
         public ResponseContext<bool> AddOrUpdateHomeInfo(HomeInfoEntity req)
         {
+            var existStartList = todayDal.HomeInfoListByDisplayTime(req.DisplayStartDateTime);
+            if (existStartList.NotEmpty())
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.Failure, false,"已经存在时间冲突的数据，请修改展示起始时间!");
+            }
+
+            var existEndList = todayDal.HomeInfoListByDisplayTime(req.DisplayEndDateTime);
+            if (existEndList.NotEmpty())
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.Failure, false, "已经存在时间冲突的数据，请修改展示起始时间!");
+            }
+
             bool success = true;
             if (req.HomeInfoId <= 0)
             {

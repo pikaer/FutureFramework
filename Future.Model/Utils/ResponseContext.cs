@@ -24,14 +24,19 @@ namespace Future.Model.Utils
             Content = data;
         }
 
-        public ResponseContext(bool success, ErrCodeEnum err, T data)
+        public ResponseContext(bool success, ErrCodeEnum err, T data,string msg=null)
         {
             Success = success;
             Code = err;
             ResultMessage = err.ToDescription();
             Content = data;
+            if (!msg.IsNullOrEmpty())
+            {
+                ResultMessage = msg;
+            }
         }
         
+
         /// <summary>
         /// 返回值
         /// true:成功

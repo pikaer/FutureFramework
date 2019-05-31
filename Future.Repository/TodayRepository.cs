@@ -160,6 +160,15 @@ namespace Future.Repository
             }
         }
 
+        public List<HomeInfoEntity> HomeInfoListByDisplayTime(DateTime dateTime)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = SELECT_HOMEINFO + @" Where DisplayStartDateTime<=@DisplayDateTime and @DisplayDateTime<=DisplayEndDateTime";
+                return Db.Query<HomeInfoEntity>(sql,new { DisplayDateTime= dateTime }).AsList();
+            }
+        }
+
         public List<HomeTextEntity> HomeTextList(long homeInfoId)
         {
             using (var Db = GetDbConnection())

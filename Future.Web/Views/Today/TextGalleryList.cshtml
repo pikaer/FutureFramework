@@ -150,6 +150,10 @@
 
         //搜索
         function doSearch() {
+            if ($('#searchEndDateTime').datetimebox('getValue') < $('#searchStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
             var queryData = {
                 TextContent: $("#searchTextContent").val(),
                 TextSource: $("#searchTextSource").val(),

@@ -1,11 +1,10 @@
 ﻿@{
-    ViewBag.Title = "权限树管理";
+    ViewBag.Title = "今日份";
     Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
 }
 <head>
-    <title>权限树管理</title>
+    <title>今日份</title>
     <script type="text/javascript">
-
         $(function () {
             cancelHomeInfo();
             cancelHomeImg();
@@ -13,6 +12,8 @@
             InitGrid(null);
             InitTextGrid(null);
             InitImgGrid(null);
+            InitSelectTextGrid(null);
+            InitSelectImgGrid(null);
         });
 
         function InitGrid(queryData) {
@@ -116,7 +117,7 @@
             });
         }
 
-        function InitSelectTextGrid() {
+        function InitSelectTextGrid(queryData) {
             $("#selectTextGrid").datagrid({
                 title: "今日份言论素材库",
                 rownumbers: true,
@@ -126,6 +127,7 @@
                 idField: 'textId',
                 striped: true,
                 border: false,
+                queryParams: queryData,
                 iconCls: 'icon icon-tree',
                 url: '/Today/GetTextGalleryList',//获取列表数据
                 method: 'post',
@@ -148,7 +150,7 @@
             });
         }
 
-        function InitSelectImgGrid() {
+        function InitSelectImgGrid(queryData) {
             $("#selectImgGrid").datagrid({
                 title: "图片素材库列表",
                 rownumbers: true,
@@ -158,6 +160,7 @@
                 idField: 'textId',
                 striped: true,
                 border: false,
+                queryParams: queryData,
                 iconCls: 'icon icon-tree',
                 url: '/Today/GetImageGalleryList',//获取列表数据
                 method: 'post',
@@ -246,7 +249,7 @@
                 $.messager.alert('提示', '请选择今日份对应的行!', 'info');
                 return;
             }
-            InitSelectTextGrid();
+            InitSelectTextGrid(null);
             $('#dlgHomeText').dialog('open');
         }
 
@@ -277,6 +280,18 @@
         }
 
         function submitHomeInfo() {
+            if ($('#displayStartDateTime').datetimebox('getValue') === "") {
+                $.messager.alert("提示", "起始日期不能为空");
+                return;
+            }
+            if ($('#displayEndDateTime').datetimebox('getValue') === "") {
+                $.messager.alert("提示", "结束日期不能为空");
+                return;
+            }
+            if ($('#displayEndDateTime').datetimebox('getValue') < $('#displayStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
             var homeInfoId = $('#hiddenHomeInfoId').val();
             if ($('#addHomeInfoType').val() === "1") {
                 homeInfoId = 0;
@@ -296,7 +311,7 @@
                         reloadGrid();
                     }
                     else {
-                        $.messager.alert("提示", data.ResultMessage);
+                        $.messager.alert("提示", data.resultMessage);
                     }
                 });
         }
@@ -322,7 +337,7 @@
                         reloadTextGrid();
                     }
                     else {
-                        $.messager.alert("提示", data.ResultMessage);
+                        $.messager.alert("提示", data.resultMessage);
                     }
                 });
         }
@@ -348,7 +363,7 @@
                         reloadImgGrid();
                     }
                     else {
-                        $.messager.alert("提示", data.ResultMessage);
+                        $.messager.alert("提示", data.resultMessage);
                     }
                 });
         }
@@ -369,7 +384,7 @@
                                 reloadGrid();
                             }
                             else {
-                                $.messager.alert("提示", data.ResultMessage);
+                                $.messager.alert("提示", data.resultMessage);
                             }
                         });
                 }
@@ -395,7 +410,7 @@
                                 reloadTextGrid();
                             }
                             else {
-                                $.messager.alert("提示", data.ResultMessage);
+                                $.messager.alert("提示", data.resultMessage);
                             }
                         });
                 }
@@ -421,7 +436,7 @@
                                 reloadImgGrid();
                             }
                             else {
-                                $.messager.alert("提示", data.ResultMessage);
+                                $.messager.alert("提示", data.resultMessage);
                             }
                         });
                 }
@@ -446,11 +461,11 @@
                         reloadTextGrid();
                     }
                     else {
-                        $.messager.alert("提示", data.ResultMessage);
+                        $.messager.alert("提示", data.resultMessage);
                     }
                 });
         }
-        
+
         function imgMove(up) {
             var row = $('#imgGrid').datagrid('getSelected');
             if (!row) {
@@ -466,24 +481,68 @@
                         reloadImgGrid();
                     }
                     else {
-                        $.messager.alert("提示", data.ResultMessage);
+                        $.messager.alert("提示", data.resultMessage);
                     }
                 });
         }
-
-        //重置
+        
         function resetSearch() {
             $('#searchStartDateTime').datetimebox('setValue', '');
             $('#searchEndDateTime').datetimebox('setValue', '');
         }
-
-        //搜索
+        
         function doSearch() {
+            if ($('#searchEndDateTime').datetimebox('getValue') < $('#searchStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
             var queryData = {
                 StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
                 EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
             };
             InitGrid(queryData);
+        }
+        
+        function resetHomeTextSearch() {
+            $('#searchTextContent').val("");
+            $('#searchTextSource').val("");
+            $('#searchTextStartDateTime').datetimebox('setValue', '');
+            $('#searchTextEndDateTime').datetimebox('setValue', '');
+        }
+        
+        function doHomeTextSearch() {
+            if ($('#searchTextEndDateTime').datetimebox('getValue') < $('#searchTextStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
+            var queryData = {
+                TextContent: $("#searchTextContent").val(),
+                TextSource: $("#searchTextSource").val(),
+                StartCreateTime: $('#searchTextStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchTextEndDateTime').datetimebox('getValue')
+            };
+            InitSelectTextGrid(queryData);
+        }
+        
+        function resetHomeImgSearch() {
+            $('#searchImgName').val("");
+            $('#searchImgSource').val("");
+            $('#searchImgStartDateTime').datetimebox('setValue', '');
+            $('#searchImgEndDateTime').datetimebox('setValue', '');
+        }
+        
+        function doHomeImgSearch() {
+            if ($('#searchImgEndDateTime').datetimebox('getValue') < $('#searchImgStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
+            var queryData = {
+                ImgName: $("#searchImgName").val(),
+                ImgSource: $("#searchImgSource").val(),
+                StartCreateTime: $('#searchImgStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchImgEndDateTime').datetimebox('getValue')
+            };
+            InitSelectImgGrid(queryData)
         }
     </script>
 </head>
@@ -562,12 +621,14 @@
     @*今日份编辑弹框*@
     <div id="dlg" class="easyui-dialog" title="今日份" data-options="iconCls:'icon-save'" style="width:600px;height:220px;padding:10px;display:none">
         <div style="padding: 5px">
-            <form id="ff">
+            <form id="formHomeInfo">
                 <table class="groupTable">
                     <tr>
                         <td>展示日期:</td>
-                        <td> <input id="displayStartDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required" editable="fasle">
-                         至<input id="displayEndDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required" editable="fasle"></td>
+                        <td>
+                            <input id="displayStartDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required" editable="fasle">
+                            至<input id="displayEndDateTime" type="text" class="easyui-datetimebox" style="height:30px;width: 150px" required="required" editable="fasle">
+                        </td>
                     </tr>
                     <tr>
                         <td>备注:</td>
@@ -596,6 +657,24 @@
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" plain="true" onclick="cancelHomeText()">取消</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" plain="true" onclick="submitHomeText()">确定</a>
                 </td>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">文本关键字: </td>
+                <td style="float:left;">
+                    <input id="searchTextContent" class="easyui-validatebox textbox" type="text" style="height:25px;width:120px" />
+                </td>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">文本来源:</td>
+                <td style="float:left">
+                    <input id="searchTextSource" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+                </td>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
+                <td style="float:left">
+                    <input id="searchTextStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                    至
+                    <input id="searchTextEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                </td>
+                <td style="float:left">
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetHomeTextSearch()">重置</a>
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doHomeTextSearch()">搜索</a>
+                </td>
             </tr>
         </table>
     </div>
@@ -614,6 +693,24 @@
                 <td>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" plain="true" onclick="cancelHomeImg()">取消</a>
                     <a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" plain="true" onclick="submitHomeImg()">确定</a>
+                </td>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">图片名: </td>
+                <td style="float:left;">
+                    <input id="searchImgName" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+                </td>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">图片来源:</td>
+                <td style="float:left">
+                    <input id="searchImgSource" class="easyui-validatebox textbox" type="text" style="height:25px;width:90px" />
+                </td>
+                <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
+                <td style="float:left">
+                    <input id="searchImgStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                    至
+                    <input id="searchImgEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                </td>
+                <td style="float:left">
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetHomeImgSearch()">重置</a>
+                    <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doHomeImgSearch()">搜索</a>
                 </td>
             </tr>
         </table>
