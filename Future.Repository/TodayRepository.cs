@@ -2,6 +2,7 @@
 using Future.Model.Entity.Today;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Future.Repository
 {
@@ -62,33 +63,100 @@ namespace Future.Repository
             }
         }
 
-        public List<TextGalleryEntity> TextGalleryList(int pageIndex, int pageSize)
+        public List<TextGalleryEntity> TextGalleryList(int pageIndex, int pageSize, string textContent, string textSource, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = $@"{SELECT_TEXTGALLERY} order by CreateTime desc OFFSET @OFFSETCount ROWS FETCH NEXT @TakeCount ROWS ONLY";
+                var sql = new StringBuilder(SELECT_TEXTGALLERY);
+                sql.Append(" where 1=1 ");
 
-                return Db.Query<TextGalleryEntity>(sql, new { OFFSETCount = (pageIndex - 1) * pageSize, TakeCount = pageSize }).AsList();
+                if (!string.IsNullOrWhiteSpace(textContent))
+                {
+                    sql.AppendFormat("and TextContent like '%{0}%' ", textContent.Trim());
+                }
+
+                if (!string.IsNullOrWhiteSpace(textSource))
+                {
+                    sql.AppendFormat("and TextSource like '%{0}%' ", textSource.Trim());
+                }
+
+                if (creater > 0)
+                {
+                    sql.AppendFormat("and CreateUserId={0} ", creater);
+                }
+
+                if (!startDateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime>'{0}' ", startDateTime.Value.ToString());
+                }
+
+                if (!endCreateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
+                }
+
+                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+                return Db.Query<TextGalleryEntity>(sql.ToString()).AsList();
             }
         }
 
-        public List<ImgGalleryEntity> ImgGalleryList(int pageIndex, int pageSize)
+        public List<ImgGalleryEntity> ImgGalleryList(int pageIndex, int pageSize, string imgName, string imgSource, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = $@"{SELECT_IMGGALLERY} order by CreateTime desc OFFSET @OFFSETCount ROWS FETCH NEXT @TakeCount ROWS ONLY";
+                var sql = new StringBuilder(SELECT_IMGGALLERY);
+                sql.Append(" where 1=1 ");
 
-                return Db.Query<ImgGalleryEntity>(sql, new { OFFSETCount = (pageIndex - 1) * pageSize, TakeCount = pageSize }).AsList();
+                if (!string.IsNullOrWhiteSpace(imgName))
+                {
+                    sql.AppendFormat("and ImgName like '%{0}%' ", imgName.Trim());
+                }
+
+                if (!string.IsNullOrWhiteSpace(imgSource))
+                {
+                    sql.AppendFormat("and ImgSource like '%{0}%' ", imgSource.Trim());
+                }
+
+                if (creater > 0)
+                {
+                    sql.AppendFormat("and CreateUserId={0} ", creater);
+                }
+
+                if (!startDateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime>'{0}' ", startDateTime.Value.ToString());
+                }
+
+                if (!endCreateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
+                }
+
+                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+
+                return Db.Query<ImgGalleryEntity>(sql.ToString()).AsList();
             }
         }
         
-        public List<HomeInfoEntity> HomeInfoList(int pageIndex, int pageSize)
+        public List<HomeInfoEntity> HomeInfoList(int pageIndex, int pageSize,  DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = $@"{SELECT_HOMEINFO} order by CreateTime desc OFFSET @OFFSETCount ROWS FETCH NEXT @TakeCount ROWS ONLY";
+                var sql = new StringBuilder(SELECT_HOMEINFO);
+                sql.Append(" where 1=1 ");
+                
+                if (!startDateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and DisplayStartDateTime>'{0}' ", startDateTime.Value.ToString());
+                }
 
-                return Db.Query<HomeInfoEntity>(sql, new { OFFSETCount = (pageIndex - 1) * pageSize, TakeCount = pageSize }).AsList();
+                if (!endCreateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and DisplayEndDateTime<'{0}' ", endCreateTime.Value.ToString());
+                }
+
+                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+                return Db.Query<HomeInfoEntity>(sql.ToString()).AsList();
             }
         }
 

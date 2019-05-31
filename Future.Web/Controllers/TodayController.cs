@@ -19,11 +19,31 @@ namespace Future.Web.Controllers
             return View();
         }
         
-        public JsonResult GetTextGalleryList(int page=1, int rows=10)
+        public JsonResult GetTextGalleryList()
         {
             try
             {
-                var rtn = todayService.GetTextList(page, rows);
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                string textContent = Request.Form["TextContent"];
+                string textSource = Request.Form["TextSource"];
+
+                long creater = 0;
+                if (!string.IsNullOrWhiteSpace(Request.Form["Creater"]))
+                {
+                    creater = Convert.ToInt64(Request.Form["Creater"]);
+                }
+                var startDateTime = new DateTime();
+                if(!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+                var rtn = todayService.GetTextList(page, rows, textContent, textSource, creater, startDateTime, endCreateTime);
                 return new JsonResult(rtn);
             }
             catch (Exception ex)
@@ -71,11 +91,31 @@ namespace Future.Web.Controllers
             return View();
         }
 
-        public JsonResult GetImageGalleryList(int page = 1, int rows = 10)
+        public JsonResult GetImageGalleryList()
         {
             try
             {
-                var rtn = todayService.GetImageGalleryList(page, rows);
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                string imgName = Request.Form["ImgName"];
+                string imgSource = Request.Form["ImgSource"];
+
+                long creater = 0;
+                if (!string.IsNullOrWhiteSpace(Request.Form["Creater"]))
+                {
+                    creater = Convert.ToInt64(Request.Form["Creater"]);
+                }
+                var startDateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+                var rtn = todayService.GetImageGalleryList(page, rows, imgName, imgSource, creater, startDateTime, endCreateTime);
                 return new JsonResult(rtn);
             }
             catch (Exception ex)
@@ -215,11 +255,23 @@ namespace Future.Web.Controllers
         {
             return View();
         }
-        public JsonResult GetHomeInfoList(int page = 1, int rows = 10)
+        public JsonResult GetHomeInfoList()
         {
             try
             {
-                var rtn = todayService.GetHomeInfoList(page, rows);
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                var startDateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+                var rtn = todayService.GetHomeInfoList(page, rows, startDateTime, endCreateTime);
                 return new JsonResult(rtn);
             }
             catch (Exception ex)

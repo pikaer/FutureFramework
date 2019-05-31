@@ -9,11 +9,11 @@
     <script type="text/javascript">
         $(function () {
             $('#dlg').dialog('close');
-            InitGrid();
+            InitGrid(null);
 
         });
 
-        function InitGrid() {
+        function InitGrid(queryData) {
             $("#datagrid").datagrid({
                 title: "图片素材库列表",
                 rownumbers: true,
@@ -27,6 +27,7 @@
                 url: '/Today/GetImageGalleryList',//获取列表数据
                 method: 'post',
                 autoRowHeight: false,
+                queryParams: queryData,
                 nowrap: false,   //换行
                 pagination: true,
                 pageSize: 10,

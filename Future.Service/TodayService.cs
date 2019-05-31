@@ -16,10 +16,11 @@ namespace Future.Service
     {
         private readonly TodayRepository todayDal = SingletonProvider<TodayRepository>.Instance;
         private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
-        public PageResult<TextGalleryDTO> GetTextList(int pageIndex, int pageSize)
+
+        public PageResult<TextGalleryDTO> GetTextList(int pageIndex, int pageSize, string textContent, string textSource, long creater,DateTime? startDateTime, DateTime? endCreateTime)
         {
             var rtn = new PageResult<TextGalleryDTO>();
-            var entityList = todayDal.TextGalleryList(pageIndex, pageSize);
+            var entityList = todayDal.TextGalleryList(pageIndex, pageSize, textContent, textSource, creater, startDateTime, endCreateTime);
             if (entityList.NotEmpty())
             {
                 var txtList = entityList.Select(a => new TextGalleryDTO()
@@ -95,10 +96,10 @@ namespace Future.Service
             }
         }
 
-        public PageResult<ImgGalleryDTO> GetImageGalleryList(int pageIndex, int pageSize)
+        public PageResult<ImgGalleryDTO> GetImageGalleryList(int pageIndex, int pageSize, string imgName, string imgSource, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             var rtn = new PageResult<ImgGalleryDTO>();
-            var entityList = todayDal.ImgGalleryList(pageIndex, pageSize);
+            var entityList = todayDal.ImgGalleryList(pageIndex, pageSize, imgName, imgSource, creater, startDateTime, endCreateTime);
             if (entityList.NotEmpty())
             {
                 var imageList = entityList.Select(a => new ImgGalleryDTO()
@@ -193,10 +194,10 @@ namespace Future.Service
             }
         }
 
-        public PageResult<HomeInfoDTO> GetHomeInfoList(int pageIndex, int pageSize)
+        public PageResult<HomeInfoDTO> GetHomeInfoList(int pageIndex, int pageSize, DateTime? startDateTime, DateTime? endCreateTime)
         {
             var rtn = new PageResult<HomeInfoDTO>();
-            var entityList = todayDal.HomeInfoList(pageIndex, pageSize);
+            var entityList = todayDal.HomeInfoList(pageIndex, pageSize, startDateTime, endCreateTime);
             if (entityList.NotEmpty())
             {
                 var list = entityList.OrderByDescending(x=>x.DisplayStartDateTime).Select(a => new HomeInfoDTO()
