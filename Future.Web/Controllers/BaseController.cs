@@ -19,6 +19,7 @@ namespace Future.Web.Controllers
         
         private readonly LogHelper LogHelper = SingletonProvider<LogHelper>.Instance;
 
+        #region Base
         /// <summary>
         /// 当前登录的用户属性
         /// </summary>
@@ -85,6 +86,8 @@ namespace Future.Web.Controllers
                 }
             }
         }
+
+        #endregion
 
         #region Cookies
         /// <summary>
@@ -164,6 +167,7 @@ namespace Future.Web.Controllers
         }
         #endregion
     }
+
 
     /// <summary>
     /// 默认校验会话Session
