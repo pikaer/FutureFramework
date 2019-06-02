@@ -31,23 +31,6 @@ namespace Future.Web.Controllers
                 return result.Bytes2Object<StaffEntity>();
             }
         }
-
-        /// <summary>
-        /// 处理请求数据流
-        /// </summary>
-        /// <returns></returns>
-        protected string GetInputString()
-        {
-            Stream req = Request.Body;
-            string json = new StreamReader(req).ReadToEnd();
-
-            if (!string.IsNullOrEmpty(json))
-            {
-                while (json.IndexOf("\\/", StringComparison.Ordinal) != -1) json = json.Replace("\\/", "/");
-            }
-
-            return json;
-        }
         
         /// <summary>
         /// 获取错误的返回

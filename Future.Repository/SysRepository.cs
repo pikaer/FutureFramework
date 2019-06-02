@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Future.Model.DTO.Sys;
 using Future.Model.Entity.Sys;
-using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Future.Repository
 {
@@ -11,9 +11,7 @@ namespace Future.Repository
         private readonly string SELECT_FUNCTION = "SELECT Id,ParentId,Text,Url,IconCls,EnumFuncType,Remark,CreateTime,ModifyTime,CreateUserId,ModifyUserId FROM dbo.sys_Function";
 
         private readonly string SELECT_STAFF = "SELECT StaffId, StaffName, Gender, Role, Mobile, Email, PassWord, CreateTime, ModifyTime FROM dbo.sys_Staff ";
-
-       
-
+        
         protected override DbEnum GetDbEnum()
         {
             return DbEnum.FutureFramework;
@@ -147,13 +145,25 @@ namespace Future.Repository
             }
         }
 
-        public List<StaffEntity>StaffList(int pageIndex, int pageSize)
+        public List<StaffEntity>StaffList(int pageIndex, int pageSize, string staffName, string mobile)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = $@"{SELECT_STAFF} order by CreateTime desc OFFSET @OFFSETCount ROWS FETCH NEXT @TakeCount ROWS ONLY";
+                var sql = new StringBuilder(SELECT_STAFF);
+                sql.Append(" where 1=1 ");
 
-                return Db.Query<StaffEntity>(sql, new { OFFSETCount = (pageIndex - 1) * pageSize, TakeCount = pageSize }).AsList();
+                if (!string.IsNullOrWhiteSpace(staffName))
+                {
+                    sql.AppendFormat("and StaffName like '%{0}%' ", staffName.Trim());
+                }
+
+                if (!string.IsNullOrWhiteSpace(mobile))
+                {
+                    sql.AppendFormat("and Mobile like '%{0}%' ", mobile.Trim());
+                }
+                
+                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+                return Db.Query<StaffEntity>(sql.ToString()).AsList();
             }
         }
 
@@ -164,6 +174,58 @@ namespace Future.Repository
                 var sql = "select count(1) from dbo.sys_Staff";
 
                 return Db.QueryFirstOrDefault<int>(sql);
+            }
+        }
+
+        public bool IndertStaff(StaffEntity request)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.sys_Staff
+                                  (StaffName
+                                  ,Gender
+                                  ,Role
+                                  ,Mobile
+                                  ,Email
+                                  ,PassWord
+                                  ,CreateTime
+                                  ,ModifyTime)
+                            VALUES
+                                  (@StaffName
+                                  ,@Gender
+                                  ,@Role
+                                  ,@Mobile
+                                  ,@Email
+                                  ,@PassWord
+                                  ,@CreateTime
+                                  ,@ModifyTime)";
+                return Db.Execute(sql, request) > 0;
+            }
+        }
+
+        public bool UpdateStaff(StaffEntity request)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.sys_Staff
+                               SET StaffName = @StaffName
+                                  , Gender = @Gender
+                                  , Role = @Role
+                                  , Mobile = @Mobile
+                                  , Email = @Email
+                                  , ModifyTime = @ModifyTime
+                             WHERE StaffId = @StaffId";
+                return Db.Execute(sql, request) > 0;
+            }
+        }
+
+        public bool DeleteStaff(long staffId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("DELETE FROM dbo.sys_Staff WHERE StaffId={0}", staffId);
+
+                return Db.Execute(sql) > 0;
             }
         }
     }

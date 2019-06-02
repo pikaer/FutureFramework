@@ -208,10 +208,10 @@ namespace Future.Service
             return new PageResult<LogDTO>(dto, logDal.LogListCount());
         }
 
-        public PageResult<StaffDTO> GetStaffList(int pageIndex, int pageSize)
+        public PageResult<StaffDTO> GetStaffList(int pageIndex, int pageSize,string staffName, string mobile)
         {
             var rtn = new PageResult<StaffDTO>();
-            var entityList = sysDal.StaffList(pageIndex, pageSize);
+            var entityList = sysDal.StaffList(pageIndex, pageSize, staffName, mobile);
             if (entityList.NotEmpty())
             {
                 var staffList = entityList.Select(a => new StaffDTO()
@@ -234,6 +234,45 @@ namespace Future.Service
         public StaffEntity StaffByMobile(string mobile)
         {
             return sysDal.StaffByMobile(mobile);
+        }
+
+        public ResponseContext<bool> AddOrUpdateStaff(StaffEntity request)
+        {
+            bool success = true;
+            if (request.StaffId <= 0)
+            {
+                request.PassWord = JsonSettingHelper.AppSettings["DefaultPassWord"];
+                request.CreateTime = DateTime.Now;
+                request.ModifyTime = DateTime.Now;
+                success = sysDal.IndertStaff(request);
+            }
+            else
+            {
+                request.ModifyTime = DateTime.Now;
+                success = sysDal.UpdateStaff(request);
+            }
+
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> DeleteStaff(long staffId)
+        {
+            bool success = sysDal.DeleteStaff(staffId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
         }
     }
 }

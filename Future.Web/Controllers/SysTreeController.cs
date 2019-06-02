@@ -212,5 +212,48 @@ namespace Future.Web.Controllers
             }
         }
         #endregion
+
+        #region 用户管理
+        
+        public IActionResult UserManageIndex()
+        {
+            return View();
+        }
+
+        public JsonResult GetStaffList()
+        {
+            try
+            {
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                string staffName = Request.Form["StaffName"];
+                string mobile = Request.Form["Mobile"];
+                var rtn = sysService.GetStaffList(page, rows, staffName, mobile);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetHomeTextList", ex);
+            }
+        }
+
+        public JsonResult AddOrUpdateStaff(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<StaffEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = sysService.AddOrUpdateStaff(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateStaff", ex);
+            }
+        }
+        #endregion
     }
 }

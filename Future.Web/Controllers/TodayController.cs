@@ -61,6 +61,8 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
+                request.CreateUserId = CurrentUserInfo.StaffId;
+                request.ModifyUserId = CurrentUserInfo.StaffId;
                 var res = todayService.AddOrUpdateText(request);
                 return new JsonResult(res);
             }
@@ -133,6 +135,8 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
+                request.CreateUserId = CurrentUserInfo.StaffId;
+                request.ModifyUserId = CurrentUserInfo.StaffId;
                 var res = todayService.AddOrUpdateImage(request);
                 return new JsonResult(res);
             }
@@ -240,6 +244,7 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
+                request.ModifyUserId = CurrentUserInfo.StaffId;
                 var res = todayService.UpdateShortUrl(request);
                 return new JsonResult(res);
             }
@@ -325,6 +330,8 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
                 }
+                request.CreateUserId = CurrentUserInfo.StaffId;
+                request.ModifyUserId = CurrentUserInfo.StaffId;
                 var res = todayService.AddOrUpdateHomeInfo(request);
                 return new JsonResult(res);
             }
@@ -361,6 +368,7 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code, "IndertHomeText");
                 }
+                request.CreateUserId = CurrentUserInfo.StaffId;
                 var res = todayService.IndertHomeText(request);
                 return new JsonResult(res);
             }
@@ -443,6 +451,7 @@ namespace Future.Web.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code, "IndertHomeImg");
                 }
+                request.CreateUserId = CurrentUserInfo.StaffId;
                 var res = todayService.IndertHomeImg(request);
                 return new JsonResult(res);
             }
