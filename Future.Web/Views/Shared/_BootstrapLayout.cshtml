@@ -1,0 +1,25 @@
+﻿
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <link type="text/css" href="@Url.Content("~/css/site.css")" rel="stylesheet" />
+    @* 头部预留css区域 *@
+    @this.RenderSection("Head_Css", false)
+    @* easyui *@
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/plugins/easyui/jquery.json-2.4.js")"></script>
+    @* bootstrap *@
+    <script type="text/javascript" src="@Url.Content("~/plugins/bootstrap/js/bootstrap.js")"></script>
+    <link type="text/css" href="@Url.Content("~/plugins/bootstrap/css/bootstrap.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/plugins/bootstrap/css/custom.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/plugins/bootstrap/css/bootstrap-table.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/plugins/bootstrap/js/bootstrap-table.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/plugins/bootstrap/js/bootstrap-table-zh-CN.js")"></script>
+</head>
+
+<body>
+    @RenderBody()
+</body>
+</html>

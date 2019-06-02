@@ -230,5 +230,10 @@ namespace Future.Service
             }
             return rtn;
         }
+
+        public StaffEntity StaffByMobile(string mobile)
+        {
+            return sysDal.StaffByMobile(mobile);
+        }
     }
 }

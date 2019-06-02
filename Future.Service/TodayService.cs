@@ -47,7 +47,7 @@ namespace Future.Service
             {
                 return string.Empty;
             }
-            var entity = sysDal.Staff(userId);
+            var entity = sysDal.StaffByUId(userId);
             if (entity == null)
             {
                 return string.Empty;

@@ -24,4 +24,20 @@
     <Folder Include="wwwroot\image\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\plugins\bootstrap\css\bootstrap-theme.css.map" />
+    <None Include="wwwroot\plugins\bootstrap\css\bootstrap-theme.min.css.map" />
+    <None Include="wwwroot\plugins\bootstrap\css\bootstrap.css.map" />
+    <None Include="wwwroot\plugins\bootstrap\css\bootstrap.min.css.map" />
+    <None Include="wwwroot\plugins\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\plugins\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="wwwroot\plugins\bootstrap\js\bootstrap-contextmenu.js" />
+    <None Include="wwwroot\plugins\bootstrap\js\bootstrap-table-zh-CN.js" />
+    <None Include="wwwroot\plugins\bootstrap\js\bootstrap-table.js" />
+    <None Include="wwwroot\plugins\bootstrap\js\bootstrap-table.min.js" />
+    <None Include="wwwroot\plugins\bootstrap\js\bootstrap.js" />
+    <None Include="wwwroot\plugins\bootstrap\js\bootstrap.min.js" />
+    <None Include="wwwroot\plugins\bootstrap\js\npm.js" />
+  </ItemGroup>
+
 </Project>

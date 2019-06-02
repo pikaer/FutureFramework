@@ -129,7 +129,7 @@ namespace Future.Repository
             }
         }
 
-        public StaffEntity Staff(long userId)
+        public StaffEntity StaffByUId(long userId)
         {
             using (var Db = GetDbConnection())
             {
@@ -138,7 +138,14 @@ namespace Future.Repository
             }
         }
 
-     
+        public StaffEntity StaffByMobile(string mobile)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = string.Format("{0} where Mobile={1}", SELECT_STAFF, mobile);
+                return Db.QueryFirstOrDefault<StaffEntity>(sql);
+            }
+        }
 
         public List<StaffEntity>StaffList(int pageIndex, int pageSize)
         {

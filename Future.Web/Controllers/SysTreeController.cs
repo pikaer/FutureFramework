@@ -153,5 +153,64 @@ namespace Future.Web.Controllers
             }
         }
         #endregion
+
+        #region 登录
+
+        [LoginCheckFilter(IsCheck = false)]
+        public IActionResult LoginIndex()
+        {
+            var mobile = GetCookies(UserKey);
+            if (!mobile.IsNullOrEmpty())
+            {
+                var currentUser = sysService.StaffByMobile(mobile);
+
+                //记录Session
+                SetSession(UserKey, currentUser);
+
+                return new RedirectResult("/Main/Index");
+            }
+            return View();
+        }
+
+        /// <summary>
+        /// 验证登录
+        /// </summary>
+        [LoginCheckFilter(IsCheck=false)]
+        public IActionResult Login(string data,bool rememberMe)
+        {
+            try
+            {
+                var response = new ResponseContext<bool>();
+                var request = data.JsonToObject<StaffEntity>();
+                string pwd = string.IsNullOrEmpty(request.PassWord) ? "" : Md5Helper.GetMd5Str32(request.PassWord);
+                var currentUser = sysService.StaffByMobile(request.Mobile);
+                if (currentUser != null && currentUser.PassWord.ToLower().Trim().Equals(pwd))
+                {
+                    //记录Session
+                    SetSession(UserKey, currentUser);
+                    if (rememberMe)
+                    {
+                        SetCookies(UserKey, currentUser.Mobile);
+                    }
+                    else
+                    {
+                        if (!GetCookies(UserKey).IsNullOrEmpty())
+                        {
+                            DeleteCookies(UserKey);
+                        }
+                    }
+                }
+                else
+                {
+                    response = new ResponseContext<bool>(false, ErrCodeEnum.UserNoExist, false, "用户名或登录密码有误!");
+                }
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "Login", ex);
+            }
+        }
+        #endregion
     }
 }

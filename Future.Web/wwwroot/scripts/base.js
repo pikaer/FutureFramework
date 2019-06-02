@@ -101,7 +101,7 @@ function addLoadEvent(func) {
         window.onload = function () {
             oldOnload();
             func();
-        }
+        };
     }
 }
 
@@ -186,14 +186,10 @@ function getCookie(c_name) {
             return unescape(document.cookie.substring(c_start, c_end))
         }
     }
-    return ""
+    return "";
 }
 //cookie end
 
-/**
- * 打印局部div
- * @param printpage 局部div的ID
- */
 function printdom(domId) {
     var headhtml = "<html><head><title></title></head><body>";
     var foothtml = "</body>";
