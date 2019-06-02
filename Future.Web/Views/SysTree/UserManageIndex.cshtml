@@ -12,7 +12,7 @@
 
         function InitGrid(queryData) {
             $("#datagrid").datagrid({
-                title: "合伙人列表",
+                title: "用户列表",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -29,11 +29,11 @@
                 pagination: true,
                 pageSize: 10,
                 columns: [[
-                    { field: 'staffName', width: 300, title: "姓名", sortable: true },
-                    { field: 'gender', width: 120, title: "性别", sortable: true },
+                    { field: 'staffName', width: 150, title: "姓名", sortable: true },
+                    { field: 'gender', width: 80, title: "性别", sortable: true },
                     { field: 'role', width: 120, title: "角色", sortable: true },
-                    { field: 'mobile', width: 160, title: "手机号", sortable: true },
-                    { field: 'email', width: 80, title: "电子邮箱", sortable: true },
+                    { field: 'mobile', width: 150, title: "手机号", sortable: true },
+                    { field: 'email', width: 150, title: "电子邮箱", sortable: true },
                     { field: 'createTimeDesc', width: 130, title: "创建时间", sortable: true },
                     { field: 'modifyTimeDesc', width: 130, title: "最近修改时间", sortable: true }
                 ]],
@@ -68,7 +68,7 @@
                 Remark: $("#remarkInput").val(),
                 TextId: textId
             };
-            $.post("/Today/AddOrUpdateText",
+            $.post("/SysTree/AddOrUpdateStaff",
                 { data: $.toJSON(queryData) },
                 function (data) {
                     if (data.success) {
@@ -114,7 +114,7 @@
             }
             $.messager.confirm('提示', '是否删除?', function (r) {
                 if (r) {
-                    $.post("/Today/DeleteText",
+                    $.post("/SysTree/DeleteStaff",
                         { data: $.toJSON(row.textId) },
                         function (data) {
                             if (data.success) {
@@ -139,25 +139,15 @@
 
         //重置
         function resetSearch() {
-            $('#searchTextContent').val("");
-            $('#searchTextSource').val("");
-            $('#searchCreater').val("");
-            $('#searchStartDateTime').datetimebox('setValue', '');
-            $('#searchEndDateTime').datetimebox('setValue', '');
+            $('#searchStaffName').val("");
+            $('#searchMobile').val("");
         }
 
         //搜索
         function doSearch() {
-            if ($('#searchEndDateTime').datetimebox('getValue') < $('#searchStartDateTime').datetimebox('getValue')) {
-                $.messager.alert("提示", "结束日期不能小于起始日期");
-                return;
-            }
             var queryData = {
-                TextContent: $("#searchTextContent").val(),
-                TextSource: $("#searchTextSource").val(),
-                Creater: $("#searchCreater").val(),
-                StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
-                EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
+                StaffName: $("#searchStaffName").val(),
+                Mobile: $("#searchMobile").val()
             };
             InitGrid(queryData);
         }
@@ -175,23 +165,13 @@
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editItem()">编辑</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="del()">删除</a>
             </td>
-            <td style="float:left;padding-left: 8px;padding-top: 5px;">文本关键字: </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">姓名: </td>
             <td style="float:left;">
-                <input id="searchTextContent" class="easyui-validatebox textbox" type="text" style="height:25px;width:120px" />
+                <input id="searchStaffName" class="easyui-validatebox textbox" type="text" style="height:25px;width:120px" />
             </td>
-            <td style="float:left;padding-left: 8px;padding-top: 5px;">文本来源:</td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">手机号:</td>
             <td style="float:left">
-                <input id="searchTextSource" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
-            </td>
-            <td style="float:left;padding-left: 8px;padding-top: 5px;">创建人: </td>
-            <td style="float:left;">
-                <input id="searchCreater" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
-            </td>
-            <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
-            <td style="float:left">
-                <input id="searchStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
-                至
-                <input id="searchEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                <input id="searchMobile" class="easyui-validatebox textbox" type="text" style="height:25px;width:120px" />
             </td>
             <td style="float:left">
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetSearch()">重置</a>
@@ -208,20 +188,12 @@
         <form id="ff">
             <table class="groupTable">
                 <tr>
-                    <td>文本内容:</td>
-                    <td><textarea id="textContentInput" style="height:60px;width: 100%"></textarea> </td>
-                </tr>
-                <tr>
-                    <td>文本来源:</td>
+                    <td>姓名:</td>
                     <td> <input id="textSourceInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
                 </tr>
                 <tr>
                     <td>作者:</td>
                     <td><input id="authorInput" class="easyui-validatebox textbox" type="text" style="height:30px;width: 100%" /></td>
-                </tr>
-                <tr>
-                    <td>备注:</td>
-                    <td><textarea id="remarkInput" style="height:60px;width: 100%"></textarea> </td>
                 </tr>
             </table>
         </form>
