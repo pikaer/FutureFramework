@@ -254,6 +254,30 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateStaff", ex);
             }
         }
+
+        public JsonResult DeleteStaff(string data)
+        {
+            try
+            {
+                long tsaffId = Convert.ToInt16(data);
+                var res = sysService.DeleteStaff(tsaffId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteStaff", ex);
+            }
+        }
+
+        public JsonResult GenderCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(GenderEnum)));
+        }
+
+        public JsonResult RoleCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(RoleEnum)));
+        }
         #endregion
     }
 }
