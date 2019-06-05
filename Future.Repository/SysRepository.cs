@@ -140,7 +140,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = string.Format("{0} where Mobile={1}", SELECT_STAFF, mobile);
+                string sql = string.Format("{0} where Mobile='{1}'", SELECT_STAFF, mobile);
                 return Db.QueryFirstOrDefault<StaffEntity>(sql);
             }
         }

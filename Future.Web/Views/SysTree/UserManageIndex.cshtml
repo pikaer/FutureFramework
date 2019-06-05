@@ -18,7 +18,7 @@
                 fit: true,
                 singleSelect: true,
                 remoteSort: false,//前台排序 true则为后台排序 需要传参
-                idField: 'textId',
+                idField: 'staffId',
                 striped: true,
                 border: false,
                 iconCls: 'icon icon-tree',
@@ -31,8 +31,8 @@
                 pageSize: 10,
                 columns: [[
                     { field: 'staffName', width: 150, title: "姓名", sortable: true },
-                    { field: 'gender', width: 80, title: "性别", sortable: true },
-                    { field: 'role', width: 120, title: "角色", sortable: true },
+                    { field: 'genderDesc', width: 80, title: "性别", sortable: true },
+                    { field: 'roleDesc', width: 120, title: "角色", sortable: true },
                     { field: 'mobile', width: 150, title: "手机号", sortable: true },
                     { field: 'email', width: 150, title: "电子邮箱", sortable: true },
                     { field: 'createTimeDesc', width: 130, title: "创建时间", sortable: true },
@@ -134,7 +134,7 @@
             $.messager.confirm('提示', '是否删除?', function (r) {
                 if (r) {
                     $.post("/SysTree/DeleteStaff",
-                        { data: $.toJSON(row.textId) },
+                        { data: $.toJSON(row.staffId) },
                         function (data) {
                             if (data.success) {
                                 //成功后刷新界面

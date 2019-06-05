@@ -218,8 +218,10 @@ namespace Future.Service
                 {
                     StaffId = a.StaffId,
                     StaffName = a.StaffName.Trim(),
-                    Gender = a.Gender.ToDescription(),
-                    Role = a.Role.ToDescription(),
+                    Gender = a.Gender,
+                    GenderDesc = a.Gender.ToDescription(),
+                    Role = a.Role,
+                    RoleDesc = a.Role.ToDescription(),
                     Mobile =a.Mobile.Trim(),
                     Email = a.Email.Trim(),
                     CreateTimeDesc = a.CreateTime.ToString(),
@@ -241,7 +243,7 @@ namespace Future.Service
             bool success = true;
             if (request.StaffId <= 0)
             {
-                request.PassWord = JsonSettingHelper.AppSettings["DefaultPassWord"];
+                request.PassWord = Md5Helper.GetMd5Str32(JsonSettingHelper.AppSettings["DefaultPassWord"]);
                 request.CreateTime = DateTime.Now;
                 request.ModifyTime = DateTime.Now;
                 success = sysDal.IndertStaff(request);

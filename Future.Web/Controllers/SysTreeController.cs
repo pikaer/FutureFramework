@@ -259,8 +259,8 @@ namespace Future.Web.Controllers
         {
             try
             {
-                long tsaffId = Convert.ToInt16(data);
-                var res = sysService.DeleteStaff(tsaffId);
+                long staffId = Convert.ToInt16(data);
+                var res = sysService.DeleteStaff(staffId);
                 return new JsonResult(res);
             }
             catch (Exception ex)

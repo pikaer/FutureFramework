@@ -1,4 +1,6 @@
-﻿namespace Future.Model.DTO.Sys
+﻿using Future.Model.Enum.Sys;
+
+namespace Future.Model.DTO.Sys
 {
     public class StaffDTO
     {
@@ -15,12 +17,22 @@
         /// <summary>
         /// 性别
         /// </summary>
-        public string Gender { get; set; }
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 性别
+        /// </summary>
+        public string GenderDesc { get; set; }
 
         /// <summary>
         /// 用户角色
         /// </summary>
-        public string Role { get; set; }
+        public RoleEnum Role { get; set; }
+
+        /// <summary>
+        /// 用户角色
+        /// </summary>
+        public string RoleDesc { get; set; }
 
         /// <summary>
         /// 手机号

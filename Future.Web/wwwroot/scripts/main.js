@@ -8,6 +8,7 @@
 
 //加载一级菜单
 function LoadTopTree() {
+    Clearnav();
     $.post("/Main/GetModules",
         function (dataObj) {
             if (dataObj.success) {
