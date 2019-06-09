@@ -22,7 +22,8 @@ namespace Future.Repository
         {
             FutureFramework,
             TodayHappy,
-            LogService
+            LogService,
+            LetterService
         }
 
         /// <summary>

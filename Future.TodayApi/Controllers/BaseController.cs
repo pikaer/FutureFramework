@@ -9,6 +9,9 @@ using System.IO;
 
 namespace Future.TodayApi.Controllers
 {
+    /// <summary>
+    /// 控制器基类
+    /// </summary>
     public class BaseController : Controller
     {
         private readonly LogHelper LogHelper = SingletonProvider<LogHelper>.Instance;
