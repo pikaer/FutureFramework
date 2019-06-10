@@ -10,5 +10,7 @@ namespace Future.Repository
         {
             return DbEnum.LetterService;
         }
+
+
     }
 }

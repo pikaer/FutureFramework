@@ -21,10 +21,10 @@ namespace Future.TodayApi.Controllers
         /// 获取互动列表
         /// </summary>
         [HttpPost]
-        public JsonResult ExchangeList()
+        public JsonResult PickUpList()
         {
-            RequestContext<ExchangeListRequest> request = null;
-            ResponseContext<ExchangeListResponse> response = null;
+            RequestContext<PickUpListRequest> request = null;
+            ResponseContext<PickUpListResponse> response = null;
             try
             {
                 string json = GetInputString();
@@ -32,7 +32,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
                 }
-                request = json.JsonToObject<RequestContext<ExchangeListRequest>>();
+                request = json.JsonToObject<RequestContext<PickUpListRequest>>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
@@ -45,16 +45,16 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
-                response = api.ExchangeList(request);
+                response = api.PickUpList(request);
                 return new JsonResult(response);
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "ExchangeList", ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "PickUpList", ex);
             }
             finally
             {
-                WriteServiceLog(MODULE, "ExchangeList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+                WriteServiceLog(MODULE, "PickUpList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
     }

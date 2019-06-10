@@ -25,7 +25,7 @@ namespace Future.Model.Entity.Letter
         /// <summary>
         /// 图片内容（图片最多支持一张）
         /// </summary>
-        public string ImgContents { get; set; }
+        public string ImgContent { get; set; }
 
         /// <summary>
         /// 主人是否已删除

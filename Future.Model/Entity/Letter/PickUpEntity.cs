@@ -2,12 +2,15 @@
 
 namespace Future.Model.Entity.Letter
 {
-    public class ExchangeEntity: BaseEntity
+    /// <summary>
+    /// 漂流瓶被捡起实体
+    /// </summary>
+    public class PickUpEntity: BaseEntity
     {
         /// <summary>
-        /// 互动列表
+        /// 互动Id
         /// </summary>
-        public Guid ExchangeId { get; set; }
+        public Guid PickUpId { get; set; }
 
         /// <summary>
         /// 动态Id
@@ -17,6 +20,6 @@ namespace Future.Model.Entity.Letter
         /// <summary>
         /// 参与评论的用户
         /// </summary>
-        public long ExchangeUId { get; set; }
+        public long PickUpUId { get; set; }
     }
 }

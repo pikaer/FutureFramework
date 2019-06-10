@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Future.Model.Utils
 {
     #region ExchangeList（互动列表）
-    public class ExchangeListRequest
+    public class PickUpListRequest
     {
         /// <summary>
         /// 用户Id
@@ -16,25 +17,30 @@ namespace Future.Model.Utils
         public int PageIndex { get; set; }
     }
 
-    public class ExchangeListResponse
+    public class PickUpListResponse
     {
         /// <summary>
         /// 互动列表
         /// </summary>
-        public List<ExchangeType> ExchangeList { get; set; }
+        public List<PickUpListType> ExchangeList { get; set; }
     }
 
-    public class ExchangeType
+    public class PickUpListType
     {
         /// <summary>
         /// 动态Id
         /// </summary>
-        public string MomentId { get; set; }
+        public Guid PickUpId { get; set; }
 
         /// <summary>
-        /// 用户Id
+        /// 动态发布者Id
         /// </summary>
-        public long UId { get; set; }
+        public long MomentUId { get; set; }
+
+        /// <summary>
+        /// 参与评论的用户
+        /// </summary>
+        public long PickUpUId { get; set; }
 
         /// <summary>
         /// 头像路径
@@ -54,7 +60,7 @@ namespace Future.Model.Utils
         /// <summary>
         /// 图片内容（图片最多支持一张）
         /// </summary>
-        public string ImgContents { get; set; }
+        public string ImgContent { get; set; }
 
         /// <summary>
         /// 最近一次交谈时间
