@@ -18,6 +18,11 @@ namespace Future.Model.Entity.Letter
         public Guid MomentId { get; set; }
 
         /// <summary>
+        /// 动态发布者Id(减少关联查询）
+        /// </summary>
+        public long MomentUId { get; set; }
+
+        /// <summary>
         /// 参与评论的用户
         /// </summary>
         public long PickUpUId { get; set; }
