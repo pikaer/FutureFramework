@@ -57,5 +57,46 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "PickUpList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 获取互动列表
+        /// </summary>
+        [HttpPost]
+        public JsonResult DiscussList()
+        {
+            RequestContext<DiscussListRequest> request = null;
+            ResponseContext<DiscussListResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<DiscussListRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.DiscussList(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DiscussList", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "DiscussList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }

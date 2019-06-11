@@ -9,7 +9,7 @@ namespace Future.Repository
     {
         private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
 
-        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Gender,NickName,BirthDate,Province,City,Area,Mobile,WeChatNo,HeadPhotoPath,Signature,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
+        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Gender,NickName,BirthDate,Province,City,Area,Mobile,WeChatNo,HeadPhotoPath,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
@@ -84,7 +84,6 @@ namespace Future.Repository
                                   ,Mobile
                                   ,WeChatNo
                                   ,HeadPhotoPath
-                                  ,Signature
                                   ,CreateTime
                                   ,UpdateTime)
                             VALUES
@@ -99,7 +98,6 @@ namespace Future.Repository
                                   ,@Mobile
                                   ,@WeChatNo
                                   ,@HeadPhotoPath
-                                  ,@Signature
                                   ,@CreateTime
                                   ,@UpdateTime)";
                 return Db.Execute(sql, userEntity) > 0;

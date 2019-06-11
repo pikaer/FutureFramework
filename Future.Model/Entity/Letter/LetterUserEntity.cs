@@ -58,10 +58,5 @@ namespace Future.Model.Entity.Letter
         /// 头像路径
         /// </summary>
         public string HeadPhotoPath { get; set; }
-
-        /// <summary>
-        /// 个性签名
-        /// </summary>
-        public string Signature { get; set; }
     }
 }
