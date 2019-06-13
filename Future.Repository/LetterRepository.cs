@@ -40,7 +40,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpList(long uId,int pageIndex)
         {
-            var sql = string.Format("{0} Where MomentUId={1} Or PickUpUId={1}", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where PickUpUId={1}", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
@@ -53,6 +53,15 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 return Db.Query<DiscussEntity>(sql).AsList();
+            }
+        }
+
+        public MomentEntity GetMoment(Guid momentId)
+        {
+            var sql = SELECT_MomentEntity + @" Where MomentId=@MomentId";
+            using (var Db = GetDbConnection())
+            {
+                return Db.QueryFirstOrDefault<MomentEntity>(sql,new { MomentId= momentId });
             }
         }
 

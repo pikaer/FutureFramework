@@ -1,7 +1,9 @@
-﻿using Future.Model.Utils;
+﻿using Future.Model.Entity.Letter;
+using Future.Model.Utils;
 using Future.Repository;
 using Future.Utility;
 using Infrastructure;
+using System;
 using System.Linq;
 
 namespace Future.Service
@@ -10,11 +12,11 @@ namespace Future.Service
     {
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
-        public ResponseContext<PickUpListResponse> PickUpList(RequestContext<PickUpListRequest> request)
+        public ResponseContext<DiscussListResponse> DiscussList(RequestContext<DiscussListRequest> request)
         {
-            var response = new ResponseContext<PickUpListResponse>()
+            var response = new ResponseContext<DiscussListResponse>()
             {
-                Content = new PickUpListResponse()
+                Content = new DiscussListResponse()
             };
 
             var pickUpList = letterDal.PickUpList(request.Content.UId, request.Content.PageIndex);
@@ -33,7 +35,7 @@ namespace Future.Service
                         continue;
                     }
                     var lastDiscuss = discussList.OrderByDescending(a => a.CreateTime).First();
-                    var dto = new PickUpType()
+                    var dto = new DiscussType()
                     {
                         PickUpId = item.PickUpId,
                         MomentUId = item.MomentUId,
@@ -44,17 +46,17 @@ namespace Future.Service
                         RecentChatTime = item.UpdateTime.Value.GetDateDesc()
                     };
 
-                    response.Content.PickUpList.Add(dto);
+                    response.Content.DiscussList.Add(dto);
                 }
             }
             return response;
         }
         
-        public ResponseContext<DiscussListResponse> DiscussList(RequestContext<DiscussListRequest> request)
+        public ResponseContext<DiscussDetailListResponse> DiscussDetailList(RequestContext<DiscussDetailListRequest> request)
         {
-            var response = new ResponseContext<DiscussListResponse>()
+            var response = new ResponseContext<DiscussDetailListResponse>()
             {
-                Content = new DiscussListResponse()
+                Content = new DiscussDetailListResponse()
             };
 
             var discussList = letterDal.DiscussList(request.Content.PickUpId);
@@ -67,7 +69,7 @@ namespace Future.Service
                     {
                         continue;
                     }
-                    var dto = new DiscussType()
+                    var dto = new DiscussDetailType()
                     {
                         PickUpId = item.PickUpId,
                         PickUpUId=item.UId,
@@ -77,9 +79,74 @@ namespace Future.Service
                         RecentChatTime = item.UpdateTime.Value.GetDateDesc()
                     };
 
-                    response.Content.DiscussList.Add(dto);
+                    response.Content.DiscussDetailList.Add(dto);
                 }
             }
+            return response;
+        }
+
+        /// <summary>
+        /// 捡起但没有回复的漂流瓶列表
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public ResponseContext<PickUpListResponse> PickUpList(RequestContext<PickUpListRequest> request)
+        {
+            var response = new ResponseContext<PickUpListResponse>()
+            {
+                Content = new PickUpListResponse()
+            };
+
+            var pickUpList = letterDal.PickUpList(request.Content.UId,request.Content.PageIndex);
+            if (pickUpList.NotEmpty())
+            {
+                foreach (var item in pickUpList)
+                {
+                    var pickUpUser = letterDal.LetterUser(item.MomentUId);
+                    if (pickUpUser == null)
+                    {
+                        continue;
+                    }
+                    var moment= letterDal.GetMoment(item.MomentId);
+                    if (moment == null)
+                    {
+                        continue;
+                    }
+                    var dto = new PickUpType()
+                    {
+                        MomentId = item.MomentId,
+                        UId = item.MomentUId,
+                        HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
+                        NickName = pickUpUser.NickName,
+                        TextContent = moment.TextContent,
+                        ImgContent = moment.ImgContent,
+                        CreateTime = item.CreateTime.GetDateDesc()
+                    };
+
+                    response.Content.PickUpList.Add(dto);
+                }
+            }
+            return response;
+        }
+
+        public ResponseContext<PublishMomentResponse> PublishMoment(RequestContext<PublishMomentRequest> request)
+        {
+            var response = new ResponseContext<PublishMomentResponse>()
+            {
+                Content = new PublishMomentResponse()
+            };
+
+            var moment = new MomentEntity()
+            {
+                MomentId = Guid.NewGuid(),
+                UId = request.Content.UId,
+                TextContent = request.Content.TextContent,
+                ImgContent = request.Content.ImgContent,
+                CreateTime=DateTime.Now,
+                UpdateTime=DateTime.Now
+            };
+
+            response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
             return response;
         }
     }
