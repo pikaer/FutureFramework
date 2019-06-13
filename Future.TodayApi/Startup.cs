@@ -27,8 +27,8 @@ namespace Future.TodayApi
                 options.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
-                    Title = "TodayHappy.Api",
-                    Description = "为今日份小程序提供Api接口",
+                    Title = "Today.Api",
+                    Description = "为小程序提供Api接口",
                     TermsOfService = "None"
                 });
                 var basePath = AppContext.BaseDirectory;
