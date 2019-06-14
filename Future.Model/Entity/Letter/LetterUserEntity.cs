@@ -2,7 +2,7 @@
 
 namespace Future.Model.Entity.Letter
 {
-    public class LetterUserEntity
+    public class LetterUserEntity:BaseEntity
     {
         /// <summary>
         /// 用户唯一标示

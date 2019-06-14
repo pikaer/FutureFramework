@@ -242,4 +242,37 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
+    #region SetUserInfo
+    public class SetUserInfoRequest
+    {
+        /// <summary>
+        /// 小程序端-用户唯一标示
+        /// </summary>
+        public string OpenId { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public int Gender { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+    }
+
+    public class SetUserInfoResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+    #endregion
 }

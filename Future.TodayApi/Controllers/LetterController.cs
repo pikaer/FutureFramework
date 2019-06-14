@@ -298,5 +298,46 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "DeleteImg", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 存入用户信息
+        /// </summary>
+        [HttpPost]
+        public JsonResult SetUserInfo()
+        {
+            RequestContext<SetUserInfoRequest> request = null;
+            ResponseContext<SetUserInfoResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<SetUserInfoRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.SetUserInfo(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "SetUserInfo", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "SetUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Future.Model.Entity.Letter;
+using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
 using Future.Utility;
@@ -157,6 +158,39 @@ namespace Future.Service
             };
 
             response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
+            return response;
+        }
+
+        public ResponseContext<SetUserInfoResponse> SetUserInfo(RequestContext<SetUserInfoRequest> request)
+        {
+            var response = new ResponseContext<SetUserInfoResponse>()
+            {
+                Content = new SetUserInfoResponse()
+            };
+            var userInfoEntity = letterDal.LetterUser(0, request.Content.OpenId);
+            if (userInfoEntity == null)
+            {
+                var entity = new LetterUserEntity()
+                {
+                    OpenId = request.Content.OpenId,
+                    Gender = (GenderEnum)request.Content.Gender,
+                    NickName = request.Content.NickName,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now,
+                    HeadPhotoPath = "pikaer.jpg"
+                };
+                bool success = letterDal.InsertLetterUser(entity);
+                if (success)
+                {
+                    response.Content.UId = letterDal.LetterUser(0, request.Content.OpenId).UId;
+                }
+                response.Content.IsExecuteSuccess = success;
+            }
+            else
+            {
+                response.Content.UId = userInfoEntity.UId;
+                response.Content.IsExecuteSuccess = true;
+            }
             return response;
         }
     }
