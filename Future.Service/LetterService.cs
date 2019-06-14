@@ -4,6 +4,7 @@ using Future.Repository;
 using Future.Utility;
 using Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Future.Service
@@ -17,6 +18,9 @@ namespace Future.Service
             var response = new ResponseContext<DiscussListResponse>()
             {
                 Content = new DiscussListResponse()
+                {
+                    DiscussList=new List<DiscussType>()
+                }
             };
 
             var pickUpList = letterDal.PickUpList(request.Content.UId, request.Content.PageIndex);
@@ -57,6 +61,9 @@ namespace Future.Service
             var response = new ResponseContext<DiscussDetailListResponse>()
             {
                 Content = new DiscussDetailListResponse()
+                {
+                    DiscussDetailList=new List<DiscussDetailType>()
+                }
             };
 
             var discussList = letterDal.DiscussList(request.Content.PickUpId);
@@ -95,6 +102,9 @@ namespace Future.Service
             var response = new ResponseContext<PickUpListResponse>()
             {
                 Content = new PickUpListResponse()
+                {
+                    PickUpList=new List<PickUpType>()
+                }
             };
 
             var pickUpList = letterDal.PickUpList(request.Content.UId,request.Content.PageIndex);

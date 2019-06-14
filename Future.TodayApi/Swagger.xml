@@ -4,6 +4,11 @@
         <name>Future.TodayApi</name>
     </assembly>
     <members>
+        <member name="T:Future.TodayApi.Controllers.BaseController">
+            <summary>
+            控制器基类
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.BaseController.GetInputString">
             <summary>
             处理请求数据流
@@ -18,6 +23,41 @@
         <member name="M:Future.TodayApi.Controllers.BaseController.WriteServiceLog(System.String,System.String,Future.Model.Utils.RequestHead,Future.Model.Enum.Sys.ErrCodeEnum,System.String,System.Object,System.Object)">
             <summary>
             写入服务接口调用日志到数据库,用作接口性能检测
+            </summary>
+        </member>
+        <member name="T:Future.TodayApi.Controllers.LetterController">
+            <summary>
+            漂流瓶控制器
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DiscussList">
+            <summary>
+            瓶子互动列表
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DiscussDetailList">
+            <summary>
+            瓶子互动详情列表
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.PickUpList">
+            <summary>
+            首页瓶子捡起列表
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.PublishMoment">
+            <summary>
+            发布动态
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.UpLoadImg">
+            <summary>
+            上传动态图片
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DeleteImg">
+            <summary>
+            删除已上传的图片
             </summary>
         </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
