@@ -60,6 +60,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 瓶子互动
+        /// </summary>
+        [HttpPost]
+        public JsonResult Discuss()
+        {
+            RequestContext<DiscussRequest> request = null;
+            ResponseContext<DiscussResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<DiscussRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0 || request.Content.TextContent.IsNullOrEmpty())
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.Discuss(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "Discuss", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "Discuss", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 瓶子互动详情列表
         /// </summary>
         [HttpPost]
@@ -101,7 +142,48 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 首页瓶子捡起列表
+        /// 下拉捡起一个瓶子
+        /// </summary>
+        [HttpPost]
+        public JsonResult PickUp()
+        {
+            RequestContext<PickUpRequest> request = null;
+            ResponseContext<PickUpResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<PickUpRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.PickUp(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "PickUp", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "PickUp", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 首页瓶子捡起列表(捡起但没有回复的漂流瓶列表)
         /// </summary>
         [HttpPost]
         public JsonResult PickUpList()
@@ -341,7 +423,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 存入用户信息
+        /// 获取用户小程序唯一标识
         /// </summary>
         [HttpPost]
         public JsonResult GetOpenId()

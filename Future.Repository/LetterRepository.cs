@@ -65,6 +65,28 @@ namespace Future.Repository
             }
         }
 
+        public MomentEntity GetMoment(long uId,int pickUpCount)
+        {
+            var sql = @"SELECT moment.MomentId
+                              ,moment.UId
+                              ,moment.TextContent
+                              ,moment.ImgContent
+                              ,moment.IsDelete
+                              ,moment.IsReport
+                              ,moment.ReplyCount
+                              ,moment.CreateTime
+                              ,moment.UpdateTime
+                          FROM dbo.letter_Moment moment
+                          Left join dbo.letter_PickUp pick
+                          ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
+                          Where pick.MomentId is Null and moment.ReplyCount<=@PickUpCount and moment.IsReport=0 and moment.IsDelete=0
+                          Order by moment.CreateTime desc";
+            using (var Db = GetDbConnection())
+            {
+                return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount });
+            }
+        }
+
         public bool UpdatePickCount(Guid momentId)
         {
             using (var Db = GetDbConnection())

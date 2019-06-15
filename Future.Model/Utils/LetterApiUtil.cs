@@ -116,7 +116,26 @@ namespace Future.Model.Utils
     }
     #endregion
 
-    #region MomentList（动态评论）
+    #region PickUp
+    public class PickUpRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class PickUpResponse
+    {
+        /// <summary>
+        /// 互动列表
+        /// </summary>
+        public List<PickUpType> PickUpList { get; set; }
+    }
+    
+    #endregion
+
+    #region PickUpList
     public class PickUpListRequest
     {
         /// <summary>
@@ -308,6 +327,35 @@ namespace Future.Model.Utils
         public string OpenId { get; set; }
 
         public string Session_key { get; set; }
+    }
+    #endregion
+
+    #region Discuss
+    public class DiscussRequest
+    {
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+
+    }
+
+    public class DiscussResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
     }
     #endregion
 }

@@ -93,6 +93,24 @@ namespace Future.Service
             return response;
         }
 
+        public ResponseContext<DiscussResponse> Discuss(RequestContext<DiscussRequest> request)
+        {
+            var response = new ResponseContext<DiscussResponse>()
+            {
+                Content = new DiscussResponse()
+            };
+
+            var discuss = new DiscussEntity()
+            {
+                DiscussId = Guid.NewGuid(),
+                PickUpId = request.Content.PickUpId,
+                UId = request.Content.UId,
+                DiscussContent = request.Content.TextContent
+            };
+            response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
+            return response;
+        }
+
         /// <summary>
         /// 捡起但没有回复的漂流瓶列表
         /// </summary>
@@ -136,6 +154,56 @@ namespace Future.Service
 
                     response.Content.PickUpList.Add(dto);
                 }
+            }
+            return response;
+        }
+
+        public ResponseContext<PickUpResponse> PickUp(RequestContext<PickUpRequest> request)
+        {
+            var response = new ResponseContext<PickUpResponse>()
+            {
+                Content = new PickUpResponse()
+                {
+                    PickUpList = new List<PickUpType>()
+                }
+            };
+
+            int pickUpCount = 20;
+            if (!string.IsNullOrEmpty(JsonSettingHelper.AppSettings["PickUpCount"]))
+            {
+                pickUpCount= Convert.ToInt16(JsonSettingHelper.AppSettings["PickUpCount"]);
+            }
+            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount);
+            if (moment == null)
+            {
+                return response;
+            }
+
+            var pickUp = new PickUpEntity()
+            {
+                PickUpId = Guid.NewGuid(),
+                MomentId = moment.MomentId,
+                MomentUId = moment.UId,
+                PickUpUId = request.Content.UId
+            };
+            bool success=letterDal.InsertPickUp(pickUp);
+            if (success)
+            {
+                var letterUser= letterDal.LetterUser(moment.UId);
+                if (letterUser == null)
+                {
+                    return response;
+                }
+                response.Content.PickUpList.Add(new PickUpType()
+                {
+                    MomentId= moment.MomentId,
+                    UId= moment.UId,
+                    HeadImgPath= letterUser.HeadPhotoPath.GetImgPath(),
+                    NickName= letterUser.NickName,
+                    TextContent= moment.TextContent.Trim(),
+                    ImgContent= moment.ImgContent.GetImgPath(),
+                    CreateTime= moment.CreateTime.GetDateDesc()
+                });
             }
             return response;
         }
