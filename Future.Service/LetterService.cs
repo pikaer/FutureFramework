@@ -130,7 +130,7 @@ namespace Future.Service
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         TextContent = moment.TextContent,
-                        ImgContent = moment.ImgContent,
+                        ImgContent = moment.ImgContent.GetImgPath(),
                         CreateTime = item.CreateTime.GetDateDesc()
                     };
 
