@@ -339,5 +339,46 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "SetUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 存入用户信息
+        /// </summary>
+        [HttpPost]
+        public JsonResult GetOpenId()
+        {
+            RequestContext<GetOpenIdRequest> request = null;
+            ResponseContext<GetOpenIdResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<GetOpenIdRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null|| request.Content.LoginCode.IsNullOrEmpty())
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.GetOpenId(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetOpenId", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "GetOpenId", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }

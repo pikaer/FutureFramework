@@ -260,6 +260,21 @@ namespace Future.Model.Utils
         /// 用户昵称
         /// </summary>
         public string NickName { get; set; }
+
+        /// <summary>
+        /// 用户所在省份
+        /// </summary>
+        public string Province { get; set; }
+
+        /// <summary>
+        /// 用户所在城市
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// 用户所在国家
+        /// </summary>
+        public string Country { get; set; }
     }
 
     public class SetUserInfoResponse
@@ -273,6 +288,26 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
+    }
+    #endregion
+
+    #region GetOpenId
+    public class GetOpenIdRequest
+    {
+        /// <summary>
+        /// 用来获取小程序OpenId
+        /// </summary>
+        public string LoginCode { get; set; }
+    }
+
+    public class GetOpenIdResponse
+    {
+        /// <summary>
+        /// 小程序端-用户唯一标示
+        /// </summary>
+        public string OpenId { get; set; }
+
+        public string Session_key { get; set; }
     }
     #endregion
 }

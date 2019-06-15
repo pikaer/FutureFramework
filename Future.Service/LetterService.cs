@@ -167,6 +167,7 @@ namespace Future.Service
             {
                 Content = new SetUserInfoResponse()
             };
+            
             var userInfoEntity = letterDal.LetterUser(0, request.Content.OpenId);
             if (userInfoEntity == null)
             {
@@ -175,9 +176,12 @@ namespace Future.Service
                     OpenId = request.Content.OpenId,
                     Gender = (GenderEnum)request.Content.Gender,
                     NickName = request.Content.NickName,
+                    Country= request.Content.Country,
+                    Province = request.Content.Province,
+                    City = request.Content.City,
+                    HeadPhotoPath = "pikaer.jpg",
                     CreateTime = DateTime.Now,
-                    UpdateTime = DateTime.Now,
-                    HeadPhotoPath = "pikaer.jpg"
+                    UpdateTime = DateTime.Now
                 };
                 bool success = letterDal.InsertLetterUser(entity);
                 if (success)
@@ -191,6 +195,18 @@ namespace Future.Service
                 response.Content.UId = userInfoEntity.UId;
                 response.Content.IsExecuteSuccess = true;
             }
+            return response;
+        }
+
+        public ResponseContext<GetOpenIdResponse> GetOpenId(RequestContext<GetOpenIdRequest> request)
+        {
+            var response = new ResponseContext<GetOpenIdResponse>();
+
+            string myAppid = JsonSettingHelper.AppSettings["LetterAppId"];
+            string mySecret = JsonSettingHelper.AppSettings["LetterSecret"];
+
+            string url = string.Format("https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
+            response.Content = HttpHelper.HttpGet<GetOpenIdResponse>(url);
             return response;
         }
     }

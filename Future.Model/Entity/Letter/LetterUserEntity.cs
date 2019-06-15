@@ -40,9 +40,9 @@ namespace Future.Model.Entity.Letter
         public string City { get; set; }
 
         /// <summary>
-        /// 用户所在区
+        /// 用户所在国家
         /// </summary>
-        public string Area { get; set; }        
+        public string Country { get; set; }        
 
         /// <summary>
         /// 手机号

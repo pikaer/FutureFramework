@@ -60,6 +60,16 @@
             删除已上传的图片
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.SetUserInfo">
+            <summary>
+            存入用户信息
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.GetOpenId">
+            <summary>
+            存入用户信息
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
             <summary>
             主接口集合
