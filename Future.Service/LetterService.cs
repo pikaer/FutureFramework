@@ -184,7 +184,9 @@ namespace Future.Service
                 PickUpId = Guid.NewGuid(),
                 MomentId = moment.MomentId,
                 MomentUId = moment.UId,
-                PickUpUId = request.Content.UId
+                PickUpUId = request.Content.UId,
+                CreateTime=DateTime.Now,
+                UpdateTime= DateTime.Now
             };
             bool success=letterDal.InsertPickUp(pickUp);
             if (success)
