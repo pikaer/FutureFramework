@@ -38,9 +38,9 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpEntity> PickUpList(long uId,int pageIndex)
+        public List<PickUpEntity> PickUpList(long uId, int pageIndex, int pageSize)
         {
-            var sql = string.Format("{0} Where PickUpUId={1}", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where PickUpUId={1} order by CreateTime desc OFFSET {2} ROWS FETCH NEXT {3} ROWS ONLY", SELECT_PickUpEntity, uId, (pageIndex - 1) * pageSize, pageSize);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
