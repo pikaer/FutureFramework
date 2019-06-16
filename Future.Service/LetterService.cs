@@ -148,7 +148,7 @@ namespace Future.Service
                     }
                     var dto = new PickUpType()
                     {
-                        MomentId = item.MomentId,
+                        PickUpId = item.PickUpId,
                         UId = item.MomentUId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
@@ -203,7 +203,7 @@ namespace Future.Service
                 }
                 response.Content.PickUpList.Add(new PickUpType()
                 {
-                    MomentId= moment.MomentId,
+                    PickUpId = pickUp.PickUpId,
                     UId= moment.UId,
                     HeadImgPath= letterUser.HeadPhotoPath.GetImgPath(),
                     NickName= letterUser.NickName,
@@ -282,6 +282,17 @@ namespace Future.Service
 
             string url = string.Format("https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
             response.Content = HttpHelper.HttpGet<GetOpenIdResponse>(url);
+            return response;
+        }
+
+        public ResponseContext<DeleteBottleResponse> DeleteBottle(RequestContext<DeleteBottleRequest> request)
+        {
+            var response = new ResponseContext<DeleteBottleResponse>()
+            {
+                Content = new DeleteBottleResponse()
+            };
+            letterDal.DeleteDiscuss(request.Content.PickUpId);
+            response.Content.IsExecuteSuccess = letterDal.DeletePickUp(request.Content.PickUpId); ;
             return response;
         }
     }

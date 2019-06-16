@@ -35,14 +35,24 @@
             瓶子互动列表
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.Discuss">
+            <summary>
+            瓶子互动
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.DiscussDetailList">
             <summary>
             瓶子互动详情列表
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.PickUp">
+            <summary>
+            下拉捡起一个瓶子
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.PickUpList">
             <summary>
-            首页瓶子捡起列表
+            首页瓶子捡起列表(捡起但没有回复的漂流瓶列表)
             </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.PublishMoment">
@@ -67,7 +77,7 @@
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.GetOpenId">
             <summary>
-            存入用户信息
+            获取用户小程序唯一标识
             </summary>
         </member>
         <member name="T:Future.TodayApi.Controllers.MainController">

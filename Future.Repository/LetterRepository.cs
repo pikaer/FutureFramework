@@ -55,8 +55,7 @@ namespace Future.Repository
                 return Db.Query<PickUpEntity>(sql).AsList();
             }
         }
-
-
+        
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {
             var sql = string.Format("{0} Where PickUpId='{1}'", SELECT_DiscussEntity, pickUpId);
@@ -212,6 +211,24 @@ namespace Future.Repository
                                   ,@CreateTime
                                   ,@UpdateTime)";
                 return Db.Execute(sql, discussEntity) > 0;
+            }
+        }
+
+        public bool DeleteDiscuss(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.letter_Discuss Where PickUpId=@PickUpId";
+                return Db.Execute(sql, new { PickUpId= pickUpId }) > 0;
+            }
+        }
+
+        public bool DeletePickUp(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.letter_PickUp Where PickUpId=@PickUpId";
+                return Db.Execute(sql, new { PickUpId = pickUpId }) > 0;
             }
         }
     }

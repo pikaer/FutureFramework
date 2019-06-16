@@ -161,9 +161,9 @@ namespace Future.Model.Utils
     public class PickUpType
     {
         /// <summary>
-        /// 动态Id
+        /// 互动Id
         /// </summary>
-        public Guid MomentId { get; set; }
+        public Guid PickUpId { get; set; }
 
         /// <summary>
         /// 用户Id
@@ -351,6 +351,25 @@ namespace Future.Model.Utils
     }
 
     public class DiscussResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region DeleteBottle
+    public class DeleteBottleRequest
+    {
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+    }
+
+    public class DeleteBottleResponse
     {
         /// <summary>
         /// 处理结果
