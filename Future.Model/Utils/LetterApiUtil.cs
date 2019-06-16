@@ -231,6 +231,7 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
     #region PublishMoment
     /// <summary>
     /// 发布动态
@@ -370,6 +371,25 @@ namespace Future.Model.Utils
     }
 
     public class DeleteBottleResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region ReportBottle
+    public class ReportBottleRequest
+    {
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+    }
+
+    public class ReportBottleResponse
     {
         /// <summary>
         /// 处理结果

@@ -464,7 +464,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 存入用户信息
+        /// 删除捡到的瓶子
         /// </summary>
         [HttpPost]
         public JsonResult DeleteBottle()
@@ -501,6 +501,47 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "DeleteBottle", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 举报捡到的瓶子
+        /// </summary>
+        [HttpPost]
+        public JsonResult ReportBottle()
+        {
+            RequestContext<ReportBottleRequest> request = null;
+            ResponseContext<ReportBottleResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<ReportBottleRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.ReportBottle(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ReportBottle", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "ReportBottle", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
     }

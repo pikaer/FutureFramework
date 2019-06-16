@@ -55,7 +55,16 @@ namespace Future.Repository
                 return Db.Query<PickUpEntity>(sql).AsList();
             }
         }
-        
+
+        public PickUpEntity PickUp(Guid pickUpId)
+        {
+            var sql = string.Format("{0} Where PickUpId='{1}' ", SELECT_PickUpEntity, pickUpId.ToString());
+            using (var Db = GetDbConnection())
+            {
+                return Db.QueryFirstOrDefault<PickUpEntity>(sql);
+            }
+        }
+
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {
             var sql = string.Format("{0} Where PickUpId='{1}'", SELECT_DiscussEntity, pickUpId);
@@ -105,6 +114,18 @@ namespace Future.Repository
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
                 return Db.Execute(sql, new { UpdateTime =DateTime.Now, MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool UpdatePickUpReport(Guid momentId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Moment
+                               SET IsReport =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE MomentId=@MomentId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
             }
         }
 

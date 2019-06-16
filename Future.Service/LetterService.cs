@@ -196,6 +196,7 @@ namespace Future.Service
             bool success=letterDal.InsertPickUp(pickUp);
             if (success)
             {
+                letterDal.UpdatePickCount(moment.MomentId);
                 var letterUser= letterDal.LetterUser(moment.UId);
                 if (letterUser == null)
                 {
@@ -293,6 +294,26 @@ namespace Future.Service
             };
             letterDal.DeleteDiscuss(request.Content.PickUpId);
             response.Content.IsExecuteSuccess = letterDal.DeletePickUp(request.Content.PickUpId); ;
+            return response;
+        }
+
+        public ResponseContext<ReportBottleResponse> ReportBottle(RequestContext<ReportBottleRequest> request)
+        {
+            var response = new ResponseContext<ReportBottleResponse>()
+            {
+                Content = new ReportBottleResponse()
+            };
+            var pickUp= letterDal.GetMoment(request.Content.PickUpId);
+            if (pickUp == null)
+            {
+                return response;
+            }
+
+            var moment = letterDal.GetMoment(pickUp.MomentId);
+            if (moment != null)
+            {
+                response.Content.IsExecuteSuccess= letterDal.UpdatePickUpReport(pickUp.MomentId);
+            }
             return response;
         }
     }
