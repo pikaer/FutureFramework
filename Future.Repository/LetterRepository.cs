@@ -38,7 +38,7 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpEntity> PickUpList(long uId, int pageIndex, int pageSize)
+        public List<PickUpEntity> PickUpListByPageIndex(long uId, int pageIndex, int pageSize)
         {
             var sql = string.Format("{0} Where PickUpUId={1} order by CreateTime desc OFFSET {2} ROWS FETCH NEXT {3} ROWS ONLY", SELECT_PickUpEntity, uId, (pageIndex - 1) * pageSize, pageSize);
             using (var Db = GetDbConnection())
@@ -46,6 +46,16 @@ namespace Future.Repository
                 return Db.Query<PickUpEntity>(sql).AsList();
             }
         }
+
+        public List<PickUpEntity> PickUpList(long uId)
+        {
+            var sql = string.Format("{0} Where PickUpUId={1}", SELECT_PickUpEntity, uId);
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<PickUpEntity>(sql).AsList();
+            }
+        }
+
 
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {

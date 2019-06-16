@@ -24,7 +24,7 @@ namespace Future.Service
                 }
             };
 
-            var pickUpList = letterDal.PickUpList(request.Content.UId, request.Content.PageIndex);
+            var pickUpList = letterDal.PickUpList(request.Content.UId);
             if (pickUpList.NotEmpty())
             {
                 foreach(var item in pickUpList)
@@ -126,7 +126,12 @@ namespace Future.Service
                 }
             };
 
-            var pickUpList = letterDal.PickUpList(request.Content.UId,request.Content.PageIndex);
+            int pageSize = 30;
+            if (!JsonSettingHelper.AppSettings["MomentPageSize"].IsNullOrEmpty())
+            {
+                pageSize = Convert.ToInt32(JsonSettingHelper.AppSettings["MomentPageSize"]);
+            }
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
                 foreach (var item in pickUpList)
