@@ -121,7 +121,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Moment
+                string sql = @"UPDATE dbo.letter_PickUp
                                SET IsDelete =1
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
