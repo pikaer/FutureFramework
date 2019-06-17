@@ -293,7 +293,7 @@ namespace Future.Service
                 Content = new DeleteBottleResponse()
             };
             letterDal.DeleteDiscuss(request.Content.PickUpId);
-            response.Content.IsExecuteSuccess = letterDal.DeletePickUp(request.Content.PickUpId); ;
+            response.Content.IsExecuteSuccess = letterDal.UpdatePickDelete(request.Content.PickUpId); ;
             return response;
         }
 
@@ -303,7 +303,7 @@ namespace Future.Service
             {
                 Content = new ReportBottleResponse()
             };
-            var pickUp= letterDal.GetMoment(request.Content.PickUpId);
+            var pickUp= letterDal.PickUp(request.Content.PickUpId);
             if (pickUp == null)
             {
                 return response;

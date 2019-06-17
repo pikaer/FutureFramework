@@ -80,6 +80,16 @@
             获取用户小程序唯一标识
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DeleteBottle">
+            <summary>
+            删除捡到的瓶子
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.ReportBottle">
+            <summary>
+            举报捡到的瓶子
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
             <summary>
             主接口集合

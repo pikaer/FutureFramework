@@ -26,5 +26,10 @@ namespace Future.Model.Entity.Letter
         /// 参与评论的用户
         /// </summary>
         public long PickUpUId { get; set; }
+
+        /// <summary>
+        /// 是否逻辑删除
+        /// </summary>
+        public bool IsDelete { get; set; }
     }
 }

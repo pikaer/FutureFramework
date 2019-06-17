@@ -40,7 +40,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListByPageIndex(long uId, int pageIndex, int pageSize)
         {
-            var sql = string.Format("{0} Where PickUpUId={1} order by CreateTime desc OFFSET {2} ROWS FETCH NEXT {3} ROWS ONLY", SELECT_PickUpEntity, uId, (pageIndex - 1) * pageSize, pageSize);
+            var sql = string.Format("{0} Where PickUpUId={1} and IsDelete=0 order by CreateTime desc OFFSET {2} ROWS FETCH NEXT {3} ROWS ONLY", SELECT_PickUpEntity, uId, (pageIndex - 1) * pageSize, pageSize);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
@@ -114,6 +114,18 @@ namespace Future.Repository
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
                 return Db.Execute(sql, new { UpdateTime =DateTime.Now, MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool UpdatePickDelete(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Moment
+                               SET IsDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
             }
         }
 
