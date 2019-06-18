@@ -397,4 +397,23 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
+    #region ClearAllBottle
+    public class ClearAllBottleRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+    }
+
+    public class ClearAllBottleResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
 }

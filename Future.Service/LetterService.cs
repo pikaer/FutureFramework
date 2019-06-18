@@ -160,6 +160,7 @@ namespace Future.Service
                     response.Content.PickUpList.Add(dto);
                 }
             }
+            
             return response;
         }
 
@@ -314,6 +315,27 @@ namespace Future.Service
             {
                 response.Content.IsExecuteSuccess= letterDal.UpdatePickUpReport(pickUp.MomentId);
             }
+            return response;
+        }
+
+        public ResponseContext<ClearAllBottleResponse> ClearAllBottle(RequestContext<ClearAllBottleRequest> request)
+        {
+            var response = new ResponseContext<ClearAllBottleResponse>()
+            {
+                Content = new ClearAllBottleResponse()
+            };
+            var pickUpList = letterDal.PickUpList(request.Content.UId);
+            foreach(var item in pickUpList)
+            {
+                //清空未回复过的所有瓶子
+                var discussList= letterDal.DiscussList(item.PickUpId);
+                if (discussList.IsNullOrEmpty())
+                {
+                    letterDal.UpdatePickDelete(item.PickUpId);
+                }
+            }
+            
+            response.Content.IsExecuteSuccess = true;
             return response;
         }
     }
