@@ -61,6 +61,15 @@ namespace Future.Repository
                 return Db.Query<PickUpEntity>(sql).AsList();
             }
         }
+        
+        public List<DiscussEntity>DiscussList(Guid pickUpId)
+        {
+            var sql = string.Format("{0} Where PickUpId='{1}'", SELECT_DiscussEntity, pickUpId);
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<DiscussEntity>(sql).AsList();
+            }
+        }
 
         public PickUpEntity PickUp(Guid pickUpId)
         {
@@ -68,15 +77,6 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 return Db.QueryFirstOrDefault<PickUpEntity>(sql);
-            }
-        }
-
-        public List<DiscussEntity>DiscussList(Guid pickUpId)
-        {
-            var sql = string.Format("{0} Where PickUpId='{1}'", SELECT_DiscussEntity, pickUpId);
-            using (var Db = GetDbConnection())
-            {
-                return Db.Query<DiscussEntity>(sql).AsList();
             }
         }
 
@@ -91,7 +91,9 @@ namespace Future.Repository
 
         public MomentEntity GetMoment(long uId,int pickUpCount)
         {
-            var sql = @"SELECT moment.MomentId
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT moment.MomentId
                               ,moment.UId
                               ,moment.TextContent
                               ,moment.ImgContent
@@ -103,10 +105,12 @@ namespace Future.Repository
                           FROM dbo.letter_Moment moment
                           Left join dbo.letter_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
-                          Where pick.MomentId is Null and moment.ReplyCount<=@PickUpCount and moment.IsReport=0 and moment.IsDelete=0
+                          Where moment.UId!=@UId  
+                            and pick.MomentId is Null 
+                            and moment.ReplyCount<=@PickUpCount 
+                            and moment.IsReport=0 
+                            and moment.IsDelete=0
                           Order by moment.CreateTime desc";
-            using (var Db = GetDbConnection())
-            {
                 return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount });
             }
         }
@@ -135,7 +139,6 @@ namespace Future.Repository
             }
         }
         
-
         public bool UpdatePickUpReport(Guid momentId)
         {
             using (var Db = GetDbConnection())
