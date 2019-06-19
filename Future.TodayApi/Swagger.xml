@@ -40,7 +40,7 @@
             瓶子互动
             </summary>
         </member>
-        <member name="M:Future.TodayApi.Controllers.LetterController.DiscussDetailList">
+        <member name="M:Future.TodayApi.Controllers.LetterController.DiscussDetail">
             <summary>
             瓶子互动详情列表
             </summary>
@@ -88,6 +88,11 @@
         <member name="M:Future.TodayApi.Controllers.LetterController.ReportBottle">
             <summary>
             举报捡到的瓶子
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.ClearAllBottle">
+            <summary>
+            清空所有捡到的未回复瓶子
             </summary>
         </member>
         <member name="T:Future.TodayApi.Controllers.MainController">

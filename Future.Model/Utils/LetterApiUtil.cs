@@ -65,7 +65,7 @@ namespace Future.Model.Utils
     #endregion
 
     #region DiscussList（动态评论）
-    public class DiscussDetailListRequest
+    public class DiscussDetailRequest
     {
         /// <summary>
         /// 用户Id
@@ -74,8 +74,43 @@ namespace Future.Model.Utils
         
     }
 
-    public class DiscussDetailListResponse
+    public class DiscussDetailResponse
     {
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 动态发布用户Id
+        /// </summary>
+        public long MomentUId { get; set; }
+
+        /// <summary>
+        /// 头像路径
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+
+        /// <summary>
+        /// 图片内容
+        /// </summary>
+        public string ImgContent { get; set; }
+
+        /// <summary>
+        /// 创建时间（动态创建时间，而非捡起时间）
+        /// </summary>
+        public string CreateTime { get; set; }
+
         /// <summary>
         /// 互动列表
         /// </summary>
@@ -84,11 +119,6 @@ namespace Future.Model.Utils
 
     public class DiscussDetailType
     {
-        /// <summary>
-        /// 动态Id
-        /// </summary>
-        public Guid PickUpId { get; set; }
-        
         /// <summary>
         /// 参与评论的用户
         /// </summary>
@@ -108,7 +138,7 @@ namespace Future.Model.Utils
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
-
+        
         /// <summary>
         /// 最近一次交谈时间
         /// </summary>

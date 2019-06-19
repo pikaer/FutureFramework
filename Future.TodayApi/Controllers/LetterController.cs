@@ -104,10 +104,10 @@ namespace Future.TodayApi.Controllers
         /// 瓶子互动详情列表
         /// </summary>
         [HttpPost]
-        public JsonResult DiscussDetailList()
+        public JsonResult DiscussDetail()
         {
-            RequestContext<DiscussDetailListRequest> request = null;
-            ResponseContext<DiscussDetailListResponse> response = null;
+            RequestContext<DiscussDetailRequest> request = null;
+            ResponseContext<DiscussDetailResponse> response = null;
             try
             {
                 string json = GetInputString();
@@ -115,7 +115,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
                 }
-                request = json.JsonToObject<RequestContext<DiscussDetailListRequest>>();
+                request = json.JsonToObject<RequestContext<DiscussDetailRequest>>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
@@ -128,7 +128,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
-                response = api.DiscussDetailList(request);
+                response = api.DiscussDetail(request);
                 return new JsonResult(response);
             }
             catch (Exception ex)

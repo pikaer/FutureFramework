@@ -57,14 +57,36 @@ namespace Future.Service
             return response;
         }
         
-        public ResponseContext<DiscussDetailListResponse> DiscussDetailList(RequestContext<DiscussDetailListRequest> request)
+        public ResponseContext<DiscussDetailResponse> DiscussDetail(RequestContext<DiscussDetailRequest> request)
         {
-            var response = new ResponseContext<DiscussDetailListResponse>()
+            var response = new ResponseContext<DiscussDetailResponse>();
+
+            var pickUp= letterDal.PickUp(request.Content.PickUpId);
+            if(pickUp==null)
             {
-                Content = new DiscussDetailListResponse()
-                {
-                    DiscussDetailList=new List<DiscussDetailType>()
-                }
+                return response;
+            }
+            var moment= letterDal.GetMoment(pickUp.MomentId);
+            if (moment == null)
+            {
+                return response;
+            }
+            var user= letterDal.LetterUser(moment.UId);
+            if (user == null)
+            {
+                return response;
+            }
+
+            response.Content = new DiscussDetailResponse()
+            {
+                MomentId = moment.MomentId,
+                MomentUId= moment.UId,
+                HeadImgPath= user.HeadPhotoPath.GetImgPath(),
+                NickName= user.NickName.Trim(),
+                TextContent= moment.TextContent.Trim(),
+                ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
+                CreateTime= moment.CreateTime.GetDateDesc(),
+                DiscussDetailList=new List<DiscussDetailType>()
             };
 
             var discussList = letterDal.DiscussList(request.Content.PickUpId);
@@ -79,7 +101,6 @@ namespace Future.Service
                     }
                     var dto = new DiscussDetailType()
                     {
-                        PickUpId = item.PickUpId,
                         PickUpUId=item.UId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
@@ -105,7 +126,9 @@ namespace Future.Service
                 DiscussId = Guid.NewGuid(),
                 PickUpId = request.Content.PickUpId,
                 UId = request.Content.UId,
-                DiscussContent = request.Content.TextContent
+                DiscussContent = request.Content.TextContent,
+                CreateTime=DateTime.Now,
+                UpdateTime=DateTime.Now
             };
             response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
             return response;
@@ -154,7 +177,7 @@ namespace Future.Service
                         NickName = pickUpUser.NickName,
                         TextContent = moment.TextContent,
                         ImgContent = moment.ImgContent.GetImgPath(),
-                        CreateTime = item.CreateTime.GetDateDesc()
+                        CreateTime = moment.CreateTime.GetDateDesc()
                     };
 
                     response.Content.PickUpList.Add(dto);
