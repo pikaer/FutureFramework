@@ -185,15 +185,15 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdateAvatarUrl(string avatarUrl)
+        public bool UpdateAvatarUrl(string avatarUrl,long uId)
         {
             using (var Db = GetDbConnection())
             {
                 string sql = @"UPDATE dbo.letter_LetterUser
                                SET HeadPhotoPath =@HeadPhotoPath
                                   ,UpdateTime = @UpdateTime
-                               WHERE MomentId=@MomentId";
-                return Db.Execute(sql, new { UpdateTime = DateTime.Now, HeadPhotoPath = avatarUrl }) > 0;
+                               WHERE UId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, HeadPhotoPath = avatarUrl, UId= uId }) > 0;
             }
         }
 

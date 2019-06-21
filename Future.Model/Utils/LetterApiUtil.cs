@@ -40,7 +40,7 @@ namespace Future.Model.Utils
         /// <summary>
         /// 参与评论的用户
         /// </summary>
-        public long PickUpUId { get; set; }
+        public long PartnerUId { get; set; }
 
         /// <summary>
         /// 头像路径

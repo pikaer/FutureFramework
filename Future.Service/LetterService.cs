@@ -29,7 +29,8 @@ namespace Future.Service
             {
                 foreach(var item in pickUpList)
                 {
-                    var pickUpUser= letterDal.LetterUser(item.PickUpUId);
+                    var partnerUId = item.PickUpUId == request.Content.UId ? item.MomentUId : item.PickUpUId;
+                    var pickUpUser= letterDal.LetterUser(partnerUId);
                     if (pickUpUser == null)
                     {
                         continue;
@@ -44,7 +45,7 @@ namespace Future.Service
                     {
                         PickUpId = item.PickUpId,
                         MomentUId = item.MomentUId,
-                        PickUpUId = item.PickUpUId,
+                        PartnerUId = partnerUId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         TextContent = lastDiscuss.DiscussContent,
@@ -294,7 +295,7 @@ namespace Future.Service
             {
                 if (!string.IsNullOrEmpty(request.Content.AvatarUrl))
                 {
-                    letterDal.UpdateAvatarUrl(request.Content.AvatarUrl);
+                    letterDal.UpdateAvatarUrl(request.Content.AvatarUrl, userInfoEntity.UId);
                 }
                 
                 response.Content.UId = userInfoEntity.UId;
