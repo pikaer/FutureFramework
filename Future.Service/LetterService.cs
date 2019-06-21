@@ -279,7 +279,7 @@ namespace Future.Service
                     Country= request.Content.Country,
                     Province = request.Content.Province,
                     City = request.Content.City,
-                    HeadPhotoPath = "pikaer.jpg",
+                    HeadPhotoPath = request.Content.AvatarUrl,
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
@@ -292,6 +292,11 @@ namespace Future.Service
             }
             else
             {
+                if (!string.IsNullOrEmpty(request.Content.AvatarUrl))
+                {
+                    letterDal.UpdateAvatarUrl(request.Content.AvatarUrl);
+                }
+                
                 response.Content.UId = userInfoEntity.UId;
                 response.Content.IsExecuteSuccess = true;
             }

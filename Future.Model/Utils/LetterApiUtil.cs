@@ -325,6 +325,11 @@ namespace Future.Model.Utils
         /// 用户所在国家
         /// </summary>
         public string Country { get; set; }
+
+        /// <summary>
+        /// 微信头像地址
+        /// </summary>
+        public string AvatarUrl { get; set; }
     }
 
     public class SetUserInfoResponse

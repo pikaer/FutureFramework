@@ -17,6 +17,11 @@ namespace Future.Utility
                 return rtn;
             }
 
+            if (shortPath.Contains("https://")|| shortPath.Contains("http://"))
+            {
+                return shortPath;
+            }
+
             //默认前缀
             string defaultPath = JsonSettingHelper.AppSettings["GetImgPath"];
 
