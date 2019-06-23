@@ -58,6 +58,11 @@ namespace Future.Model.Utils
         public string TextContent { get; set; }
 
         /// <summary>
+        ///用于排序的时间
+        /// </summary>
+        public DateTime SortChatTime { get; set; }
+
+        /// <summary>
         /// 最近一次交谈时间
         /// </summary>
         public string RecentChatTime { get; set; }

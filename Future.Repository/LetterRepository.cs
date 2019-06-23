@@ -53,7 +53,7 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpEntity> PickUpList(long uId)
+        public List<PickUpEntity> PickUpListPickUpUId(long uId)
         {
             var sql = string.Format("{0} Where PickUpUId={1}", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
@@ -61,7 +61,16 @@ namespace Future.Repository
                 return Db.Query<PickUpEntity>(sql).AsList();
             }
         }
-        
+
+        public List<PickUpEntity> PickUpListByMomentUId(long uId)
+        {
+            var sql = string.Format("{0} Where MomentUId={1}", SELECT_PickUpEntity, uId);
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<PickUpEntity>(sql).AsList();
+            }
+        }
+
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {
             var sql = string.Format("{0} Where PickUpId='{1}'", SELECT_DiscussEntity, pickUpId);

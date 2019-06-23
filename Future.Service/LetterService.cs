@@ -24,7 +24,19 @@ namespace Future.Service
                 }
             };
 
-            var pickUpList = letterDal.PickUpList(request.Content.UId);
+            var pickUpList = new List<PickUpEntity>();
+            //主动捡起的瓶子
+            var myPickUpList = letterDal.PickUpListPickUpUId(request.Content.UId);
+            if (myPickUpList.NotEmpty())
+            {
+                pickUpList.AddRange(myPickUpList);
+            }
+            var partnerPickUpList= letterDal.PickUpListByMomentUId(request.Content.UId);
+            if (partnerPickUpList.NotEmpty())
+            {
+                pickUpList.AddRange(partnerPickUpList);
+            }
+
             if (pickUpList.NotEmpty())
             {
                 foreach(var item in pickUpList)
@@ -49,11 +61,13 @@ namespace Future.Service
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         TextContent = lastDiscuss.DiscussContent,
-                        RecentChatTime = item.UpdateTime.Value.GetDateDesc()
+                        SortChatTime= lastDiscuss.CreateTime,
+                        RecentChatTime = lastDiscuss.CreateTime.GetDateDesc()
                     };
 
                     response.Content.DiscussList.Add(dto);
                 }
+                response.Content.DiscussList = response.Content.DiscussList.OrderByDescending(a => a.SortChatTime).ToList();
             }
             return response;
         }
