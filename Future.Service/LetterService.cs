@@ -64,7 +64,7 @@ namespace Future.Service
                         PartnerUId = partnerUId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
-                        TextContent = lastDiscuss.DiscussContent,
+                        TextContent = TextCut(lastDiscuss.DiscussContent),
                         SortChatTime= lastDiscuss.CreateTime,
                         UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
                         RecentChatTime = lastDiscuss.CreateTime.GetDateDesc()
@@ -446,6 +446,26 @@ namespace Future.Service
             else
             {
                 return "99+";
+            }
+        }
+
+        /// <summary>
+        /// 文本截取处理
+        /// </summary>
+        private string TextCut(string text)
+        {
+            if (string.IsNullOrEmpty(text)|| string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
+            else if (text.Length < 15)
+            {
+                return text;
+            }
+            else
+            {
+                string result = text.Substring(0, 13);
+                return result + "...";
             }
         }
         #endregion
