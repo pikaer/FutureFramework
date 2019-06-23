@@ -587,6 +587,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 清空所有捡到的未回复瓶子
+        /// </summary>
+        [HttpPost]
+        public JsonResult DeleteAllBottle()
+        {
+            RequestContext<DeleteAllBottleRequest> request = null;
+            ResponseContext<DeleteAllBottleResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<DeleteAllBottleRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null||request.Content.UId<=0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.DeleteAllBottle(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteAllBottle", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "DeleteAllBottle", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 清除未读数量
         /// </summary>
         [HttpPost]

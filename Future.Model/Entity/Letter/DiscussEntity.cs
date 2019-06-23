@@ -22,7 +22,7 @@ namespace Future.Model.Entity.Letter
         public string DiscussContent { get; set; }
 
         /// <summary>
-        /// 是否已读
+        /// 对方是否已读
         /// </summary>
         public bool HasRead { get; set; }
     }

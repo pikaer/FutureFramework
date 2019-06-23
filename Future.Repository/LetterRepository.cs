@@ -13,7 +13,7 @@ namespace Future.Repository
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
-        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
+        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsUserDelete,IsPartnerDelete,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
 
         protected override DbEnum GetDbEnum()
@@ -43,7 +43,7 @@ namespace Future.Repository
             var sql = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
                          FROM dbo.letter_PickUp pick 
                          Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
-                         Where PickUpUId=@UId and IsDelete=0 and discuss.PickUpId is Null
+                         Where PickUpUId=@UId and discuss.PickUpId is Null
                          Order by CreateTime desc 
                          OFFSET @OFFSETCount ROWS 
                          FETCH NEXT @FETCHCount ROWS ONLY";
@@ -55,7 +55,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListPickUpUId(long uId)
         {
-            var sql = string.Format("{0} Where PickUpUId={1} and IsDelete=0 ", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where PickUpUId={1} and IsPartnerDelete=0 ", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
@@ -64,7 +64,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListByMomentUId(long uId)
         {
-            var sql = string.Format("{0} Where MomentUId={1}", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where MomentUId={1} and IsUserDelete=0", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
@@ -158,15 +158,21 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdatePickDelete(Guid pickUpId)
+        public bool UpdatePickDelete(Guid pickUpId,int isUserDelete, int isPartnerDelete)
         {
             using (var Db = GetDbConnection())
             {
                 string sql = @"UPDATE dbo.letter_PickUp
-                               SET IsDelete =1
+                               SET IsUserDelete =@IsUserDelete,
+                                   IsPartnerDelete=@IsPartnerDelete,
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
-                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
+                return Db.Execute(sql, new {
+                                              UpdateTime = DateTime.Now,
+                                              PickUpId = pickUpId,
+                                              IsUserDelete= isUserDelete,
+                                              IsPartnerDelete= isPartnerDelete
+                                           }) > 0;
             }
         }
         
@@ -239,6 +245,37 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, UId = uId }) > 0;
             }
         }
+
+        /// <summary>
+        /// 删除所有我主动捡起的瓶子
+        /// </summary>
+        public bool DeleteAllPickBottle(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsPartnerDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpUId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uId}) > 0;
+            }
+        }
+
+        /// <summary>
+        /// 删除所有我扔出去的被别人捡起的瓶子
+        /// </summary>
+        public bool DeleteAllPublishBottle(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsUserDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE MomentUId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uId }) > 0;
+            }
+        }
+
 
         public bool InsertMoment(MomentEntity momentEntity)
         {

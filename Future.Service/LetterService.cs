@@ -72,7 +72,7 @@ namespace Future.Service
 
                     response.Content.DiscussList.Add(dto);
                 }
-                response.Content.DiscussList = response.Content.DiscussList.OrderByDescending(a => a.SortChatTime).ToList();
+                response.Content.DiscussList = response.Content.DiscussList.OrderBy(a => a.SortChatTime).ToList();
                 response.Content.CurrentTotalUnReadCount= UnReadTotalCount(request.Content.UId);
             }
             return response;
@@ -342,7 +342,21 @@ namespace Future.Service
             {
                 Content = new DeleteBottleResponse()
             };
-            response.Content.IsExecuteSuccess = letterDal.UpdatePickDelete(request.Content.PickUpId); ;
+
+            var pickUp= letterDal.PickUp(request.Content.PickUpId);
+            if (pickUp == null)
+            {
+                return response;
+            }
+            if(pickUp.MomentUId== request.Content.UId)
+            {
+                letterDal.UpdatePickDelete(pickUp.PickUpId,1,0);
+            }
+            else
+            {
+                letterDal.UpdatePickDelete(pickUp.PickUpId,0,1);
+            }
+            response.Content.IsExecuteSuccess = true;
             response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
             return response;
         }
@@ -413,6 +427,44 @@ namespace Future.Service
             return response;
         }
 
+        public ResponseContext<DeleteAllBottleResponse> DeleteAllBottle(RequestContext<DeleteAllBottleRequest> request)
+        {
+            var response = new ResponseContext<DeleteAllBottleResponse>()
+            {
+                Content = new DeleteAllBottleResponse()
+            };
+
+            var myPickUpList= letterDal.PickUpListPickUpUId(request.Content.UId);
+            if (myPickUpList.NotEmpty())
+            {
+                foreach(var item in myPickUpList)
+                {
+                    //当瓶子发布者删除的时候，直接清空评论数据
+                    if (item.IsUserDelete)
+                    {
+                        letterDal.DeleteDiscuss(item.PickUpId);
+                    }
+                }
+            }
+
+            var partnerPickUpList = letterDal.PickUpListByMomentUId(request.Content.UId);
+            if (partnerPickUpList.NotEmpty())
+            {
+                foreach (var item in partnerPickUpList)
+                {
+                    if (item.IsPartnerDelete)
+                    {
+                        letterDal.DeleteDiscuss(item.PickUpId);
+                    }
+                }
+            }
+
+            letterDal.DeleteAllPickBottle(request.Content.UId);
+            letterDal.DeleteAllPublishBottle(request.Content.UId);
+            response.Content.IsExecuteSuccess = true;
+            return response;
+        }
+
         #endregion
 
         #region private Method
@@ -464,10 +516,11 @@ namespace Future.Service
             }
             else
             {
-                string result = text.Substring(0, 13);
+                string result = text.Substring(0, 15);
                 return result + "...";
             }
         }
+        
         #endregion
     }
 }

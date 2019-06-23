@@ -505,6 +505,34 @@ namespace Future.Model.Utils
     }
     #endregion
 
+    #region DeleteAllBottle(删除瓶子列表）
+    public class DeleteAllBottleRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+    }
+
+    public class DeleteAllBottleResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+
+        /// <summary>
+        /// 当前未读总条数
+        /// </summary>
+        public string CurrentTotalUnReadCount { get; set; }
+    }
+    #endregion
+
     #region UnReadTotalCount(未读消息总数量）
     public class UnReadTotalCountRequest
     {

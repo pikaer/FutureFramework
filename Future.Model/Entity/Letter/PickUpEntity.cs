@@ -28,8 +28,13 @@ namespace Future.Model.Entity.Letter
         public long PickUpUId { get; set; }
 
         /// <summary>
-        /// 是否逻辑删除
+        /// 动态发布者是否已删除
         /// </summary>
-        public bool IsDelete { get; set; }
+        public bool IsUserDelete { get; set; }
+
+        /// <summary>
+        /// 瓶子捡起者是否删除
+        /// </summary>
+        public bool IsPartnerDelete { get; set; }
     }
 }
