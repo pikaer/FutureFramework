@@ -55,7 +55,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListPickUpUId(long uId)
         {
-            var sql = string.Format("{0} Where PickUpUId={1}", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where PickUpUId={1} and IsDelete=0 ", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
@@ -64,7 +64,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListByMomentUId(long uId)
         {
-            var sql = string.Format("{0} Where MomentUId={1}", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where MomentUId={1} and IsDelete=0 ", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();

@@ -341,7 +341,6 @@ namespace Future.Service
             {
                 Content = new DeleteBottleResponse()
             };
-            letterDal.DeleteDiscuss(request.Content.PickUpId);
             response.Content.IsExecuteSuccess = letterDal.UpdatePickDelete(request.Content.PickUpId); ;
             response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
             return response;
