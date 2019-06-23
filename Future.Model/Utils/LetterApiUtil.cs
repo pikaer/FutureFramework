@@ -23,6 +23,11 @@ namespace Future.Model.Utils
         /// 互动列表
         /// </summary>
         public List<DiscussType> DiscussList { get; set; }
+
+        /// <summary>
+        /// 当前未读总条数
+        /// </summary>
+        public string CurrentTotalUnReadCount { get; set; }
     }
 
     public class DiscussType

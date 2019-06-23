@@ -95,6 +95,16 @@
             清空所有捡到的未回复瓶子
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.ClearUnReadCount">
+            <summary>
+            清除未读数量
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.UnReadTotalCount">
+            <summary>
+            未读消息总数量
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
             <summary>
             主接口集合

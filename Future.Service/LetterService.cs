@@ -73,6 +73,7 @@ namespace Future.Service
                     response.Content.DiscussList.Add(dto);
                 }
                 response.Content.DiscussList = response.Content.DiscussList.OrderByDescending(a => a.SortChatTime).ToList();
+                response.Content.CurrentTotalUnReadCount= UnReadTotalCount(request.Content.UId);
             }
             return response;
         }

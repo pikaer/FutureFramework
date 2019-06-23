@@ -64,7 +64,7 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListByMomentUId(long uId)
         {
-            var sql = string.Format("{0} Where MomentUId={1} and IsDelete=0 ", SELECT_PickUpEntity, uId);
+            var sql = string.Format("{0} Where MomentUId={1}", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql).AsList();
@@ -141,7 +141,7 @@ namespace Future.Repository
                                From dbo.letter_PickUp pic
                                Inner Join dbo.letter_Discuss dis
                                On pic.PickUpId=dis.PickUpId
-                               Where dis.UId!=UId and HasRead=0";
+                               Where dis.UId!=@UId and HasRead=0";
                 return Db.QueryFirstOrDefault<int>(sql, new {UId = uId });
             }
         }
