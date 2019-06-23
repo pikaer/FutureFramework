@@ -367,7 +367,7 @@ namespace Future.Service
             {
                 Content = new ClearAllBottleResponse()
             };
-            var pickUpList = letterDal.PickUpList(request.Content.UId);
+            var pickUpList = letterDal.PickUpListPickUpUId(request.Content.UId);
             foreach(var item in pickUpList)
             {
                 //清空未回复过的所有瓶子
