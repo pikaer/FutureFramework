@@ -61,7 +61,7 @@ namespace Future.TodayApi
             app.UseSwaggerUI(action =>
             {
                 action.ShowExtensions();
-                action.SwaggerEndpoint("/today/swagger/v1/swagger.json", "V1 Docs");
+                action.SwaggerEndpoint("/todayApi/swagger/v1/swagger.json", "V1 Docs");
                 action.RoutePrefix = string.Empty; ;
             });
         }

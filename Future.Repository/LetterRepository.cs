@@ -7,7 +7,7 @@ namespace Future.Repository
 {
     public class LetterRepository : BaseRepository
     {
-        private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
+        private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
 
         private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Gender,NickName,BirthDate,Province,City,Country,Mobile,WeChatNo,HeadPhotoPath,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
@@ -124,6 +124,28 @@ namespace Future.Repository
             }
         }
 
+        public int UnReadCount(Guid pickUpId, long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"SELECT Count(0) FROM dbo.letter_Discuss  Where PickUpId=@PickUpId and UId!=@UId and HasRead=0";
+                return Db.QueryFirstOrDefault<int>(sql, new { PickUpId = pickUpId, UId = uId });
+            }
+        }
+
+        public int UnReadTotalCount(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"Select Count(0) 
+                               From dbo.letter_PickUp pic
+                               Inner Join dbo.Discuss dis
+                               On pic.PickUpId=dis.PickUpId
+                               Where dis.UId!=UId and HasRead=0";
+                return Db.QueryFirstOrDefault<int>(sql, new {UId = uId });
+            }
+        }
+
         public bool UpdatePickCount(Guid momentId)
         {
             using (var Db = GetDbConnection())
@@ -203,6 +225,18 @@ namespace Future.Repository
                                   ,UpdateTime = @UpdateTime
                                WHERE UId=@UId";
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, HeadPhotoPath = avatarUrl, UId= uId }) > 0;
+            }
+        }
+
+        public bool UpdateHasRead(Guid pickUpId, long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Discuss
+                               SET HasRead =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId and UId!=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, UId = uId }) > 0;
             }
         }
 

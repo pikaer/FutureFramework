@@ -12,6 +12,8 @@ namespace Future.Service
 {
     public class LetterService
     {
+        #region public Method
+
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
         public ResponseContext<DiscussListResponse> DiscussList(RequestContext<DiscussListRequest> request)
@@ -31,6 +33,8 @@ namespace Future.Service
             {
                 pickUpList.AddRange(myPickUpList);
             }
+
+            //别人捡起我扔出去的瓶子
             var partnerPickUpList= letterDal.PickUpListByMomentUId(request.Content.UId);
             if (partnerPickUpList.NotEmpty())
             {
@@ -62,6 +66,7 @@ namespace Future.Service
                         NickName = pickUpUser.NickName,
                         TextContent = lastDiscuss.DiscussContent,
                         SortChatTime= lastDiscuss.CreateTime,
+                        UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
                         RecentChatTime = lastDiscuss.CreateTime.GetDateDesc()
                     };
 
@@ -338,6 +343,7 @@ namespace Future.Service
             };
             letterDal.DeleteDiscuss(request.Content.PickUpId);
             response.Content.IsExecuteSuccess = letterDal.UpdatePickDelete(request.Content.PickUpId); ;
+            response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
             return response;
         }
 
@@ -381,5 +387,67 @@ namespace Future.Service
             response.Content.IsExecuteSuccess = true;
             return response;
         }
+
+        public ResponseContext<ClearUnReadCountResponse> ClearUnReadCount(RequestContext<ClearUnReadCountRequest> request)
+        {
+            var response = new ResponseContext<ClearUnReadCountResponse>()
+            {
+                Content = new ClearUnReadCountResponse()
+            };
+
+            letterDal.UpdateHasRead(request.Content.PickUpId,request.Content.UId);
+            response.Content.IsExecuteSuccess = true;
+            response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
+            return response;
+        }
+
+        public ResponseContext<UnReadTotalCountResponse> UnReadTotalCount(RequestContext<UnReadTotalCountRequest> request)
+        {
+            var response = new ResponseContext<UnReadTotalCountResponse>()
+            {
+                Content = new UnReadTotalCountResponse()
+            };
+            
+            response.Content.UnReadCount = UnReadTotalCount(request.Content.UId);
+
+            return response;
+        }
+
+        #endregion
+
+        #region private Method
+
+        /// <summary>
+        /// 获取某条动态未读数量
+        /// </summary>
+        private string UnReadCount(Guid pickUpId,long uId)
+        {
+            return UnRead(letterDal.UnReadCount(pickUpId, uId));
+        }
+
+        private string UnReadTotalCount(long uId)
+        {
+            return UnRead(letterDal.UnReadTotalCount(uId));
+        }
+
+        /// <summary>
+        /// 未读数量文本化
+        /// </summary>
+        private string UnRead(int count)
+        {
+            if (count == 0)
+            {
+                return string.Empty;
+            }
+            else if (count > 0 && count <= 99)
+            {
+                return count.ToString();
+            }
+            else
+            {
+                return "99+";
+            }
+        }
+        #endregion
     }
 }

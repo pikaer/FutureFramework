@@ -66,6 +66,11 @@ namespace Future.Model.Utils
         /// 最近一次交谈时间
         /// </summary>
         public string RecentChatTime { get; set; }
+
+        /// <summary>
+        /// 未读数量
+        /// </summary>
+        public string UnReadCount { get; set; }
     }
     #endregion
 
@@ -404,6 +409,11 @@ namespace Future.Model.Utils
     public class DeleteBottleRequest
     {
         /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
         /// 互动Id
         /// </summary>
         public Guid PickUpId { get; set; }
@@ -416,6 +426,11 @@ namespace Future.Model.Utils
         /// 处理结果
         /// </summary>
         public bool IsExecuteSuccess { get; set; }
+
+        /// <summary>
+        /// 当前未读总条数
+        /// </summary>
+        public string CurrentTotalUnReadCount { get; set; }
     }
     #endregion
 
@@ -454,6 +469,52 @@ namespace Future.Model.Utils
         /// 处理结果
         /// </summary>
         public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region ClearUnReadCount(清除未读数量）
+    public class ClearUnReadCountRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+    }
+
+    public class ClearUnReadCountResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+
+        /// <summary>
+        /// 当前未读总条数
+        /// </summary>
+        public string CurrentTotalUnReadCount { get; set; }
+    }
+    #endregion
+
+    #region UnReadTotalCount(未读消息总数量）
+    public class UnReadTotalCountRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class UnReadTotalCountResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public string UnReadCount { get; set; }
     }
     #endregion
 }

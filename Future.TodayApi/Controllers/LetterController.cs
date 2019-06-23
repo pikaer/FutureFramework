@@ -585,5 +585,87 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "ClearAllBottle", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 清除未读数量
+        /// </summary>
+        [HttpPost]
+        public JsonResult ClearUnReadCount()
+        {
+            RequestContext<ClearUnReadCountRequest> request = null;
+            ResponseContext<ClearUnReadCountResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<ClearUnReadCountRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null|| request.Content.UId<=0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.ClearUnReadCount(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ClearUnReadCount", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "ClearUnReadCount", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 未读消息总数量
+        /// </summary>
+        [HttpPost]
+        public JsonResult UnReadTotalCount()
+        {
+            RequestContext<UnReadTotalCountRequest> request = null;
+            ResponseContext<UnReadTotalCountResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<UnReadTotalCountRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.UnReadTotalCount(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UnReadTotalCount", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "UnReadTotalCount", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }

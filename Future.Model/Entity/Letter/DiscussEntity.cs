@@ -20,5 +20,10 @@ namespace Future.Model.Entity.Letter
         /// 评论内容
         /// </summary>
         public string DiscussContent { get; set; }
+
+        /// <summary>
+        /// 是否已读
+        /// </summary>
+        public bool HasRead { get; set; }
     }
 }
