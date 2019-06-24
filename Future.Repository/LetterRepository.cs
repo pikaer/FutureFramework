@@ -53,7 +53,7 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpEntity> PickUpListPickUpUId(long uId)
+        public List<PickUpEntity> PickUpListByPickUpUId(long uId)
         {
             var sql = string.Format("{0} Where PickUpUId={1} and IsPartnerDelete=0 ", SELECT_PickUpEntity, uId);
             using (var Db = GetDbConnection())

@@ -28,7 +28,7 @@ namespace Future.Service
 
             var pickUpList = new List<PickUpEntity>();
             //主动捡起的瓶子
-            var myPickUpList = letterDal.PickUpListPickUpUId(request.Content.UId);
+            var myPickUpList = letterDal.PickUpListByPickUpUId(request.Content.UId);
             if (myPickUpList.NotEmpty())
             {
                 pickUpList.AddRange(myPickUpList);
@@ -387,14 +387,14 @@ namespace Future.Service
             {
                 Content = new ClearAllBottleResponse()
             };
-            var pickUpList = letterDal.PickUpListPickUpUId(request.Content.UId);
+            var pickUpList = letterDal.PickUpListByPickUpUId(request.Content.UId);
             foreach(var item in pickUpList)
             {
                 //清空未回复过的所有瓶子
                 var discussList= letterDal.DiscussList(item.PickUpId);
                 if (discussList.IsNullOrEmpty())
                 {
-                    letterDal.UpdatePickDelete(item.PickUpId);
+                    letterDal.UpdatePickDelete(item.PickUpId,1,0);
                 }
             }
             
@@ -434,7 +434,7 @@ namespace Future.Service
                 Content = new DeleteAllBottleResponse()
             };
 
-            var myPickUpList= letterDal.PickUpListPickUpUId(request.Content.UId);
+            var myPickUpList= letterDal.PickUpListByPickUpUId(request.Content.UId);
             if (myPickUpList.NotEmpty())
             {
                 foreach(var item in myPickUpList)
