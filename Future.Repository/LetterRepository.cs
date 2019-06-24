@@ -139,7 +139,7 @@ namespace Future.Repository
 
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {
-            var sql = string.Format("{0} Where PickUpId='{1}'", SELECT_DiscussEntity, pickUpId);
+            var sql = string.Format("{0} Where PickUpId='{1}' Order by CreateTime", SELECT_DiscussEntity, pickUpId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<DiscussEntity>(sql).AsList();
@@ -231,7 +231,7 @@ namespace Future.Repository
                 string sql = @"UPDATE dbo.letter_PickUp
                                SET IsUserDelete =@IsUserDelete,
                                    IsPartnerDelete=@IsPartnerDelete,
-                                  ,UpdateTime = @UpdateTime
+                                   UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 return Db.Execute(sql, new {
                                               UpdateTime = DateTime.Now,

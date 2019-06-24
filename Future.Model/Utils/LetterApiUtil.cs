@@ -535,4 +535,33 @@ namespace Future.Model.Utils
         public string UnReadCount { get; set; }
     }
     #endregion
+
+
+    #region ClearAllUnReadCount(清除所有未读数量）
+    public class ClearAllUnReadCountRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+    }
+
+    public class ClearAllUnReadCountResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+
+        /// <summary>
+        /// 当前未读总条数
+        /// </summary>
+        public string CurrentTotalUnReadCount { get; set; }
+    }
+    #endregion
 }

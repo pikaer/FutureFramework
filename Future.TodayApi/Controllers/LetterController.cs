@@ -587,7 +587,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 清空所有捡到的未回复瓶子
+        /// 删除所有捡到的未回复瓶子
         /// </summary>
         [HttpPost]
         public JsonResult DeleteAllBottle()
@@ -665,6 +665,47 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "ClearUnReadCount", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 清除未读数量
+        /// </summary>
+        [HttpPost]
+        public JsonResult ClearAllUnReadCount()
+        {
+            RequestContext<ClearAllUnReadCountRequest> request = null;
+            ResponseContext<ClearAllUnReadCountResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<ClearAllUnReadCountRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.ClearAllUnReadCount(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ClearAllUnReadCount", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "ClearAllUnReadCount", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
 

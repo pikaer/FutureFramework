@@ -442,6 +442,15 @@ namespace Future.Service
             return response;
         }
 
+
+        public ResponseContext<ClearAllUnReadCountResponse> ClearAllUnReadCount(RequestContext<ClearAllUnReadCountRequest> request)
+        {
+            var response = new ResponseContext<DeleteAllBottleResponse>()
+            {
+                Content = new DeleteAllBottleResponse()
+            };
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region private Method
@@ -497,7 +506,9 @@ namespace Future.Service
                 return result + "...";
             }
         }
-        
+
+       
+
         #endregion
     }
 }
