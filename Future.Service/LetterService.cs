@@ -26,53 +26,29 @@ namespace Future.Service
                 }
             };
 
-            var pickUpList = new List<PickUpEntity>();
-            //主动捡起的瓶子
-            var myPickUpList = letterDal.PickUpListByPickUpUId(request.Content.UId);
-            if (myPickUpList.NotEmpty())
+            int pageSize = 20;
+            string pickUpPageSize = JsonSettingHelper.AppSettings["PickUpPageSize"];
+            if (!pickUpPageSize.IsNullOrEmpty())
             {
-                pickUpList.AddRange(myPickUpList);
+                pageSize = Convert.ToInt32(pickUpPageSize);
             }
-
-            //别人捡起我扔出去的瓶子
-            var partnerPickUpList= letterDal.PickUpListByMomentUId(request.Content.UId);
-            if (partnerPickUpList.NotEmpty())
-            {
-                pickUpList.AddRange(partnerPickUpList);
-            }
-
+            var pickUpList = letterDal.PickUpDTOs(request.Content.UId, request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
                 foreach(var item in pickUpList)
                 {
-                    var partnerUId = item.PickUpUId == request.Content.UId ? item.MomentUId : item.PickUpUId;
-                    var pickUpUser= letterDal.LetterUser(partnerUId);
-                    if (pickUpUser == null)
-                    {
-                        continue;
-                    }
-                    var discussList= letterDal.DiscussList(item.PickUpId);
-                    if (discussList.IsNullOrEmpty())
-                    {
-                        continue;
-                    }
-                    var lastDiscuss = discussList.OrderByDescending(a => a.CreateTime).First();
                     var dto = new DiscussType()
                     {
                         PickUpId = item.PickUpId,
-                        MomentUId = item.MomentUId,
-                        PartnerUId = partnerUId,
-                        HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
-                        NickName = pickUpUser.NickName,
-                        TextContent = TextCut(lastDiscuss.DiscussContent),
-                        SortChatTime= lastDiscuss.CreateTime,
+                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                        NickName = item.NickName,
+                        TextContent = TextCut(item.DiscussContent),
                         UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
-                        RecentChatTime = lastDiscuss.CreateTime.GetDateDesc()
+                        RecentChatTime = item.CreateTime.GetDateDesc()
                     };
 
                     response.Content.DiscussList.Add(dto);
                 }
-                response.Content.DiscussList = response.Content.DiscussList.OrderBy(a => a.SortChatTime).ToList();
                 response.Content.CurrentTotalUnReadCount= UnReadTotalCount(request.Content.UId);
             }
             return response;
@@ -170,10 +146,11 @@ namespace Future.Service
                 }
             };
 
-            int pageSize = 30;
-            if (!JsonSettingHelper.AppSettings["MomentPageSize"].IsNullOrEmpty())
+            int pageSize = 20;
+            string pickUpPageSize = JsonSettingHelper.AppSettings["MomentPageSize"];
+            if (!pickUpPageSize.IsNullOrEmpty())
             {
-                pageSize = Convert.ToInt32(JsonSettingHelper.AppSettings["MomentPageSize"]);
+                pageSize = Convert.ToInt32(pickUpPageSize);
             }
             var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())

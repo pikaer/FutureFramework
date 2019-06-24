@@ -38,16 +38,6 @@ namespace Future.Model.Utils
         public Guid PickUpId { get; set; }
 
         /// <summary>
-        /// 动态发布者Id
-        /// </summary>
-        public long MomentUId { get; set; }
-
-        /// <summary>
-        /// 参与评论的用户
-        /// </summary>
-        public long PartnerUId { get; set; }
-
-        /// <summary>
         /// 头像路径
         /// </summary>
         public string HeadImgPath { get; set; }
@@ -61,12 +51,7 @@ namespace Future.Model.Utils
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
-
-        /// <summary>
-        ///用于排序的时间
-        /// </summary>
-        public DateTime SortChatTime { get; set; }
-
+        
         /// <summary>
         /// 最近一次交谈时间
         /// </summary>

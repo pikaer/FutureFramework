@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Future.Model.DTO.Letter;
 using Future.Model.Entity.Letter;
 using System;
 using System.Collections.Generic;
@@ -55,19 +56,84 @@ namespace Future.Repository
 
         public List<PickUpEntity> PickUpListByPickUpUId(long uId)
         {
-            var sql = string.Format("{0} Where PickUpUId={1} and IsPartnerDelete=0 ", SELECT_PickUpEntity, uId);
+            var sql = @"SELECT pick.PickUpId
+                              ,pick.MomentId
+                              ,pick.MomentUId
+                              ,pick.PickUpUId
+                              ,pick.IsUserDelete
+                              ,pick.IsPartnerDelete
+                              ,pick.CreateTime
+                              ,pick.UpdateTime
+                          FROM dbo.letter_PickUp pick
+                          Inner join letter_Discuss dis on pick.PickUpId=dis.PickUpId
+                          Where PickUpUId=@UId and IsPartnerDelete=0";
             using (var Db = GetDbConnection())
             {
-                return Db.Query<PickUpEntity>(sql).AsList();
+                return Db.Query<PickUpEntity>(sql,new { UId = uId }).AsList();
             }
         }
 
         public List<PickUpEntity> PickUpListByMomentUId(long uId)
         {
-            var sql = string.Format("{0} Where MomentUId={1} and IsUserDelete=0", SELECT_PickUpEntity, uId);
+            var sql = @"SELECT pick.PickUpId
+                              ,pick.MomentId
+                              ,pick.MomentUId
+                              ,pick.PickUpUId
+                              ,pick.IsUserDelete
+                              ,pick.IsPartnerDelete
+                              ,pick.CreateTime
+                              ,pick.UpdateTime
+                          FROM dbo.letter_PickUp pick
+                          Inner join letter_Discuss dis on pick.PickUpId=dis.PickUpId
+                          Where MomentUId=@UId and IsUserDelete=0";
             using (var Db = GetDbConnection())
             {
-                return Db.Query<PickUpEntity>(sql).AsList();
+                return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
+            }
+        }
+
+        public List<PickUpDTO> PickUpDTOs(long uId, int pageIndex, int pageSize)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT *
+				            From    (SELECT pick.PickUpId,
+				          				 dis1Temp.CreateTime,
+                                           dis1Temp.DiscussContent,
+				          			     us.UId,
+				          				 us.NickName,
+				          			     us.HeadPhotoPath
+                                    FROM dbo.letter_PickUp pick
+                                    Inner join (Select row_number() over(partition by dis1.PickUpId order by dis1.CreateTime desc) as rownum,
+				          		                     dis1.PickUpId,
+				          							 dis1.CreateTime,
+				          		                     dis1.DiscussContent
+				          		              From letter_Discuss dis1) dis1Temp
+				          				on dis1Temp.PickUpId=pick.PickUpId and dis1Temp.rownum=1
+				          		  Inner join letter_LetterUser us on us.UId=pick.MomentUId
+                                    Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0
+                          
+				          		  Union
+                          
+				          		  SELECT pick.PickUpId,
+				          				 dis2Temp.CreateTime,
+                                           dis2Temp.DiscussContent,
+				          				 us.UId,
+				          			     us.NickName,
+				          			     us.HeadPhotoPath
+                                    FROM dbo.letter_PickUp pick
+                                    Inner join (Select row_number() over(partition by dis2.PickUpId order by dis2.CreateTime desc) as rownum,
+				          		                     dis2.PickUpId,
+				          							 dis2.CreateTime,
+				          		                     dis2.DiscussContent
+				          		              From letter_Discuss dis2) dis2Temp
+				          				on dis2Temp.PickUpId=pick.PickUpId and dis2Temp.rownum=1
+				          		  Inner join letter_LetterUser us on us.UId=pick.PickUpUId
+                                    Where pick.MomentUId=@UId and pick.IsUserDelete=0) temp
+				           Order by temp.CreateTime desc 
+                           OFFSET @OFFSETCount ROWS 
+                           FETCH NEXT @FETCHCount ROWS ONLY";
+                return Db.Query<PickUpDTO>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
             }
         }
 
