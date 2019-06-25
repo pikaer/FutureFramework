@@ -97,12 +97,17 @@
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.DeleteAllBottle">
             <summary>
-            清空所有捡到的未回复瓶子
+            删除所有捡到的未回复瓶子
             </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.ClearUnReadCount">
             <summary>
             清除未读数量
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.ClearAllUnReadCount">
+            <summary>
+            清除全部未读数量（全部标为已读）
             </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.UnReadTotalCount">

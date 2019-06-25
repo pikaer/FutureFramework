@@ -66,7 +66,7 @@ namespace Future.Repository
                               ,pick.UpdateTime
                           FROM dbo.letter_PickUp pick
                           Inner join letter_Discuss dis on pick.PickUpId=dis.PickUpId
-                          Where PickUpUId=@UId and IsPartnerDelete=0";
+                          Where PickUpUId=@UId";
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql,new { UId = uId }).AsList();
@@ -85,7 +85,7 @@ namespace Future.Repository
                               ,pick.UpdateTime
                           FROM dbo.letter_PickUp pick
                           Inner join letter_Discuss dis on pick.PickUpId=dis.PickUpId
-                          Where MomentUId=@UId and IsUserDelete=0";
+                          Where MomentUId=@UId";
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
@@ -206,8 +206,8 @@ namespace Future.Repository
                 string sql = @"Select Count(0) 
                                From dbo.letter_PickUp pic
                                Inner Join dbo.letter_Discuss dis
-                               On pic.PickUpId=dis.PickUpId
-                               Where dis.UId!=@UId and HasRead=0";
+                               On pic.PickUpId=dis.PickUpId 
+                               Where (pic.MomentUId=@UId or pic.PickUpUId=@UId)and dis.UId!=@UId and HasRead=0";
                 return Db.QueryFirstOrDefault<int>(sql, new {UId = uId });
             }
         }
