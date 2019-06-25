@@ -445,11 +445,23 @@ namespace Future.Service
 
         public ResponseContext<ClearAllUnReadCountResponse> ClearAllUnReadCount(RequestContext<ClearAllUnReadCountRequest> request)
         {
-            var response = new ResponseContext<DeleteAllBottleResponse>()
+            var response = new ResponseContext<ClearAllUnReadCountResponse>()
             {
-                Content = new DeleteAllBottleResponse()
+                Content = new ClearAllUnReadCountResponse()
             };
-            throw new NotImplementedException();
+            var myPickUpList = letterDal.PickUpListByPickUpUId(request.Content.UId);
+            foreach(var item in myPickUpList)
+            {
+                letterDal.UpdateDiscussHasRead(item.PickUpId, item.MomentUId);
+            }
+
+            var partnerPickUpList = letterDal.PickUpListByMomentUId(request.Content.UId);
+            foreach (var item in partnerPickUpList)
+            {
+                letterDal.UpdateDiscussHasRead(item.PickUpId, item.PickUpUId);
+            }
+            response.Content.IsExecuteSuccess = true;
+            return response;
         }
         #endregion
 

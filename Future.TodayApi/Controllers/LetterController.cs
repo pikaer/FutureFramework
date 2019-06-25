@@ -669,7 +669,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 清除未读数量
+        /// 清除全部未读数量（全部标为已读）
         /// </summary>
         [HttpPost]
         public JsonResult ClearAllUnReadCount()

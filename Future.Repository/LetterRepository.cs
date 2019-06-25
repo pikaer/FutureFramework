@@ -44,7 +44,7 @@ namespace Future.Repository
             var sql = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
                          FROM dbo.letter_PickUp pick 
                          Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
-                         Where PickUpUId=@UId and discuss.PickUpId is Null
+                         Where PickUpUId=@UId and discuss.PickUpId is Null and IsPartnerDelete=0
                          Order by CreateTime desc 
                          OFFSET @OFFSETCount ROWS 
                          FETCH NEXT @FETCHCount ROWS ONLY";
@@ -221,6 +221,18 @@ namespace Future.Repository
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
                 return Db.Execute(sql, new { UpdateTime =DateTime.Now, MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool UpdateDiscussHasRead(Guid pickUpId,long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Discuss
+                               SET HasRead =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId and UId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId , UId = uId }) > 0;
             }
         }
 
