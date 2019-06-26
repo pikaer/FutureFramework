@@ -6,7 +6,6 @@ using Future.Utility;
 using Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Future.Service
 {
@@ -16,6 +15,9 @@ namespace Future.Service
 
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
+        /// <summary>
+        /// 捡到的回复过的瓶子列表
+        /// </summary>
         public ResponseContext<DiscussListResponse> DiscussList(RequestContext<DiscussListRequest> request)
         {
             var response = new ResponseContext<DiscussListResponse>()
@@ -54,6 +56,9 @@ namespace Future.Service
             return response;
         }
         
+        /// <summary>
+        /// 某个瓶子评论详情
+        /// </summary>
         public ResponseContext<DiscussDetailResponse> DiscussDetail(RequestContext<DiscussDetailRequest> request)
         {
             var response = new ResponseContext<DiscussDetailResponse>();
@@ -111,6 +116,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 评论某个瓶子
+        /// </summary>
         public ResponseContext<DiscussResponse> Discuss(RequestContext<DiscussRequest> request)
         {
             var response = new ResponseContext<DiscussResponse>()
@@ -134,8 +142,6 @@ namespace Future.Service
         /// <summary>
         /// 捡起但没有回复的漂流瓶列表
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         public ResponseContext<PickUpListResponse> PickUpList(RequestContext<PickUpListRequest> request)
         {
             var response = new ResponseContext<PickUpListResponse>()
@@ -185,6 +191,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 捡一个瓶子
+        /// </summary>
         public ResponseContext<PickUpResponse> PickUp(RequestContext<PickUpRequest> request)
         {
             var response = new ResponseContext<PickUpResponse>()
@@ -238,6 +247,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 扔一个瓶子
+        /// </summary>
         public ResponseContext<PublishMomentResponse> PublishMoment(RequestContext<PublishMomentRequest> request)
         {
             var response = new ResponseContext<PublishMomentResponse>()
@@ -259,6 +271,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 更新用户信息并返回UId
+        /// </summary>
         public ResponseContext<SetUserInfoResponse> SetUserInfo(RequestContext<SetUserInfoRequest> request)
         {
             var response = new ResponseContext<SetUserInfoResponse>()
@@ -301,6 +316,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 获取用户小程序端唯一标示
+        /// </summary>
         public ResponseContext<GetOpenIdResponse> GetOpenId(RequestContext<GetOpenIdRequest> request)
         {
             var response = new ResponseContext<GetOpenIdResponse>();
@@ -313,6 +331,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 删除单个瓶子
+        /// </summary>
         public ResponseContext<DeleteBottleResponse> DeleteBottle(RequestContext<DeleteBottleRequest> request)
         {
             var response = new ResponseContext<DeleteBottleResponse>()
@@ -338,6 +359,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 举报某个瓶子
+        /// </summary>
         public ResponseContext<ReportBottleResponse> ReportBottle(RequestContext<ReportBottleRequest> request)
         {
             var response = new ResponseContext<ReportBottleResponse>()
@@ -358,6 +382,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 清空未回复的所有瓶子
+        /// </summary>
         public ResponseContext<ClearAllBottleResponse> ClearAllBottle(RequestContext<ClearAllBottleRequest> request)
         {
             var response = new ResponseContext<ClearAllBottleResponse>()
@@ -379,6 +406,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 清空单个瓶子未读数量
+        /// </summary>
         public ResponseContext<ClearUnReadCountResponse> ClearUnReadCount(RequestContext<ClearUnReadCountRequest> request)
         {
             var response = new ResponseContext<ClearUnReadCountResponse>()
@@ -392,6 +422,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 未读总数量
+        /// </summary>
         public ResponseContext<UnReadTotalCountResponse> UnReadTotalCount(RequestContext<UnReadTotalCountRequest> request)
         {
             var response = new ResponseContext<UnReadTotalCountResponse>()
@@ -404,6 +437,9 @@ namespace Future.Service
             return response;
         }
 
+        /// <summary>
+        /// 删除回复过的所有瓶子
+        /// </summary>
         public ResponseContext<DeleteAllBottleResponse> DeleteAllBottle(RequestContext<DeleteAllBottleRequest> request)
         {
             var response = new ResponseContext<DeleteAllBottleResponse>()
@@ -421,6 +457,8 @@ namespace Future.Service
                     {
                         letterDal.DeleteDiscuss(item.PickUpId);
                     }
+
+                    letterDal.DeleteAllPickBottle(item.PickUpId);
                 }
             }
 
@@ -433,16 +471,19 @@ namespace Future.Service
                     {
                         letterDal.DeleteDiscuss(item.PickUpId);
                     }
+                    letterDal.DeleteAllPublishBottle(item.PickUpId);
                 }
             }
-
-            letterDal.DeleteAllPickBottle(request.Content.UId);
-            letterDal.DeleteAllPublishBottle(request.Content.UId);
+            
             response.Content.IsExecuteSuccess = true;
             return response;
         }
 
-
+        /// <summary>
+        /// 所有未读消息标为已读
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public ResponseContext<ClearAllUnReadCountResponse> ClearAllUnReadCount(RequestContext<ClearAllUnReadCountRequest> request)
         {
             var response = new ResponseContext<ClearAllUnReadCountResponse>()

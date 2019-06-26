@@ -327,30 +327,30 @@ namespace Future.Repository
         /// <summary>
         /// 删除所有我主动捡起的瓶子
         /// </summary>
-        public bool DeleteAllPickBottle(long uId)
+        public bool DeleteAllPickBottle(Guid pickUpId)
         {
             using (var Db = GetDbConnection())
             {
                 string sql = @"UPDATE dbo.letter_PickUp
                                SET IsPartnerDelete =1
                                   ,UpdateTime = @UpdateTime
-                               WHERE PickUpUId=@UId";
-                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uId}) > 0;
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
             }
         }
 
         /// <summary>
         /// 删除所有我扔出去的被别人捡起的瓶子
         /// </summary>
-        public bool DeleteAllPublishBottle(long uId)
+        public bool DeleteAllPublishBottle(Guid pickUpId)
         {
             using (var Db = GetDbConnection())
             {
                 string sql = @"UPDATE dbo.letter_PickUp
                                SET IsUserDelete =1
                                   ,UpdateTime = @UpdateTime
-                               WHERE MomentUId=@UId";
-                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uId }) > 0;
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
             }
         }
 
