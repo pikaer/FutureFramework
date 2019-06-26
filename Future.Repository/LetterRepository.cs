@@ -54,6 +54,25 @@ namespace Future.Repository
             }
         }
 
+        public List<PickUpEntity> PickUpListByPickUpUIdWithoutReply(long uId)
+        {
+            var sql = @"SELECT pick.PickUpId
+                              ,pick.MomentId
+                              ,pick.MomentUId
+                              ,pick.PickUpUId
+                              ,pick.IsUserDelete
+                              ,pick.IsPartnerDelete
+                              ,pick.CreateTime
+                              ,pick.UpdateTime
+                          FROM dbo.letter_PickUp pick
+                          Left join letter_Discuss dis on pick.PickUpId=dis.PickUpId
+                          Where PickUpUId=@UId and dis.PickUpId is Null";
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
+            }
+        }
+
         public List<PickUpEntity> PickUpListByPickUpUId(long uId)
         {
             var sql = @"SELECT pick.PickUpId
@@ -207,7 +226,7 @@ namespace Future.Repository
                                From dbo.letter_PickUp pic
                                Inner Join dbo.letter_Discuss dis
                                On pic.PickUpId=dis.PickUpId 
-                               Where (pic.MomentUId=@UId or pic.PickUpUId=@UId)and dis.UId!=@UId and HasRead=0";
+                               Where ((pic.MomentUId=@UId and pic.IsUserDelete=0) or (pic.PickUpUId=@UId and pic.IsPartnerDelete=0 ))and dis.UId!=@UId and HasRead=0";
                 return Db.QueryFirstOrDefault<int>(sql, new {UId = uId });
             }
         }
