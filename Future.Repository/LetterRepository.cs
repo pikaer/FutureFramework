@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Future.Model.DTO.Letter;
 using Future.Model.Entity.Letter;
+using Future.Model.Enum.Sys;
 using System;
 using System.Collections.Generic;
 
@@ -183,7 +184,7 @@ namespace Future.Repository
             }
         }
 
-        public MomentEntity GetMoment(long uId,int pickUpCount)
+        public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender)
         {
             using (var Db = GetDbConnection())
             {
@@ -199,13 +200,15 @@ namespace Future.Repository
                           FROM dbo.letter_Moment moment
                           Left join dbo.letter_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
+                          Inner join dbo.letter_LetterUser us On us.UId=moment.UId
                           Where moment.UId!=@UId  
                             and pick.MomentId is Null 
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
+                            and us.Gender!=@Gender
                           Order by moment.CreateTime desc";
-                return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount });
+                return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender });
             }
         }
 

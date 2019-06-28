@@ -203,13 +203,17 @@ namespace Future.Service
                     PickUpList = new List<PickUpType>()
                 }
             };
-
+            var user= letterDal.LetterUser(request.Content.UId);
+            if (user == null)
+            {
+                return response;
+            }
             int pickUpCount = 20;
             if (!string.IsNullOrEmpty(JsonSettingHelper.AppSettings["PickUpCount"]))
             {
                 pickUpCount= Convert.ToInt16(JsonSettingHelper.AppSettings["PickUpCount"]);
             }
-            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount);
+            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender);
             if (moment == null)
             {
                 return response;
