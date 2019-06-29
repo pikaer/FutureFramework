@@ -64,6 +64,52 @@ namespace Future.Model.Utils
     }
     #endregion
 
+    #region MyMomentList（我扔出去的没有被评论的动态）
+    public class MyMomentListRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 页码（分页传递数据）
+        /// </summary>
+        public int PageIndex { get; set; }
+    }
+
+    public class MyMomentListResponse
+    {
+        /// <summary>
+        /// 互动列表
+        /// </summary>
+        public List<MomentType> MomentList { get; set; }
+    }
+
+    public class MomentType
+    {
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+        
+        /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+        
+        /// <summary>
+        /// 图片内容
+        /// </summary>
+        public string ImgContent { get; set; }
+
+        /// <summary>
+        /// 最近一次交谈时间
+        /// </summary>
+        public string PublishTime { get; set; }
+    }
+    #endregion
+
     #region DiscussList（动态评论）
     public class DiscussDetailRequest
     {
@@ -535,7 +581,6 @@ namespace Future.Model.Utils
         public string UnReadCount { get; set; }
     }
     #endregion
-
 
     #region ClearAllUnReadCount(清除所有未读数量）
     public class ClearAllUnReadCountRequest

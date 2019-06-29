@@ -6,6 +6,7 @@ using Future.Utility;
 using Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Future.Service
 {
@@ -272,6 +273,39 @@ namespace Future.Service
             };
 
             response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
+            return response;
+        }
+
+        /// <summary>
+        /// 我扔出去的没有被评论的动态
+        /// </summary>
+        public ResponseContext<MyMomentListResponse> MyMomentList(RequestContext<MyMomentListRequest> request)
+        {
+            var response = new ResponseContext<MyMomentListResponse>()
+            {
+                Content = new MyMomentListResponse()
+                {
+                    MomentList = new List<MomentType>()
+                }
+            };
+
+            int pageSize = 20;
+            string pickUpPageSize = JsonSettingHelper.AppSettings["MyMomentListPageSize"];
+            if (!pickUpPageSize.IsNullOrEmpty())
+            {
+                pageSize = Convert.ToInt32(pickUpPageSize);
+            }
+            var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
+            if (myMomentList.NotEmpty())
+            {
+                response.Content.MomentList = myMomentList.Select(a => new MomentType()
+                {
+                    MomentId=a.MomentId,
+                    TextContent=a.TextContent.Trim(),
+                    ImgContent=a.ImgContent.GetImgPath(),
+                    PublishTime=a.CreateTime.GetDateDesc()
+                }).ToList();
+            }
             return response;
         }
 

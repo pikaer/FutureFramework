@@ -55,6 +55,11 @@
             首页瓶子捡起列表(捡起但没有回复的漂流瓶列表)
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.MyMomentList">
+            <summary>
+            我扔出去的没有被评论的动态
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.PublishMoment">
             <summary>
             发布动态

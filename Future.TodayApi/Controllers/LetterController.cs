@@ -224,6 +224,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 我扔出去的没有被评论的动态
+        /// </summary>
+        [HttpPost]
+        public JsonResult MyMomentList()
+        {
+            RequestContext<MyMomentListRequest> request = null;
+            ResponseContext<MyMomentListResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<MyMomentListRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.MyMomentList(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "MyMomentList", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "MyMomentList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 发布动态
         /// </summary>
         [HttpPost]
