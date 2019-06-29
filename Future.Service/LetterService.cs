@@ -7,6 +7,7 @@ using Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Future.Service
 {
@@ -43,6 +44,7 @@ namespace Future.Service
                     var dto = new DiscussType()
                     {
                         PickUpId = item.PickUpId,
+                        UId= item.UId,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
                         TextContent = TextCut(item.DiscussContent),
@@ -331,6 +333,7 @@ namespace Future.Service
                     Province = request.Content.Province,
                     City = request.Content.City,
                     HeadPhotoPath = request.Content.AvatarUrl,
+                    Signature= "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。",
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
@@ -537,6 +540,28 @@ namespace Future.Service
             response.Content.IsExecuteSuccess = true;
             return response;
         }
+
+        /// <summary>
+        /// 用户基础信息
+        /// </summary>
+        public ResponseContext<BasicUserInfoResponse> BasicUserInfo(RequestContext<BasicUserInfoRequest> request)
+        {
+            var response = new ResponseContext<BasicUserInfoResponse>();
+            var userInfo = letterDal.LetterUser(request.Content.UId);
+            if (userInfo == null)
+            {
+                return response;
+            }
+            response.Content = new BasicUserInfoResponse()
+            {
+                UId= userInfo.UId,
+                NickName= userInfo.NickName.Trim(),
+                HeadPhotoPath= userInfo.HeadPhotoPath.GetImgPath(),
+                Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
+                BasicUserInfo= BasicUserInfo(userInfo)
+            };
+            return response;
+        }
         #endregion
 
         #region private Method
@@ -592,9 +617,47 @@ namespace Future.Service
                 return result + "...";
             }
         }
+        
+        private string BasicUserInfo(LetterUserEntity userInfo)
+        {
+            if (userInfo == null)
+            {
+                return null;
+            }
+            var sb = new StringBuilder();
+            if (userInfo.Gender != GenderEnum.Default)
+            {
+                sb.Append(userInfo.Gender == GenderEnum.Man ? "男" : "女");
+                sb.Append("•");
+            }
+            if (!userInfo.BirthDate.IsNullOrEmpty())
+            {
+                sb.AppendFormat("{0}岁",Convert.ToDateTime(userInfo.BirthDate).GetAgeByBirthdate());
+                sb.Append("•");
 
-       
+                sb.Append(Convert.ToDateTime(userInfo.BirthDate).GetConstellation());
+                sb.Append("•");
+            }
 
+            if (!userInfo.Country.IsNullOrEmpty())
+            {
+                sb.Append(userInfo.Country);
+                sb.Append("•");
+            }
+
+            if (!userInfo.Province.IsNullOrEmpty())
+            {
+                sb.Append(userInfo.Province);
+                sb.Append("•");
+            }
+
+            if (!userInfo.City.IsNullOrEmpty())
+            {
+                sb.Append(userInfo.City);
+                sb.Append("•");
+            }
+            return sb.ToString().TrimEnd('•');
+        }
         #endregion
     }
 }

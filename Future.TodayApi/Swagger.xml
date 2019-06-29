@@ -120,6 +120,11 @@
             未读消息总数量
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.BasicUserInfo">
+            <summary>
+            未读消息总数量
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
             <summary>
             主接口集合

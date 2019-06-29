@@ -37,6 +37,8 @@ namespace Future.Model.Utils
         /// </summary>
         public Guid PickUpId { get; set; }
 
+        public long UId { get; set; }
+
         /// <summary>
         /// 头像路径
         /// </summary>
@@ -597,6 +599,44 @@ namespace Future.Model.Utils
         /// 处理结果
         /// </summary>
         public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region BasicUserInfo(用户基础信息）
+    public class BasicUserInfoRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class BasicUserInfoResponse
+    {
+        /// <summary>
+        /// 用户唯一标示
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 头像路径
+        /// </summary>
+        public string HeadPhotoPath { get; set; }
+
+        /// <summary>
+        /// 基础信息
+        /// </summary>
+        public string BasicUserInfo { get; set; }
+
+        /// <summary>
+        /// 个性签名
+        /// </summary>
+        public string Signature { get; set; }
     }
     #endregion
 }

@@ -11,7 +11,7 @@ namespace Future.Repository
     {
         private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
 
-        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Gender,NickName,BirthDate,Province,City,Country,Mobile,WeChatNo,HeadPhotoPath,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
+        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Gender,NickName,BirthDate,Province,City,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
@@ -299,41 +299,7 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
             }
         }
-
-        public bool InsertLetterUser(LetterUserEntity userEntity)
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = @"INSERT INTO dbo.letter_LetterUser
-                                  (OpenId
-                                  ,Gender
-                                  ,NickName
-                                  ,BirthDate
-                                  ,Province
-                                  ,City
-                                  ,Country
-                                  ,Mobile
-                                  ,WeChatNo
-                                  ,HeadPhotoPath
-                                  ,CreateTime
-                                  ,UpdateTime)
-                            VALUES
-                                  (@OpenId
-                                  ,@Gender
-                                  ,@NickName
-                                  ,@BirthDate
-                                  ,@Province
-                                  ,@City
-                                  ,@Country
-                                  ,@Mobile
-                                  ,@WeChatNo
-                                  ,@HeadPhotoPath
-                                  ,@CreateTime
-                                  ,@UpdateTime)";
-                return Db.Execute(sql, userEntity) > 0;
-            }
-        }
-
+        
         public bool UpdateAvatarUrl(string avatarUrl,long uId)
         {
             using (var Db = GetDbConnection())
@@ -458,6 +424,42 @@ namespace Future.Repository
                                   ,@CreateTime
                                   ,@UpdateTime)";
                 return Db.Execute(sql, discussEntity) > 0;
+            }
+        }
+
+        public bool InsertLetterUser(LetterUserEntity userEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.letter_LetterUser
+                                  (OpenId
+                                  ,Gender
+                                  ,NickName
+                                  ,BirthDate
+                                  ,Province
+                                  ,City
+                                  ,Country
+                                  ,Mobile
+                                  ,WeChatNo
+                                  ,HeadPhotoPath
+                                  ,Signature
+                                  ,CreateTime
+                                  ,UpdateTime)
+                            VALUES
+                                  (@OpenId
+                                  ,@Gender
+                                  ,@NickName
+                                  ,@BirthDate
+                                  ,@Province
+                                  ,@City
+                                  ,@Country
+                                  ,@Mobile
+                                  ,@WeChatNo
+                                  ,@HeadPhotoPath
+                                  ,@Signature
+                                  ,@CreateTime
+                                  ,@UpdateTime)";
+                return Db.Execute(sql, userEntity) > 0;
             }
         }
 

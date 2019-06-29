@@ -790,5 +790,46 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "UnReadTotalCount", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 未读消息总数量
+        /// </summary>
+        [HttpPost]
+        public JsonResult BasicUserInfo()
+        {
+            RequestContext<BasicUserInfoRequest> request = null;
+            ResponseContext<BasicUserInfoResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<BasicUserInfoRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.BasicUserInfo(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "BasicUserInfo", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "BasicUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }
