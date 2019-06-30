@@ -792,7 +792,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 未读消息总数量
+        /// 用户基础信息
         /// </summary>
         [HttpPost]
         public JsonResult BasicUserInfo()
@@ -831,5 +831,88 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "BasicUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 获取用户完整信息
+        /// </summary>
+        [HttpPost]
+        public JsonResult GetUserInfo()
+        {
+            RequestContext<GetUserInfoRequest> request = null;
+            ResponseContext<GetUserInfoResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<GetUserInfoRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.GetUserInfo(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetUserInfo", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "GetUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 更新用户完整信息
+        /// </summary>
+        [HttpPost]
+        public JsonResult UpdateUserInfo()
+        {
+            RequestContext<UpdateUserInfoRequest> request = null;
+            ResponseContext<UpdateUserInfoResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<UpdateUserInfoRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.UpdateUserInfo(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateUserInfo", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "UpdateUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+        
     }
 }

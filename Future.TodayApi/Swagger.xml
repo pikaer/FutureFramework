@@ -125,6 +125,16 @@
             未读消息总数量
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.GetUserInfo">
+            <summary>
+            获取用户完整信息
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.UpdateUserInfo">
+            <summary>
+            更新用户完整信息
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
             <summary>
             主接口集合

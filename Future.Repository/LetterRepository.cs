@@ -11,7 +11,7 @@ namespace Future.Repository
     {
         private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
 
-        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Gender,NickName,BirthDate,Province,City,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
+        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
@@ -186,7 +186,7 @@ namespace Future.Repository
 
         public List<MomentEntity> GetMomentByPageIndex(long uId, int pageIndex, int pageSize)
         {
-            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and ReplyCount=0 
+            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0
                                                Order by CreateTime desc 
                                                OFFSET @OFFSETCount ROWS 
                                                FETCH NEXT @FETCHCount ROWS ONLY";
@@ -324,6 +324,28 @@ namespace Future.Repository
             }
         }
 
+        public bool UpdateLetterUser(LetterUserEntity userEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.letter_LetterUser
+                            SET Gender = @Gender
+                               ,SchoolType= @SchoolType
+                               ,SchoolName = @SchoolName
+                               ,LiveState= @LiveState
+                               ,NickName= @NickName
+                               ,BirthDate = @BirthDate
+                               ,EntranceDate= @EntranceDate
+                               ,Province = @Province
+                               ,City= @City
+                               ,Area= @Area
+                               ,Signature= @Signature
+                               ,UpdateTime= @UpdateTime
+                          WHERE UId=@UId";
+                return Db.Execute(sql, userEntity) > 0;
+            }
+        }
+
         /// <summary>
         /// 删除所有我主动捡起的瓶子
         /// </summary>
@@ -434,10 +456,16 @@ namespace Future.Repository
                 var sql = @"INSERT INTO dbo.letter_LetterUser
                                   (OpenId
                                   ,Gender
+                                  ,UserType
+                                  ,SchoolType
+                                  ,LiveState
+                                  ,EntranceDate
+                                  ,SchoolName
                                   ,NickName
                                   ,BirthDate
                                   ,Province
                                   ,City
+                                  ,Area
                                   ,Country
                                   ,Mobile
                                   ,WeChatNo
@@ -448,10 +476,16 @@ namespace Future.Repository
                             VALUES
                                   (@OpenId
                                   ,@Gender
+                                  ,@UserType
+                                  ,@SchoolType
+                                  ,@LiveState
+                                  ,@EntranceDate
+                                  ,@SchoolName
                                   ,@NickName
                                   ,@BirthDate
                                   ,@Province
                                   ,@City
+                                  ,@Area
                                   ,@Country
                                   ,@Mobile
                                   ,@WeChatNo

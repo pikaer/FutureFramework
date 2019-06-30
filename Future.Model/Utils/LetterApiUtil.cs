@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Future.Model.Enum.Letter;
+using Future.Model.Enum.Sys;
+using System;
 using System.Collections.Generic;
 
 namespace Future.Model.Utils
@@ -48,12 +50,12 @@ namespace Future.Model.Utils
         /// 用户昵称
         /// </summary>
         public string NickName { get; set; }
-        
+
         /// <summary>
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
-        
+
         /// <summary>
         /// 最近一次交谈时间
         /// </summary>
@@ -94,12 +96,12 @@ namespace Future.Model.Utils
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
-        
+
         /// <summary>
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
-        
+
         /// <summary>
         /// 图片内容
         /// </summary>
@@ -119,7 +121,7 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public Guid PickUpId { get; set; }
-        
+
     }
 
     public class DiscussDetailResponse
@@ -186,7 +188,7 @@ namespace Future.Model.Utils
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
-        
+
         /// <summary>
         /// 最近一次交谈时间
         /// </summary>
@@ -210,7 +212,7 @@ namespace Future.Model.Utils
         /// </summary>
         public List<PickUpType> PickUpList { get; set; }
     }
-    
+
     #endregion
 
     #region PickUpList
@@ -267,11 +269,11 @@ namespace Future.Model.Utils
         /// 图片内容（图片最多支持一张）
         /// </summary>
         public string ImgContent { get; set; }
-        
+
         /// <summary>
         /// 创建时间
         /// </summary>
-        public string CreateTime{ get; set; }
+        public string CreateTime { get; set; }
     }
     #endregion
 
@@ -638,5 +640,150 @@ namespace Future.Model.Utils
         /// </summary>
         public string Signature { get; set; }
     }
+    #endregion
+
+    #region GetUserInfo(用户信息）
+    public class GetUserInfoRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class GetUserInfoResponse
+    {
+        /// <summary>
+        /// 用户唯一标示
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 用户类别
+        /// </summary>
+        public SchoolTypeEnum SchoolType { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public LiveStateEnum LiveState { get; set; }
+
+        /// <summary>
+        /// 入学日期（2017-09）
+        /// </summary>
+        public string EntranceDate { get; set; }
+
+        /// <summary>
+        /// 学校名称
+        /// </summary>
+        public string SchoolName { get; set; }
+
+        /// <summary>
+        /// 生日（2018-08-20）
+        /// </summary>
+        public string BirthDate { get; set; }
+
+        /// <summary>
+        /// 用户所在区域
+        /// </summary>
+        public string Area { get; set; }
+
+        /// <summary>
+        /// 用户所在省份
+        /// </summary>
+        public string Province { get; set; }
+
+        /// <summary>
+        /// 用户所在城市
+        /// </summary>
+        public string City { get; set; }
+        /// <summary>
+        /// 个性签名
+        /// </summary>
+        public string Signature { get; set; }
+    }
+    #endregion
+
+    #region UpdateUserInfo(更新用户信息）
+    public class UpdateUserInfoRequest
+    {
+        /// <summary>
+        /// 用户唯一标示
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 用户类别
+        /// </summary>
+        public SchoolTypeEnum SchoolType { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public LiveStateEnum LiveState { get; set; }
+
+        /// <summary>
+        /// 入学日期（2017-09）
+        /// </summary>
+        public string EntranceDate { get; set; }
+
+        /// <summary>
+        /// 学校名称
+        /// </summary>
+        public string SchoolName { get; set; }
+
+        /// <summary>
+        /// 生日（2018-08-20）
+        /// </summary>
+        public string BirthDate { get; set; }
+
+        /// <summary>
+        /// 用户所在区域
+        /// </summary>
+        public string Area { get; set; }
+
+        /// <summary>
+        /// 用户所在省份
+        /// </summary>
+        public string Province { get; set; }
+
+        /// <summary>
+        /// 用户所在城市
+        /// </summary>
+        public string City { get; set; }
+        /// <summary>
+        /// 个性签名
+        /// </summary>
+        public string Signature { get; set; }
+    }
+
+    public class UpdateUserInfoResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+
     #endregion
 }

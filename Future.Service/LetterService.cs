@@ -279,7 +279,7 @@ namespace Future.Service
         }
 
         /// <summary>
-        /// 我扔出去的没有被评论的动态
+        /// 我扔出去的所有动态
         /// </summary>
         public ResponseContext<MyMomentListResponse> MyMomentList(RequestContext<MyMomentListRequest> request)
         {
@@ -562,6 +562,64 @@ namespace Future.Service
             };
             return response;
         }
+
+        /// <summary>
+        /// 更新用户信息
+        /// </summary>
+        public ResponseContext<UpdateUserInfoResponse> UpdateUserInfo(RequestContext<UpdateUserInfoRequest> request)
+        {
+            var response = new ResponseContext<UpdateUserInfoResponse>();
+            var userEntity = new LetterUserEntity()
+            {
+                UId = request.Content.UId,
+                NickName = request.Content.NickName,
+                Gender = request.Content.Gender,
+                SchoolType = request.Content.SchoolType,
+                LiveState = request.Content.LiveState,
+                EntranceDate = request.Content.EntranceDate,
+                SchoolName = request.Content.SchoolName,
+                BirthDate = request.Content.BirthDate,
+                Area = request.Content.Area,
+                Province = request.Content.Province,
+                City = request.Content.City,
+                Signature = request.Content.Signature,
+                UpdateTime = DateTime.Now
+            };
+            response.Content = new UpdateUserInfoResponse()
+            {
+                IsExecuteSuccess = letterDal.UpdateLetterUser(userEntity)
+            };
+            return response;
+        }
+
+        /// <summary>
+        /// 获取用户完整信息
+        /// </summary>
+        public ResponseContext<GetUserInfoResponse> GetUserInfo(RequestContext<GetUserInfoRequest> request)
+        {
+            var response = new ResponseContext<GetUserInfoResponse>();
+            var userInfo = letterDal.LetterUser(request.Content.UId);
+            if (userInfo == null)
+            {
+                return response;
+            }
+            response.Content = new GetUserInfoResponse()
+            {
+                UId = userInfo.UId,
+                Gender = userInfo.Gender,
+                SchoolType = userInfo.SchoolType,
+                LiveState = userInfo.LiveState,
+                EntranceDate = userInfo.EntranceDate,
+                SchoolName = userInfo.SchoolName,
+                BirthDate = userInfo.BirthDate,
+                Area = userInfo.Area,
+                Province = userInfo.Province,
+                City = userInfo.City,
+                NickName = userInfo.NickName.Trim(),
+                Signature = userInfo.Signature.IsNullOrEmpty() ? "" : userInfo.Signature.Trim(),
+            };
+            return response;
+        }
         #endregion
 
         #region private Method
@@ -658,6 +716,7 @@ namespace Future.Service
             }
             return sb.ToString().TrimEnd('•');
         }
+        
         #endregion
     }
 }

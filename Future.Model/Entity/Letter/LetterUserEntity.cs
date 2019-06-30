@@ -1,4 +1,5 @@
-﻿using Future.Model.Enum.Sys;
+﻿using Future.Model.Enum.Letter;
+using Future.Model.Enum.Sys;
 
 namespace Future.Model.Entity.Letter
 {
@@ -15,9 +16,34 @@ namespace Future.Model.Entity.Letter
         public string OpenId { get; set; }
 
         /// <summary>
+        /// 用户类别
+        /// </summary>
+        public UserTypeEnum UserType { get; set; }
+
+        /// <summary>
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
         /// </summary>
         public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 用户类别
+        /// </summary>
+        public SchoolTypeEnum SchoolType { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public LiveStateEnum LiveState { get; set; }
+
+        /// <summary>
+        /// 入学日期（2017-09）
+        /// </summary>
+        public string EntranceDate { get; set; }
+
+        /// <summary>
+        /// 学校名称
+        /// </summary>
+        public string SchoolName { get; set; }
 
         /// <summary>
         /// 用户昵称
@@ -28,6 +54,11 @@ namespace Future.Model.Entity.Letter
         /// 生日（2018-08-20）
         /// </summary>
         public string BirthDate { get; set; }
+
+        /// <summary>
+        /// 用户所在区域
+        /// </summary>
+        public string Area { get; set; }
 
         /// <summary>
         /// 用户所在省份
