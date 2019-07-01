@@ -786,4 +786,40 @@ namespace Future.Model.Utils
     }
 
     #endregion
+
+    #region DeleteMoment
+    public class DeleteMomentRequest
+    {
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+    }
+
+    public class DeleteMomentResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region DeleteAllMoment
+    public class DeleteAllMomentRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class DeleteAllMomentResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
 }

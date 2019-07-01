@@ -299,7 +299,32 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
             }
         }
-        
+
+        public bool UpdateMomentDelete(Guid momentId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Moment
+                               SET IsDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE MomentId=@MomentId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
+            }
+        }
+
+
+        public bool UpdateMomentDelete(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Moment
+                               SET IsDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE UId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uId }) > 0;
+            }
+        }
+
         public bool UpdateAvatarUrl(string avatarUrl,long uId)
         {
             using (var Db = GetDbConnection())

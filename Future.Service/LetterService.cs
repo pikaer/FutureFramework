@@ -620,6 +620,29 @@ namespace Future.Service
             };
             return response;
         }
+
+        public ResponseContext<DeleteMomentResponse> DeleteMoment(RequestContext<DeleteMomentRequest> request)
+        {
+            return new ResponseContext<DeleteMomentResponse>
+            {
+                Content = new DeleteMomentResponse()
+                {
+                    IsExecuteSuccess = letterDal.UpdateMomentDelete(request.Content.MomentId)
+                }
+            };        
+        }
+
+        public ResponseContext<DeleteAllMomentResponse> DeleteAllMoment(RequestContext<DeleteAllMomentRequest> request)
+        {
+            return new ResponseContext<DeleteAllMomentResponse>
+            {
+                Content = new DeleteAllMomentResponse()
+                {
+                    IsExecuteSuccess = letterDal.UpdateMomentDelete(request.Content.UId)
+                }
+            };
+        }
+
         #endregion
 
         #region private Method

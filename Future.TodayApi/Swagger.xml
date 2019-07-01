@@ -122,7 +122,7 @@
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.BasicUserInfo">
             <summary>
-            未读消息总数量
+            用户基础信息
             </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.GetUserInfo">
@@ -133,6 +133,16 @@
         <member name="M:Future.TodayApi.Controllers.LetterController.UpdateUserInfo">
             <summary>
             更新用户完整信息
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DeleteMoment">
+            <summary>
+            删除单个动态
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DeleteAllMoment">
+            <summary>
+            删除发布的所有动态
             </summary>
         </member>
         <member name="T:Future.TodayApi.Controllers.MainController">
