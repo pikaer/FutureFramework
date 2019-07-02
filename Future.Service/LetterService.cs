@@ -609,12 +609,12 @@ namespace Future.Service
                 Gender = userInfo.Gender,
                 SchoolType = userInfo.SchoolType,
                 LiveState = userInfo.LiveState,
-                EntranceDate = userInfo.EntranceDate,
-                SchoolName = userInfo.SchoolName,
-                BirthDate = userInfo.BirthDate,
-                Area = userInfo.Area,
-                Province = userInfo.Province,
-                City = userInfo.City,
+                EntranceDate = userInfo.EntranceDate.IsNullOrEmpty()?"": userInfo.EntranceDate,
+                SchoolName = userInfo.SchoolName.IsNullOrEmpty()?"": userInfo.SchoolName,
+                BirthDate = userInfo.BirthDate.IsNullOrEmpty() ? "" : userInfo.BirthDate,
+                Area = userInfo.Area.IsNullOrEmpty() ? "" : userInfo.Area,
+                Province = userInfo.Province.IsNullOrEmpty() ? "" : userInfo.Province,
+                City = userInfo.City.IsNullOrEmpty() ? "" : userInfo.City,
                 NickName = userInfo.NickName.Trim(),
                 Signature = userInfo.Signature.IsNullOrEmpty() ? "" : userInfo.Signature.Trim(),
             };
@@ -719,24 +719,25 @@ namespace Future.Service
                 sb.Append(Convert.ToDateTime(userInfo.BirthDate).GetConstellation());
                 sb.Append("•");
             }
-
-            if (!userInfo.Country.IsNullOrEmpty())
-            {
-                sb.Append(userInfo.Country);
-                sb.Append("•");
-            }
-
+          
             if (!userInfo.Province.IsNullOrEmpty())
             {
                 sb.Append(userInfo.Province);
                 sb.Append("•");
             }
 
-            if (!userInfo.City.IsNullOrEmpty())
+            if (!userInfo.City.IsNullOrEmpty()&& userInfo.City.Trim()!= userInfo.Province.Trim())
             {
                 sb.Append(userInfo.City);
                 sb.Append("•");
             }
+
+            if (!userInfo.Area.IsNullOrEmpty() && userInfo.Area.Trim() != userInfo.City.Trim())
+            {
+                sb.Append(userInfo.Area);
+                sb.Append("•");
+            }
+
             return sb.ToString().TrimEnd('•');
         }
         
