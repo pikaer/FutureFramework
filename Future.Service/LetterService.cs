@@ -553,7 +553,8 @@ namespace Future.Service
                 NickName= userInfo.NickName.Trim(),
                 HeadPhotoPath= userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
-                BasicUserInfo= BasicUserInfo(userInfo)
+                BasicUserInfo= BasicUserInfo(userInfo),
+                PlaceInfo=PlaceInfo(userInfo)
             };
             return response;
         }
@@ -704,7 +705,7 @@ namespace Future.Service
             }
         }
         
-        private string BasicUserInfo(LetterUserEntity userInfo)
+        private string PlaceInfo(LetterUserEntity userInfo)
         {
             if (userInfo == null)
             {
@@ -718,26 +719,34 @@ namespace Future.Service
             }
             if (!userInfo.BirthDate.IsNullOrEmpty())
             {
-                sb.AppendFormat("{0}岁",Convert.ToDateTime(userInfo.BirthDate).GetAgeByBirthdate());
+                sb.AppendFormat("{0}岁", Convert.ToDateTime(userInfo.BirthDate).GetAgeByBirthdate());
                 sb.Append("•");
 
                 sb.Append(Convert.ToDateTime(userInfo.BirthDate).GetConstellation());
                 sb.Append("•");
             }
-          
-            if (!userInfo.Province.IsNullOrEmpty())
+            return sb.ToString().TrimEnd('•');
+        }
+        private string BasicUserInfo(LetterUserEntity userInfo)
+        {
+            if (userInfo == null)
+            {
+                return null;
+            }
+            var sb = new StringBuilder();
+            if (!userInfo.Province.IsNullOrEmpty()&& userInfo.Province!="全部")
             {
                 sb.Append(userInfo.Province);
                 sb.Append("•");
             }
 
-            if (!userInfo.City.IsNullOrEmpty()&& userInfo.City.Trim()!= userInfo.Province.Trim())
+            if (!userInfo.City.IsNullOrEmpty()&& userInfo.City.Trim()!= userInfo.Province.Trim() && userInfo.City != "全部")
             {
                 sb.Append(userInfo.City);
                 sb.Append("•");
             }
 
-            if (!userInfo.Area.IsNullOrEmpty() && userInfo.Area.Trim() != userInfo.City.Trim())
+            if (!userInfo.Area.IsNullOrEmpty() && userInfo.Area.Trim() != userInfo.City.Trim() && userInfo.Area != "全部")
             {
                 sb.Append(userInfo.Area);
                 sb.Append("•");

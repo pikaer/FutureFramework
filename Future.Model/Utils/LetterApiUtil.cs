@@ -636,6 +636,10 @@ namespace Future.Model.Utils
         public string BasicUserInfo { get; set; }
 
         /// <summary>
+        /// 位置信息
+        /// </summary>
+        public string PlaceInfo { get; set; }
+        /// <summary>
         /// 个性签名
         /// </summary>
         public string Signature { get; set; }
