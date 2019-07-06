@@ -346,11 +346,6 @@ namespace Future.Service
             }
             else
             {
-                if (!string.IsNullOrEmpty(request.Content.AvatarUrl))
-                {
-                    letterDal.UpdateAvatarUrl(request.Content.AvatarUrl, userInfoEntity.UId);
-                }
-                
                 response.Content.UId = userInfoEntity.UId;
                 response.Content.IsExecuteSuccess = true;
             }
@@ -643,6 +638,16 @@ namespace Future.Service
             };
         }
 
+        public ResponseContext<UpdateAvatarUrlResponse> UpdateAvatarUrl(RequestContext<UpdateAvatarUrlRequest> request)
+        {
+            return new ResponseContext<UpdateAvatarUrlResponse>
+            {
+                Content = new UpdateAvatarUrlResponse()
+                {
+                    IsExecuteSuccess = letterDal.UpdateAvatarUrl(request.Content.AvatarUrl,request.Content.UId)
+                }
+            };
+        }
         #endregion
 
         #region private Method
@@ -740,12 +745,7 @@ namespace Future.Service
 
             return sb.ToString().TrimEnd('•');
         }
-
-        public ResponseContext<UpdateAvatarUrlResponse> UpdateAvatarUrl(RequestContext<UpdateAvatarUrlRequest> request)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         #endregion
     }
 }
