@@ -705,7 +705,7 @@ namespace Future.Service
             }
         }
         
-        private string PlaceInfo(LetterUserEntity userInfo)
+        private string BasicUserInfo(LetterUserEntity userInfo)
         {
             if (userInfo == null)
             {
@@ -727,7 +727,7 @@ namespace Future.Service
             }
             return sb.ToString().TrimEnd('•');
         }
-        private string BasicUserInfo(LetterUserEntity userInfo)
+        private string PlaceInfo(LetterUserEntity userInfo)
         {
             if (userInfo == null)
             {
