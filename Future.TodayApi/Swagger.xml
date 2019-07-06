@@ -150,15 +150,5 @@
             删除发布的所有动态
             </summary>
         </member>
-        <member name="T:Future.TodayApi.Controllers.MainController">
-            <summary>
-            主接口集合
-            </summary>
-        </member>
-        <member name="M:Future.TodayApi.Controllers.MainController.GetHomeInfo">
-            <summary>
-            获取聊天列表
-            </summary>
-        </member>
     </members>
 </doc>

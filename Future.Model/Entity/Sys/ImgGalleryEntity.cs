@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Future.Model.Entity.Today
+namespace Future.Model.Entity.Sys
 {
     /// <summary>
     /// 图片库
@@ -23,16 +23,6 @@ namespace Future.Model.Entity.Today
         public string ShortUrl { get; set; }
         
         /// <summary>
-        /// 图片来源
-        /// </summary>
-        public string ImgSource { get; set; }
-
-        /// <summary>
-        /// 作者
-        /// </summary>
-        public string Author { get; set; }
-
-        /// <summary>
         /// 备注
         /// </summary>
         public string Remark { get; set; }
@@ -46,6 +36,11 @@ namespace Future.Model.Entity.Today
         /// 图片修改人
         /// </summary>
         public long ModifyUserId { get; set; }
+
+        /// <summary>
+        /// 使用次数
+        /// </summary>
+        public int UseCount { get; set; }
 
         /// <summary>
         /// 创建时间

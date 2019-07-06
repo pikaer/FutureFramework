@@ -1,4 +1,4 @@
-﻿using Future.Model.Entity.Today;
+﻿using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
@@ -12,81 +12,7 @@ namespace Future.Web.Controllers
     public class TodayController : BaseController
     {
         private readonly TodayService todayService = SingletonProvider<TodayService>.Instance;
-
-        #region TextGallery
-        public IActionResult TextGalleryList()
-        {
-            return View();
-        }
         
-        public JsonResult GetTextGalleryList()
-        {
-            try
-            {
-                int page = Convert.ToInt16(Request.Form["page"]);
-                int rows = Convert.ToInt16(Request.Form["rows"]);
-                string textContent = Request.Form["TextContent"];
-                string textSource = Request.Form["TextSource"];
-
-                long creater = 0;
-                if (!string.IsNullOrWhiteSpace(Request.Form["Creater"]))
-                {
-                    creater = Convert.ToInt64(Request.Form["Creater"]);
-                }
-                var startDateTime = new DateTime();
-                if(!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
-                {
-                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
-                }
-                var endCreateTime = new DateTime();
-                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
-                {
-                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
-                }
-                var rtn = todayService.GetTextList(page, rows, textContent, textSource, creater, startDateTime, endCreateTime);
-                return new JsonResult(rtn);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetTextGalleryList", ex);
-            }
-        }
-
-        public JsonResult AddOrUpdateText(string data)
-        {
-            try
-            {
-                var request = data.JsonToObject<TextGalleryEntity>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                request.CreateUserId = CurrentUserInfo.StaffId;
-                request.ModifyUserId = CurrentUserInfo.StaffId;
-                var res = todayService.AddOrUpdateText(request);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateText", ex);
-            }
-        }
-
-        public JsonResult DeleteText(string data)
-        {
-            try
-            {
-                long textId = Convert.ToInt16(data);
-                var res = todayService.DeleteText(textId);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteText", ex);
-            }
-        }
-        #endregion
-
         #region ImageGallery
         public IActionResult ImageGalleryList()
         {
@@ -100,7 +26,6 @@ namespace Future.Web.Controllers
                 int page = Convert.ToInt16(Request.Form["page"]);
                 int rows = Convert.ToInt16(Request.Form["rows"]);
                 string imgName = Request.Form["ImgName"];
-                string imgSource = Request.Form["ImgSource"];
 
                 long creater = 0;
                 if (!string.IsNullOrWhiteSpace(Request.Form["Creater"]))
@@ -117,7 +42,7 @@ namespace Future.Web.Controllers
                 {
                     endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
                 }
-                var rtn = todayService.GetImageGalleryList(page, rows, imgName, imgSource, creater, startDateTime, endCreateTime);
+                var rtn = todayService.GetImageGalleryList(page, rows, imgName, creater, startDateTime, endCreateTime);
                 return new JsonResult(rtn);
             }
             catch (Exception ex)
@@ -251,231 +176,6 @@ namespace Future.Web.Controllers
             catch (Exception ex)
             {
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateShortUrl", ex);
-            }
-        }
-        #endregion
-
-        #region TodayHappyIndex
-        public IActionResult TodayHappyIndex()
-        {
-            return View();
-        }
-        public JsonResult GetHomeInfoList()
-        {
-            try
-            {
-                int page = Convert.ToInt16(Request.Form["page"]);
-                int rows = Convert.ToInt16(Request.Form["rows"]);
-                var startDateTime = new DateTime();
-                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
-                {
-                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
-                }
-                var endCreateTime = new DateTime();
-                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
-                {
-                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
-                }
-                var rtn = todayService.GetHomeInfoList(page, rows, startDateTime, endCreateTime);
-                return new JsonResult(rtn);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetHomeInfoList", ex);
-            }
-        }
-
-        public JsonResult GetHomeTextList()
-        {
-            try
-            {
-                long homeInfoId = Convert.ToInt16(Request.Form["HomeInfoId"]);
-                if (homeInfoId <= 0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody, "GetHomeTextList");
-                }
-                var rtn = todayService.GetHomeTextList(homeInfoId);
-                return new JsonResult(rtn);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetHomeTextList", ex);
-            }
-        }
-
-        public JsonResult GetHomeImgList()
-        {
-            try
-            {
-                long homeInfoId = Convert.ToInt16(Request.Form["HomeInfoId"]);
-                if (homeInfoId <= 0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody, "GetHomeImgList");
-                }
-                var rtn = todayService.GetHomeImgList(homeInfoId);
-                return new JsonResult(rtn);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetHomeImgList", ex);
-            }
-        }
-
-        public JsonResult AddOrUpdateHomeInfo(string data)
-        {
-            try
-            {
-                var request = data.JsonToObject<HomeInfoEntity>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                request.CreateUserId = CurrentUserInfo.StaffId;
-                request.ModifyUserId = CurrentUserInfo.StaffId;
-                var res = todayService.AddOrUpdateHomeInfo(request);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateHomeInfo", ex);
-            }
-        }
-
-        public JsonResult DeleteHomeInfo(string data)
-        {
-            try
-            {
-                long homeInfoId = Convert.ToInt16(data);
-                if (homeInfoId <= 0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody, "DeleteHomeInfo");
-                }
-                var res = todayService.DeleteHomeInfo(homeInfoId);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteHomeInfo", ex);
-            }
-        }
-
-        public JsonResult IndertHomeText(string data)
-        {
-            try
-            {
-                var request = data.JsonToObject<HomeTextEntity>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code, "IndertHomeText");
-                }
-                request.CreateUserId = CurrentUserInfo.StaffId;
-                var res = todayService.IndertHomeText(request);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "IndertHomeText", ex);
-            }
-        }
-
-        /// <summary>
-        /// 文本内容顺序交换
-        /// </summary>
-        /// <param name="homeTextId">首页文本Id</param>
-        /// <param name="toUp">true：上升一个，false:下降一个</param>
-        /// <returns></returns>
-        public JsonResult MoveHomeText(long homeTextId,bool toUp)
-        {
-            try
-            {
-                if (homeTextId<=0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code, "MoveHomeText");
-                }
-                var res = todayService.MoveHomeText(homeTextId, toUp);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "MoveHomeText", ex);
-            }
-        }
-
-        /// <summary>
-        /// 图片内容顺序交换
-        /// </summary>
-        /// <param name="homeImgId">首页图片Id</param>
-        /// <param name="toUp">true：上升一个，false:下降一个</param>
-        /// <returns></returns>
-        public JsonResult MoveHomeImg(long homeImgId, bool toUp)
-        {
-            try
-            {
-                if (homeImgId <= 0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code, "MoveHomeText");
-                }
-                var res = todayService.MoveHomeImg(homeImgId, toUp);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "MoveHomeImg", ex);
-            }
-        }
-
-        public JsonResult DeleteHomeText(string data)
-        {
-            try
-            {
-                long homeTextId = Convert.ToInt16(data);
-                if (homeTextId <= 0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody, "DeleteHomeText");
-                }
-                var res = todayService.DeleteHomeText(homeTextId);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteHomeText", ex);
-            }
-        }
-
-        public JsonResult IndertHomeImg(string data)
-        {
-            try
-            {
-                var request = data.JsonToObject<HomeImgEntity>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code, "IndertHomeImg");
-                }
-                request.CreateUserId = CurrentUserInfo.StaffId;
-                var res = todayService.IndertHomeImg(request);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "IndertHomeImg", ex);
-            }
-        }
-
-        public JsonResult DeleteHomeImg(string data)
-        {
-            try
-            {
-                long homeImgId = Convert.ToInt16(data);
-                if (homeImgId <= 0)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody, "DeleteHomeImg");
-                }
-                var res = todayService.DeleteHomeImg(homeImgId);
-                return new JsonResult(res);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteHomeImg", ex);
             }
         }
         #endregion

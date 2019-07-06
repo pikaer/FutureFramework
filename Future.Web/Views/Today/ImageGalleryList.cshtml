@@ -33,30 +33,17 @@
                 pageSize: 10,
                 columns: [[
                     {
-                        field: 'url', width: 300, title: "缩略图", sortable: true,
+                        field: 'url', width: 100, title: "缩略图", sortable: true,
                         formatter: function (value) {
                             if (value != "" || value != null) {
-                                return "<img style=\"height: 300px;width: 300px;\" src=\"" + value + "\"/>";
+                                return "<img style=\"height: 100px;width: 100px;\" src=\"" + value + "\"/>";
                             }
                         }
                     },
-                    {
-                        field: 'formatter', width: 700, title: "图片详情", sortable: true,
-                        formatter: function (value, row) {
-                            var str = "";
-                            if (value != "" || value != null) {
-                                str = "<div style='font-size:14px'>图片名:" + row.imgName + "<br/><br/>";
-                                str += "图片来源:" + row.imgSource + "<br/><br/>";
-                                str += "作者:" + row.author + "<br/><br/>";
-                                str += "备注:" + row.remark + "<br/><br/>";
-                                str += "创建人:" + row.createUser + "<br/><br/>";
-                                str += "最近修改人:" + row.modifyUser + "<br/><br/>";
-                                str += "创建时间:" + row.createTimeDesc + "<br/><br/>";
-                                str += "最近修改时间:" + row.modifyTimeDesc + "</div>";
-                            }
-                            return str;
-                        }
-                    }
+                    { field: 'imgName', width: 100, title: "图片名", sortable: true },
+                    { field: 'remark', width: 80, title: "备注", sortable: true },
+                    { field: 'createUser', width: 70, title: "创建人", sortable: true },
+                    { field: 'createTimeDesc', width: 700, title: "创建时间", sortable: true }
                 ]],
                 toolbar: "#tb",
                 onDblClickCell: function () {
@@ -84,8 +71,6 @@
             }
             var queryData = {
                 ImgName: $("#imgNameInput").val(),
-                ImgSource: $("#imgSourceInput").val(),
-                Author: $("#authorInput").val(),
                 Remark: $("#remarkInput").val(),
                 ImgId: imgId
             };
@@ -120,8 +105,6 @@
             }
             $('#hiddenId').val(row.imgId);
             $('#imgNameInput').val(row.imgName);
-            $('#imgSourceInput').val(row.imgSource);
-            $('#authorInput').val(row.author);
             $('#remarkInput').val(row.remark);
             $('#dlg').dialog('open');
         }
@@ -220,7 +203,6 @@
         //重置
         function resetSearch() {
             $('#searchImgName').val("");
-            $('#searchImgSource').val("");
             $('#searchCreater').val("");
             $('#searchStartDateTime').datetimebox('setValue', '');
             $('#searchEndDateTime').datetimebox('setValue', '');
@@ -234,7 +216,6 @@
             }
             var queryData = {
                 ImgName: $("#searchImgName").val(),
-                ImgSource: $("#searchImgSource").val(),
                 Creater: $("#searchCreater").val(),
                 StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
                 EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
@@ -263,10 +244,7 @@
             <td style="float:left;">
                 <input id="searchImgName" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
             </td>
-            <td style="float:left;padding-left: 8px;padding-top: 5px;">图片来源:</td>
-            <td style="float:left">
-                <input id="searchImgSource" class="easyui-validatebox textbox" type="text" style="height:25px;width:90px" />
-            </td>
+            
             <td style="float:left;padding-left: 8px;padding-top: 5px;">创建人: </td>
             <td style="float:left;">
                 <input id="searchCreater" class="easyui-validatebox textbox" type="text" style="height:25px;width:90px" />
@@ -294,14 +272,6 @@
                 <tr>
                     <td>图片名:</td>
                     <td> <input id="imgNameInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
-                </tr>
-                <tr>
-                    <td>图片来源:</td>
-                    <td> <input id="imgSourceInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:100%" /></td>
-                </tr>
-                <tr>
-                    <td>作者:</td>
-                    <td><input id="authorInput" class="easyui-validatebox textbox" type="text" style="height:30px;width: 100%" /></td>
                 </tr>
                 <tr>
                     <td>备注:</td>
