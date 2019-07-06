@@ -822,4 +822,27 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
+    #region UpdateAvatarUrl
+    public class UpdateAvatarUrlRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string AvatarUrl { get; set; }
+    }
+
+    public class UpdateAvatarUrlResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
 }

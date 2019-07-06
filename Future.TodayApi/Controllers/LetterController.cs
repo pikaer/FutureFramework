@@ -915,6 +915,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 更新用户头像
+        /// </summary>
+        [HttpPost]
+        public JsonResult UpdateAvatarUrl()
+        {
+            RequestContext<UpdateAvatarUrlRequest> request = null;
+            ResponseContext<UpdateAvatarUrlResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<UpdateAvatarUrlRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0||string.IsNullOrEmpty(request.Content.AvatarUrl))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.UpdateAvatarUrl(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateAvatarUrl", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "UpdateAvatarUrl", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 删除单个动态
         /// </summary>
         [HttpPost]

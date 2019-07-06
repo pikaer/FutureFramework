@@ -311,8 +311,7 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
             }
         }
-
-
+        
         public bool UpdateMomentDelete(long uId)
         {
             using (var Db = GetDbConnection())
@@ -400,8 +399,7 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
             }
         }
-
-
+        
         public bool InsertMoment(MomentEntity momentEntity)
         {
             using (var Db = GetDbConnection())

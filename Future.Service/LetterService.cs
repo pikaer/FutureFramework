@@ -740,7 +740,12 @@ namespace Future.Service
 
             return sb.ToString().TrimEnd('•');
         }
-        
+
+        public ResponseContext<UpdateAvatarUrlResponse> UpdateAvatarUrl(RequestContext<UpdateAvatarUrlRequest> request)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

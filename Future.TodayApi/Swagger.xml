@@ -135,6 +135,11 @@
             更新用户完整信息
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.UpdateAvatarUrl">
+            <summary>
+            更新用户头像
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.DeleteMoment">
             <summary>
             删除单个动态
