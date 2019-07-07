@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "权限树管理";
+    ViewBag.Title = "模拟用户素材";
     Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
 }
 <head>
@@ -15,12 +15,12 @@
 
         function InitGrid(queryData) {
             $("#datagrid").datagrid({
-                title: "图片素材库列表",
+                title: "用户素材",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
                 remoteSort: false,//前台排序 true则为后台排序 需要传参
-                idField: 'textId',
+                idField: 'imgId',
                 striped: true,
                 border: false,
                 iconCls: 'icon icon-tree',
@@ -40,8 +40,9 @@
                             }
                         }
                     },
-                    { field: 'imgName', width: 150, title: "图片名", sortable: true },
+                    { field: 'imgName', width: 150, title: "名称", sortable: true },
                     { field: 'remark', width: 150, title: "备注", sortable: true },
+                    { field: 'useCount', width: 100, title: "使用次数", sortable: true },
                     { field: 'createUser', width: 100, title: "创建人", sortable: true },
                     { field: 'createTimeDesc', width: 150, title: "创建时间", sortable: true }
                 ]],

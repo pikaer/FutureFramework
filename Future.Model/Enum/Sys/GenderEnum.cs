@@ -9,6 +9,8 @@ namespace Future.Model.Enum.Sys
         [Description("男性")]
         Man = 1,
         [Description("女性")]
-        Woman=2
+        Woman=2,
+        [Description("全部")]
+        All = 3
     }
 }

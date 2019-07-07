@@ -1,4 +1,5 @@
 ﻿using Future.Model.DTO.Sys;
+using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
@@ -79,6 +80,26 @@ namespace Future.Web.Controllers
             {
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "GetFirstMenus", ex);
             }
+        }
+
+        public JsonResult GenderCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(GenderEnum)));
+        }
+
+        public JsonResult RoleCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(RoleEnum)));
+        }
+
+        public JsonResult SchoolTypeCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(SchoolTypeEnum)));
+        }
+
+        public JsonResult LiveStateCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(LiveStateEnum)));
         }
     }
 }

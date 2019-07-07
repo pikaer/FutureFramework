@@ -93,7 +93,7 @@ namespace Future.Repository
             }
         }
 
-        public List<ImgGalleryEntity> ImgGalleryList(int pageIndex, int pageSize, string imgName, long creater, DateTime? startDateTime, DateTime? endCreateTime)
+        public Tuple<List<ImgGalleryEntity>, int> ImgGalleryList(int pageIndex, int pageSize, string imgName, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
@@ -120,21 +120,16 @@ namespace Future.Repository
                     sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
                 }
 
+                int count = Db.Query<ImgGalleryEntity>(sql.ToString()).AsList().Count;
+
                 sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
 
-                return Db.Query<ImgGalleryEntity>(sql.ToString()).AsList();
+                var list = Db.Query<ImgGalleryEntity>(sql.ToString()).AsList();
+
+                return new Tuple<List<ImgGalleryEntity>, int>(list, count);
             }
         }
-
-        public int ImgGalleryListCount()
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = "select count(1) from dbo.gallery_ImgGallery";
-
-                return Db.QueryFirstOrDefault<int>(sql);
-            }
-        }
+        
 
         /// <summary>
         /// 通过FuncId获取Function列表

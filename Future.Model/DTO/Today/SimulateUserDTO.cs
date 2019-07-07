@@ -1,9 +1,12 @@
 ﻿using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 
-namespace Future.Model.Entity.Letter
+namespace Future.Model.DTO.Today
 {
-    public class LetterUserEntity:BaseEntity
+    /// <summary>
+    /// 模拟用户
+    /// </summary>
+    public class SimulateUserDTO
     {
         /// <summary>
         /// 用户唯一标示
@@ -11,24 +14,29 @@ namespace Future.Model.Entity.Letter
         public long UId { get; set; }
 
         /// <summary>
-        /// 小程序端-用户唯一标示
-        /// </summary>
-        public string OpenId { get; set; }
-
-        /// <summary>
-        /// 用户类别
-        /// </summary>
-        public UserTypeEnum UserType { get; set; }
-
-        /// <summary>
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
         /// </summary>
         public GenderEnum Gender { get; set; }
 
         /// <summary>
+        /// 用户的性别
+        /// </summary>
+        public string GenderDesc { get; set; }
+
+        /// <summary>
         /// 用户类别
         /// </summary>
         public SchoolTypeEnum SchoolType { get; set; }
+
+        /// <summary>
+        /// 学校类别
+        /// </summary>
+        public string SchoolTypeDesc { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public string LiveStateDesc { get; set; }
 
         /// <summary>
         /// 状态
@@ -69,22 +77,7 @@ namespace Future.Model.Entity.Letter
         /// 用户所在城市
         /// </summary>
         public string City { get; set; }
-
-        /// <summary>
-        /// 用户所在国家
-        /// </summary>
-        public string Country { get; set; }        
-
-        /// <summary>
-        /// 手机号
-        /// </summary>
-        public string Mobile { get; set; }
-
-        /// <summary>
-        /// 微信号
-        /// </summary>
-        public string WeChatNo { get; set; }
-
+        
         /// <summary>
         /// 头像路径
         /// </summary>
@@ -95,6 +88,6 @@ namespace Future.Model.Entity.Letter
         /// </summary>
         public string Signature { get; set; }
 
-        public bool IsDelete { get; set; }
+        public string CreateTimeDesc { get; set; }
     }
 }

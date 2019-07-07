@@ -1,5 +1,7 @@
 ﻿using Future.Model.DTO.Today;
+using Future.Model.Entity.Letter;
 using Future.Model.Entity.Sys;
+using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
@@ -11,10 +13,15 @@ using System.Linq;
 
 namespace Future.Service
 {
+    /// <summary>
+    /// 今日份小程序Web端后台业务层
+    /// </summary>
     public class TodayService
     {
         private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
-        
+
+        private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
+
         public string GetStaffName(long userId)
         {
             if (userId <= 0)
@@ -33,21 +40,22 @@ namespace Future.Service
         {
             var rtn = new PageResult<ImgGalleryDTO>();
             var entityList = sysDal.ImgGalleryList(pageIndex, pageSize, imgName, creater, startDateTime, endCreateTime);
-            if (entityList.NotEmpty())
+            if (entityList!=null&&entityList.Item1.NotEmpty())
             {
-                var imageList = entityList.Select(a => new ImgGalleryDTO()
+                var imageList = entityList.Item1.Select(a => new ImgGalleryDTO()
                 {
                     ImgId=a.ImgId,
                     ImgName=a.ImgName,
                     Url=a.ShortUrl.GetImgPath(),
                     Remark=a.Remark,
+                    UseCount=a.UseCount,
                     CreateUser = GetStaffName(a.CreateUserId),
                     ModifyUser = GetStaffName(a.ModifyUserId),
                     CreateTimeDesc = a.CreateTime.ToString(),
                     ModifyTimeDesc = a.ModifyTime.ToString(),
                 }).ToList();
                 rtn.Rows = imageList;
-                rtn.Total = sysDal.ImgGalleryListCount();
+                rtn.Total = entityList.Item2;
             }
             return rtn;
         }
@@ -106,7 +114,39 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
-        
+
+        public PageResult<SimulateUserDTO> GetSimulateUserList(int pageIndex, int pageSize, long uId, string nickName, GenderEnum gender,long creater, DateTime? startDateTime, DateTime? endCreateTime)
+        {
+            var rtn = new PageResult<SimulateUserDTO>();
+            var entityList = letterDal.GetSimulateUserList(pageIndex, pageSize, uId, nickName, gender,creater, startDateTime, endCreateTime);
+            if (entityList!=null&&entityList.Item1.NotEmpty())
+            {
+                var imageList = entityList.Item1.Select(a => new SimulateUserDTO()
+                {
+                    UId = a.UId,
+                    GenderDesc = a.Gender.ToDescription(),
+                    SchoolTypeDesc = a.SchoolType.ToDescription(),
+                    LiveStateDesc= a.LiveState.ToDescription(),
+                    Gender = a.Gender,
+                    SchoolType = a.SchoolType,
+                    LiveState= a.LiveState,
+                    EntranceDate = a.EntranceDate,
+                    SchoolName = a.SchoolName,
+                    NickName = a.NickName,
+                    BirthDate = a.BirthDate,
+                    Province = a.Province,
+                    City = a.City,
+                    Area = a.Area,
+                    Signature = a.Signature,
+                    HeadPhotoPath =a.HeadPhotoPath.GetImgPath(),
+                    CreateTimeDesc = a.CreateTime.ToString()
+                }).ToList();
+                rtn.Rows = imageList;
+                rtn.Total = entityList.Item2;
+            }
+            return rtn;
+        }
+
         private void DeleteLocalImage(long imgId)
         {
             if (imgId <= 0)
@@ -120,6 +160,44 @@ namespace Future.Service
                 File.Delete(path);
             }
         }
-        
+
+        public ResponseContext<bool> AddOrUpdateSimulateUser(LetterUserEntity request)
+        {
+            bool success = true;
+            if (request.UId <= 0)
+            {
+                request.CreateTime = DateTime.Now;
+                request.UserType =UserTypeEnum.SimulationUser;
+                request.UpdateTime = DateTime.Now;
+                success = letterDal.InsertLetterUser(request);
+            }
+            else
+            {
+                request.UpdateTime = DateTime.Now;
+                success = letterDal.UpdateLetterUser(request);
+            }
+
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
+
+        public ResponseContext<bool> DeleteLetterUser(long uId)
+        {
+            bool success = letterDal.UpdateLetterUserDelete(uId);
+            if (success)
+            {
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Sys;
+﻿using Future.Model.Entity.Letter;
+using Future.Model.Entity.Sys;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
@@ -176,6 +177,83 @@ namespace Future.Web.Controllers
             catch (Exception ex)
             {
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateShortUrl", ex);
+            }
+        }
+        #endregion
+
+        #region SimulateUserList(模拟用户)
+        public IActionResult SimulateUserList()
+        {
+            return View();
+        }
+
+        public JsonResult GetSimulateUserList()
+        {
+            try
+            {
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                int uId = Convert.ToInt16(Request.Form["uId"]);
+                var gender = GenderEnum.All;
+                if (!Request.Form["gender"].IsNullOrEmpty())
+                {
+                    gender = (GenderEnum)Convert.ToInt16(Request.Form["gender"]);
+                }
+                string nickName = Request.Form["nickName"];
+
+                long creater = 0;
+                if (!string.IsNullOrWhiteSpace(Request.Form["Creater"]))
+                {
+                    creater = Convert.ToInt64(Request.Form["Creater"]);
+                }
+                var startDateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+                var rtn = todayService.GetSimulateUserList(page, rows, uId, nickName, gender, creater, startDateTime, endCreateTime);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetSimulateUserList", ex);
+            }
+        }
+
+        public JsonResult AddOrUpdateSimulateUser(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<LetterUserEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = todayService.AddOrUpdateSimulateUser(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateSimulateUser", ex);
+            }
+        }
+
+        public JsonResult DeleteLetterUser(string data)
+        {
+            try
+            {
+                long uId = Convert.ToInt16(data);
+                var res = todayService.DeleteLetterUser(uId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteLetterUser", ex);
             }
         }
         #endregion

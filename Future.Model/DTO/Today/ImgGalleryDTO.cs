@@ -18,14 +18,9 @@
         public string Url { get; set; }
 
         /// <summary>
-        /// 图片来源
+        /// 使用次数
         /// </summary>
-        public string ImgSource { get; set; }
-
-        /// <summary>
-        /// 作者
-        /// </summary>
-        public string Author { get; set; }
+        public int UseCount { get; set; }
 
         /// <summary>
         /// 备注

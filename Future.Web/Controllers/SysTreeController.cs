@@ -268,16 +268,7 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteStaff", ex);
             }
         }
-
-        public JsonResult GenderCombobox()
-        {
-            return new JsonResult(EnumHelper.ToSelectPicker(typeof(GenderEnum)));
-        }
-
-        public JsonResult RoleCombobox()
-        {
-            return new JsonResult(EnumHelper.ToSelectPicker(typeof(RoleEnum)));
-        }
+        
         #endregion
     }
 }

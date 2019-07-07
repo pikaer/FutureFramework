@@ -1,0 +1,329 @@
+﻿@{
+    ViewBag.Title = "模拟用户管理";
+    Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
+}
+<head>
+    <title>权限树管理</title>
+
+    <script type="text/javascript" src="@Url.Content("~/scripts/ajaxfileupload.js")"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#dlg').dialog('close');
+            InitCombobox();
+            $("#searchGender").combobox('setValue', 3);
+            InitGrid(null);
+        });
+
+        function InitGrid(queryData) {
+            $("#datagrid").datagrid({
+                title: "模拟用户管理",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'uId',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/Today/GetSimulateUserList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'headPhotoPath', width: 100, title: "头像", sortable: true,
+                        formatter: function (value) {
+                            if (value != "" || value != null) {
+                                return "<img style=\"height: 100px;width: 100px;\" src=\"" + value + "\"/>";
+                            }
+                        }
+                    },
+                    { field: 'uId', width: 50, title: "UId", sortable: true },
+                    { field: 'nickName', width: 80, title: "用户昵称", sortable: true },
+                    { field: 'genderDesc', width: 60, title: "性别", sortable: true },
+                    { field: 'liveStateDesc', width: 50, title: "状态", sortable: true },
+                    { field: 'schoolTypeDesc', width: 80, title: "学校类别", sortable: true },
+                    { field: 'schoolName', width: 150, title: "学校名称", sortable: true },
+                    { field: 'entranceDate', width: 80, title: "入学日期", sortable: true },
+                    { field: 'province', width: 80, title: "省份", sortable: true },
+                    { field: 'city', width: 80, title: "城市", sortable: true },
+                    { field: 'area', width: 80, title: "区域", sortable: true },
+                    { field: 'signature', width: 200, title: "个性签名", sortable: true },
+                    { field: 'createTimeDesc', width: 140, title: "创建时间", sortable: true }
+                ]],
+                toolbar: "#tb",
+                onDblClickCell: function () {
+                    editItem();
+                }
+            });
+        }
+
+        function InitCombobox() {
+            $("#genderCombobox").combobox({
+                url: '/Main/GenderCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            $("#searchGender").combobox({
+                url: '/Main/GenderCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            $("#schoolTypeCombobox").combobox({
+                url: '/Main/SchoolTypeCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            $("#stateCombobox").combobox({
+                url: '/Main/LiveStateCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            
+        }
+
+
+        //添加
+        function addItem() {
+            $('#addType').val(1);
+            $('#nickNameInput').val("");
+            $('#schoolNameInput').val("");
+            $('#entranceDateInput').val("");
+            $('#birthDateInput').val("");
+            $('#proviceInput').val("");
+            $('#cityInput').val("");
+            $('#areaInput').val("");
+            $('#signatureInput').val("");
+            $('#dlg').dialog('open');
+        }
+
+        //提交
+        function submit() {
+            var uId = $('#hiddenId').val();
+            if ($('#addType').val() === "1") {
+                uId = 0;
+            }
+            var queryData = {
+                NickName: $("#nickNameInput").val(),
+                Gender: $("#genderCombobox").combobox("getValue"),
+                LiveState: $("#stateCombobox").combobox("getValue"),
+                SchoolType: $("#schoolTypeCombobox").combobox("getValue"),
+                SchoolName: $("#schoolNameInput").val(),
+                EntranceDate: $('#entranceDateInput').datetimebox('getValue'),
+                BirthDate: $('#birthDateInput').datetimebox('getValue'),
+                Province: $("#proviceInput").val(),
+                City: $("#cityInput").val(),
+                Area: $("#areaInput").val(),
+                Signature: $("#signatureInput").val(),
+                UId: uId
+            };
+            $.post("/Today/AddOrUpdateSimulateUser",
+                { data: $.toJSON(queryData) },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        cancel();
+                        reloadGrid();
+                    }
+                    else {
+                        $.messager.alert("提示", data.ResultMessage);
+                    }
+                });
+        }
+
+        //取消
+        function cancel() {
+            $('#dlg').dialog('close');
+        }
+
+        //编辑
+        function editItem() {
+
+            $('#addType').val(2);
+
+            var row = $('#datagrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择要编辑的行!', 'info');
+                return;
+            }
+            $('#hiddenId').val(row.uId);
+            $("#nickNameInput").val(row.nickName);
+            $("#genderCombobox").combobox('setValue', row.gender);
+            $("#stateCombobox").combobox('setValue', row.liveState);
+            $("#schoolTypeCombobox").combobox('setValue', row.schoolType);
+            $("#schoolNameInput").val(row.schoolName);
+            $('#entranceDateInput').datebox('setValue', row.entranceDate);
+            $('#birthDateInput').datebox('setValue', row.birthDate);
+            $("#proviceInput").val(row.province);
+            $("#cityInput").val(row.city);
+            $("#areaInput").val(row.area);
+            $("#signatureInput").val(row.signature);
+            $('#dlg').dialog('open');
+        }
+
+        //删除
+        function del() {
+            var row = $('#datagrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择要删除的行!', 'info');
+                return;
+            }
+            $.messager.confirm('提示', '是否删除?', function (r) {
+                if (r) {
+                    $.post("/Today/DeleteLetterUser",
+                        { data: $.toJSON(row.uId) },
+                        function (data) {
+                            if (data.success) {
+                                //成功后刷新界面
+                                reloadGrid();
+                            }
+                            else {
+                                $.messager.alert("提示", data.ResultMessage);
+                            }
+                        });
+                }
+                else {
+                    return;
+                }
+            });
+        }
+
+        function reloadGrid() {
+            $('#datagrid').datagrid('reload');
+        }
+
+        //添加
+        function upLoadImage() {
+            var row = $('#datagrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            }
+
+            $("#imageFlile").click();
+        }
+        
+
+        //重置
+        function resetSearch() {
+            $('#searchImgName').val("");
+            $('#searchCreater').val("");
+            $('#searchStartDateTime').datetimebox('setValue', '');
+            $('#searchEndDateTime').datetimebox('setValue', '');
+        }
+
+        //搜索
+        function doSearch() {
+            if ($('#searchEndDateTime').datetimebox('getValue') < $('#searchStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
+            var queryData = {
+                ImgName: $("#searchImgName").val(),
+                Creater: $("#searchCreater").val(),
+                StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
+            };
+            InitGrid(queryData);
+        }
+    </script>
+</head>
+
+<input id="hiddenId" type="hidden" />
+<input id="addType" type="hidden" />
+<input type="file" id="imageFlile" name="imageFlile" onchange='upLoadFile()' style="display:none" />
+
+<table id="datagrid" style="width: 100%"></table>
+
+<div id="tb">
+    <table cellpadding="0" cellspacing="0" style="width: 100%">
+        <tr>
+            <td style="float:left">
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addItem()">增加</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editItem()">编辑</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="del()">删除</a>
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
+            <td style="float:left;">
+                <input id="searchUId" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">昵称: </td>
+            <td style="float:left;">
+                <input id="searchNickName" class="easyui-validatebox textbox" type="text" style="height:25px;width:90px" />
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">性别: </td>
+            <td style="float:left;">
+                <select id="searchGender" class="easyui-combobox" style="height:30px;width:150px" data-options="panelHeight: 'auto'"> </select>
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
+            <td style="float:left">
+                <input id="searchStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                至
+                <input id="searchEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+            </td>
+            <td style="float:left">
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetSearch()">重置</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doSearch()">搜索</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+@*编辑框*@
+<div id="dlg" class="easyui-dialog" title="图片素材" data-options="iconCls:'icon-save'" style="width:500px;height:380px;padding:10px;display:none">
+    <div style="padding: 5px">
+        <form id="ff">
+            <table class="groupTable">
+                <tr>
+                    <td colspan="1">昵称:</td>
+                    <td colspan="1"> <input id="nickNameInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:150px" /></td>
+                    <td colspan="1">性别:</td>
+                    <td colspan="1"><select id="genderCombobox" class="easyui-combobox" style="height:30px;width:150px" data-options="panelHeight: 'auto'"> </select> </td>
+                </tr>
+                <tr>
+                    <td colspan="1">状态:</td>
+                    <td colspan="1"><select id="stateCombobox" class="easyui-combobox" style="height:30px;width:150px" data-options="panelHeight: 'auto'"> </select> </td>
+                    <td colspan="1">学校类型:</td>
+                    <td colspan="1"><select id="schoolTypeCombobox" class="easyui-combobox" style="height:30px;width:150px" data-options="panelHeight: 'auto'"> </select> </td>
+                </tr>
+                <tr>
+                    <td colspan="1">学校名称:</td>
+                    <td colspan="1"> <input id="schoolNameInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:150px" /></td>
+                    <td colspan="1">入学日期:</td>
+                    <td colspan="1"> <input id="entranceDateInput" class="easyui-datebox" type="text" style="height:30px;width:150px" /></td>
+                </tr>
+                <tr>
+                    <td colspan="1">生日:</td>
+                    <td colspan="1"> <input id="birthDateInput" class="easyui-datebox" type="text" style="height:30px;width:150px" /></td>
+                    <td colspan="1">所在省份:</td>
+                    <td colspan="1"> <input id="proviceInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:150px" /></td>
+                </tr>
+                <tr>
+                    <td colspan="1">所在城市:</td>
+                    <td colspan="1"> <input id="cityInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:150px" /></td>
+                    <td colspan="1">所在区域:</td>
+                    <td colspan="1"> <input id="areaInput" class="easyui-validatebox textbox" type="text" style="height:30px;width:150px" /></td>
+                </tr>
+                <tr>
+                    <td colspan="1">个性签名:</td>
+                    <td colspan="3"><textarea id="signatureInput" style="height:60px;width: 100%"></textarea> </td>
+                </tr>
+            </table>
+        </form>
+        <br />
+        <div align="center" style="float:left;margin-left:100px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" onclick="cancel()">取消</a></div>
+        <div align="center" style="float:right;margin-right:100px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" onclick="submit()">确定</a></div>
+    </div>
+</div>
