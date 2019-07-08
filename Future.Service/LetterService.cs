@@ -352,6 +352,8 @@ namespace Future.Service
                             var img = imgList.OrderBy(a => a.UseCount).First();
                             entity.NickName = img.ImgName.Trim();
                             entity.HeadPhotoPath= img.ShortUrl.Trim();
+
+                            sysDal.UpdateImgUseCount(img.ImgId);
                         }
                     }
                 }

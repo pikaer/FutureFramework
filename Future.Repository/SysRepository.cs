@@ -275,7 +275,7 @@ namespace Future.Repository
             {
                 string sql = @"UPDATE dbo.gallery_ImgGallery
                                SET UseCount =UseCount+1
-                                  ,UpdateTime = @UpdateTime
+                                  ,ModifyTime = @UpdateTime
                                WHERE ImgId=@ImgId";
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, ImgId = imgId }) > 0;
             }
