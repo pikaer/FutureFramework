@@ -17,6 +17,8 @@ namespace Future.Service
 
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
+        private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
+
         /// <summary>
         /// 捡到的回复过的瓶子列表
         /// </summary>
@@ -337,6 +339,22 @@ namespace Future.Service
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
+
+                //使用模拟信息
+                string configStr = JsonSettingHelper.AppSettings["UseSimulateUserInfo"];
+                if (!string.IsNullOrEmpty(configStr))
+                {
+                    if (Convert.ToBoolean(configStr))
+                    {
+                        var imgList = sysDal.ImgGalleryList();
+                        if (imgList.NotEmpty())
+                        {
+                            var img = imgList.OrderBy(a => a.UseCount).First();
+                            entity.NickName = img.ImgName.Trim();
+                            entity.HeadPhotoPath= img.ShortUrl.Trim();
+                        }
+                    }
+                }
                 bool success = letterDal.InsertLetterUser(entity);
                 if (success)
                 {

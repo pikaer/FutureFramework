@@ -193,13 +193,17 @@ namespace Future.Web.Controllers
             {
                 int page = Convert.ToInt16(Request.Form["page"]);
                 int rows = Convert.ToInt16(Request.Form["rows"]);
-                int uId = Convert.ToInt16(Request.Form["uId"]);
+                int uId = 0;
+                if (!string.IsNullOrEmpty(Request.Form["UId"]))
+                {
+                    uId = Convert.ToInt16(Request.Form["UId"]);
+                }
                 var gender = GenderEnum.All;
-                if (!Request.Form["gender"].IsNullOrEmpty())
+                if (!Request.Form["Gender"].IsNullOrEmpty())
                 {
                     gender = (GenderEnum)Convert.ToInt16(Request.Form["gender"]);
                 }
-                string nickName = Request.Form["nickName"];
+                string nickName = Request.Form["NickName"];
 
                 long creater = 0;
                 if (!string.IsNullOrWhiteSpace(Request.Form["Creater"]))
@@ -256,6 +260,64 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteLetterUser", ex);
             }
         }
+
+        public JsonResult UpdateAvatarUrl(long uId, long imgId)
+        {
+            try
+            {
+                var res = todayService.UpdateAvatarUrl(uId, imgId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateAvatarUrl", ex);
+            }
+        }
+        #endregion
+
+        #region RealUserList(真实注册用户)
+        public IActionResult RealUserList()
+        {
+            return View();
+        }
+
+        public JsonResult GetRealUserList()
+        {
+            try
+            {
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                int uId = 0;
+                if (!string.IsNullOrEmpty(Request.Form["UId"]))
+                {
+                    uId = Convert.ToInt16(Request.Form["UId"]);
+                }
+                var gender = GenderEnum.All;
+                if (!Request.Form["Gender"].IsNullOrEmpty())
+                {
+                    gender = (GenderEnum)Convert.ToInt16(Request.Form["gender"]);
+                }
+                string nickName = Request.Form["NickName"];
+                
+                var startDateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+                var rtn = todayService.GetSimulateUserList(page, rows, uId, nickName, gender, creater, startDateTime, endCreateTime);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetSimulateUserList", ex);
+            }
+        }
+        
         #endregion
     }
 }

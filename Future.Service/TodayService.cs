@@ -199,5 +199,25 @@ namespace Future.Service
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
         }
+
+        public ResponseContext<bool> UpdateAvatarUrl(long uId, long imgId)
+        {
+            var img=sysDal.ImgGallery(imgId);
+            if (img == null)
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false,"图片不存在");
+            }
+
+            bool success = letterDal.UpdateAvatarUrl(img.ShortUrl, uId);
+            if (success)
+            {
+                sysDal.UpdateImgUseCount(imgId);
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
+        }
     }
 }

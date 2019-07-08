@@ -130,7 +130,15 @@ namespace Future.Repository
             }
         }
         
+        public List<ImgGalleryEntity> ImgGalleryList()
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} order by UseCount ", SELECT_IMGGALLERY);
 
+                return Db.Query<ImgGalleryEntity>(sql).AsList();
+            }
+        }
         /// <summary>
         /// 通过FuncId获取Function列表
         /// </summary>
@@ -261,6 +269,17 @@ namespace Future.Repository
             }
         }
 
+        public bool UpdateImgUseCount(long imgId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.gallery_ImgGallery
+                               SET UseCount =UseCount+1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE ImgId=@ImgId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, ImgId = imgId }) > 0;
+            }
+        }
 
         public bool UpdateFunc(FunctionEntity func)
         {

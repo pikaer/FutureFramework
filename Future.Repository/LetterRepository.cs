@@ -99,7 +99,7 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql = new StringBuilder(SELECT_LetterUserEntity);
-                sql.Append(" where UserType=2 ");
+                sql.Append(" where UserType=2 and IsDelete=0 ");
 
                 if (uId>0)
                 {

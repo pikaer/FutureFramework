@@ -9,6 +9,7 @@
     <script type="text/javascript">
         $(function () {
             $('#dlg').dialog('close');
+            $('#dlgImg').dialog('close');
             InitCombobox();
             $("#searchGender").combobox('setValue', 3);
             InitGrid(null);
@@ -16,7 +17,6 @@
 
         function InitGrid(queryData) {
             $("#datagrid").datagrid({
-                title: "模拟用户管理",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -57,9 +57,53 @@
                 toolbar: "#tb",
                 onDblClickCell: function () {
                     editItem();
+                },
+                onClickRow: function (rowIndex, rowData) {
+                    $('#hiddenId').val(rowData.uId);
                 }
             });
         }
+
+        function InitGridImg(queryData) {
+            $("#datagridImg").datagrid({
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'imgId',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/Today/GetImageGalleryList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'url', width: 100, title: "缩略图", sortable: true,
+                        formatter: function (value) {
+                            if (value != "" || value != null) {
+                                return "<img style=\"height: 100px;width: 100px;\" src=\"" + value + "\"/>";
+                            }
+                        }
+                    },
+                    { field: 'imgName', width: 150, title: "名称", sortable: true },
+                    { field: 'remark', width: 150, title: "备注", sortable: true },
+                    { field: 'useCount', width: 100, title: "引用次数", sortable: true },
+                    { field: 'createUser', width: 100, title: "创建人", sortable: true },
+                    { field: 'createTimeDesc', width: 150, title: "创建时间", sortable: true }
+                ]],
+                toolbar: "#tbImg",
+                onDblClickCell: function () {
+                    updateAvatarUrl();
+                }
+            });
+        }
+
+
 
         function InitCombobox() {
             $("#genderCombobox").combobox({
@@ -90,7 +134,42 @@
                 textField: 'selectValue',
                 groupField: 'group'
             });
+
+        }
+
+        //更换头像
+        function editImg() {
+            var row = $('#datagrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择要编辑的行!', 'info');
+                return;
+            }
+            $('#hiddenId').val(row.uId);
+
+            InitGridImg(null);
+            $('#dlgImg').dialog('open');
+        }
+
+        //删除
+        function updateAvatarUrl() {
+            var row = $('#datagridImg').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            }
             
+            $.post("/Today/UpdateAvatarUrl",
+                { uId: $('#hiddenId').val(), imgId: row.imgId},
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        $('#dlgImg').dialog('close');
+                        reloadGrid();
+                    }
+                    else {
+                        $.messager.alert("提示", data.resultMessage);
+                    }
+                });
         }
 
 
@@ -213,12 +292,13 @@
 
             $("#imageFlile").click();
         }
-        
+
 
         //重置
         function resetSearch() {
-            $('#searchImgName').val("");
-            $('#searchCreater').val("");
+            $('#searchUId').val("");
+            $('#searchNickName').val("");
+            $("#searchGender").combobox('setValue', 3);
             $('#searchStartDateTime').datetimebox('setValue', '');
             $('#searchEndDateTime').datetimebox('setValue', '');
         }
@@ -230,12 +310,35 @@
                 return;
             }
             var queryData = {
-                ImgName: $("#searchImgName").val(),
-                Creater: $("#searchCreater").val(),
+                UId: $("#searchUId").val(),
+                NickName: $("#searchNickName").val(),
+                Gender: $("#searchGender").combobox("getValue"),
                 StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
                 EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
             };
             InitGrid(queryData);
+        }
+
+
+        //重置
+        function resetSearchImg() {
+            $('#searchImgName').val("");
+            $('#searchImgEndDateTime').datetimebox('setValue', '');
+            $('#searchImgStartDateTime').datetimebox('setValue', '');
+        }
+
+        //搜索
+        function doSearchImg() {
+            if ($('#searchImgEndDateTime').datetimebox('getValue') < $('#searchImgStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
+            var queryData = {
+                ImgName: $("#searchImgName").val(),
+                StartCreateTime: $('#searchImgStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchImgEndDateTime').datetimebox('getValue')
+            };
+            InitGridImg(queryData);
         }
     </script>
 </head>
@@ -251,6 +354,7 @@
         <tr>
             <td style="float:left">
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addItem()">增加</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editImg()">更换头像</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-edit" plain="true" onclick="editItem()">编辑</a>
                 <a href="#" class="easyui-linkbutton" iconcls="icon icon-delete" plain="true" onclick="del()">删除</a>
             </td>
@@ -264,7 +368,7 @@
             </td>
             <td style="float:left;padding-left: 8px;padding-top: 5px;">性别: </td>
             <td style="float:left;">
-                <select id="searchGender" class="easyui-combobox" style="height:30px;width:150px" data-options="panelHeight: 'auto'"> </select>
+                <select id="searchGender" class="easyui-combobox" style="height:30px;width:100px" data-options="panelHeight: 'auto'"> </select>
             </td>
             <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
             <td style="float:left">
@@ -326,4 +430,35 @@
         <div align="center" style="float:left;margin-left:100px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" onclick="cancel()">取消</a></div>
         <div align="center" style="float:right;margin-right:100px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" onclick="submit()">确定</a></div>
     </div>
+</div>
+
+
+
+@*编辑框*@
+<div id="dlgImg" class="easyui-dialog" title="头像素材" data-options="iconCls:'icon-save'" style="width:800px;height:500px;display:none">
+    <table id="datagridImg" style="width: 100%"></table>
+</div>
+
+<div id="tbImg">
+    <table cellpadding="0" cellspacing="0" style="width: 100%">
+        <tr>
+            <td style="float:left">
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="updateAvatarUrl()">确定</a>
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">图片名: </td>
+            <td style="float:left;">
+                <input id="searchImgName" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
+            <td style="float:left">
+                <input id="searchImgStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                至
+                <input id="searchImgEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+            </td>
+            <td style="float:left">
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetSearchImg()">重置</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doSearchImg()">搜索</a>
+            </td>
+        </tr>
+    </table>
 </div>

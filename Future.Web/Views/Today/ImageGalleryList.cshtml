@@ -15,7 +15,6 @@
 
         function InitGrid(queryData) {
             $("#datagrid").datagrid({
-                title: "用户素材",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -49,6 +48,9 @@
                 toolbar: "#tb",
                 onDblClickCell: function () {
                     editItem();
+                },
+                onClickRow: function (rowIndex, rowData) {
+                    $('#hiddenId').val(rowData.uId);
                 }
             });
         }
