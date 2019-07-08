@@ -309,8 +309,8 @@ namespace Future.Web.Controllers
                 {
                     endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
                 }
-                var rtn = todayService.GetSimulateUserList(page, rows, uId, nickName, gender, creater, startDateTime, endCreateTime);
-                return new JsonResult(rtn);
+                
+                return new JsonResult(null);
             }
             catch (Exception ex)
             {
