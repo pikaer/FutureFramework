@@ -7,7 +7,7 @@ namespace Future.Model.Enum.Letter
     /// </summary>
     public enum LiveStateEnum
     {
-        [Description("未设置/默认/都可以")]
+        [Description("未设置")]
         Default = 0,
 
         [Description("学生党")]

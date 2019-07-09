@@ -141,6 +141,53 @@ namespace Future.Repository
             }
         }
 
+        public Tuple<List<LetterUserEntity>, int> GetRealUserList(int pageIndex, int pageSize, long uId, string nickName, string openId, GenderEnum gender, DateTime? startDateTime, DateTime? endCreateTime)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = new StringBuilder(SELECT_LetterUserEntity);
+                sql.Append(" where UserType=0 and IsDelete=0 ");
+
+                if (uId > 0)
+                {
+                    sql.AppendFormat("and UId={0} ", uId);
+                }
+
+                if (!string.IsNullOrWhiteSpace(nickName))
+                {
+                    sql.AppendFormat("and NickName like '%{0}%' ", nickName.Trim());
+                }
+
+                if (gender != GenderEnum.All)
+                {
+                    sql.AppendFormat("and Gender={0} ", (int)gender);
+                }
+
+                if (!string.IsNullOrWhiteSpace(openId))
+                {
+                    sql.AppendFormat("and OpenId like '%{0}%' ", openId);
+                }
+
+                if (!startDateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime>'{0}' ", startDateTime.Value.ToString());
+                }
+
+                if (!endCreateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
+                }
+
+                int count = Db.Query<LetterUserEntity>(sql.ToString()).AsList().Count;
+
+                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+
+                var list = Db.Query<LetterUserEntity>(sql.ToString()).AsList();
+
+                return new Tuple<List<LetterUserEntity>, int>(list, count);
+            }
+        }
+
         public List<PickUpEntity> PickUpListByMomentUId(long uId)
         {
             var sql = @"SELECT pick.PickUpId

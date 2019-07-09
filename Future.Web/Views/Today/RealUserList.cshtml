@@ -1,0 +1,194 @@
+﻿@{
+    ViewBag.Title = "模拟用户管理";
+    Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
+}
+<head>
+    <title>权限树管理</title>
+
+    <script type="text/javascript" src="@Url.Content("~/scripts/ajaxfileupload.js")"></script>
+    <script type="text/javascript">
+        $(function () {
+            InitCombobox();
+            $("#searchGender").combobox('setValue', 3);
+            InitGrid(null);
+        });
+
+        function InitGrid(queryData) {
+            $("#datagrid").datagrid({
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'uId',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/Today/GetRealUserList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'headPhotoPath', width: 60, title: "头像", sortable: true,
+                        formatter: function (value) {
+                            if (value != "" || value != null) {
+                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
+                            }
+                        }
+                    },
+                    { field: 'uId', width: 50, title: "UId", sortable: true },
+                    { field: 'nickName', width: 80, title: "用户昵称", sortable: true },
+                    { field: 'genderDesc', width: 60, title: "性别", sortable: true },
+                    { field: 'liveStateDesc', width: 50, title: "状态", sortable: true },
+                    { field: 'province', width: 80, title: "省份", sortable: true },
+                    { field: 'city', width: 80, title: "城市", sortable: true },
+                    { field: 'area', width: 80, title: "区域", sortable: true },
+                    { field: 'schoolTypeDesc', width: 80, title: "学校类别", sortable: true },
+                    { field: 'schoolName', width: 150, title: "学校名称", sortable: true },
+                    { field: 'entranceDate', width: 80, title: "入学日期", sortable: true },
+                    { field: 'signature', width: 200, title: "个性签名", sortable: true },
+                    { field: 'createTimeDesc', width: 140, title: "创建时间", sortable: true }
+                ]],
+                toolbar: "#tb",
+                onDblClickCell: function () {
+                    editItem();
+                },
+                onClickRow: function (rowIndex, rowData) {
+                    $('#hiddenId').val(rowData.uId);
+                }
+            });
+        }
+
+        function InitCombobox() {
+            $("#genderCombobox").combobox({
+                url: '/Main/GenderCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            $("#searchGender").combobox({
+                url: '/Main/GenderCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            $("#schoolTypeCombobox").combobox({
+                url: '/Main/SchoolTypeCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+            $("#stateCombobox").combobox({
+                url: '/Main/LiveStateCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
+            });
+
+        }
+        
+        //删除
+        function del() {
+            var row = $('#datagrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择要删除的行!', 'info');
+                return;
+            }
+            $.messager.confirm('提示', '是否删除?', function (r) {
+                if (r) {
+                    $.post("/Today/DeleteLetterUser",
+                        { data: $.toJSON(row.uId) },
+                        function (data) {
+                            if (data.success) {
+                                //成功后刷新界面
+                                reloadGrid();
+                            }
+                            else {
+                                $.messager.alert("提示", data.ResultMessage);
+                            }
+                        });
+                }
+                else {
+                    return;
+                }
+            });
+        }
+
+        function reloadGrid() {
+            $('#datagrid').datagrid('reload');
+        }
+
+        //重置
+        function resetSearch() {
+            $('#searchUId').val("");
+            $('#searchNickName').val("");
+            $('#searchOpenId').val("");
+            $("#searchGender").combobox('setValue', 3);
+            $('#searchStartDateTime').datetimebox('setValue', '');
+            $('#searchEndDateTime').datetimebox('setValue', '');
+        }
+
+        //搜索
+        function doSearch() {
+            if ($('#searchEndDateTime').datetimebox('getValue') < $('#searchStartDateTime').datetimebox('getValue')) {
+                $.messager.alert("提示", "结束日期不能小于起始日期");
+                return;
+            }
+            var queryData = {
+                UId: $("#searchUId").val(),
+                NickName: $("#searchNickName").val(),
+                OpenId: $("#searchOpenId").val(),
+                Gender: $("#searchGender").combobox("getValue"),
+                StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
+            };
+            InitGrid(queryData);
+        }
+
+        
+    </script>
+</head>
+
+<input id="hiddenId" type="hidden" />
+
+<table id="datagrid" style="width: 100%"></table>
+
+<div id="tb">
+    <table cellpadding="0" cellspacing="0" style="width: 100%">
+        <tr>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
+            <td style="float:left;">
+                <input id="searchUId" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">OpenId: </td>
+            <td style="float:left;">
+                <input id="searchOpenId" class="easyui-validatebox textbox" type="text" style="height:25px;width:90px" />
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">昵称: </td>
+            <td style="float:left;">
+                <input id="searchNickName" class="easyui-validatebox textbox" type="text" style="height:25px;width:90px" />
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">性别: </td>
+            <td style="float:left;">
+                <select id="searchGender" class="easyui-combobox" style="height:30px;width:100px" data-options="panelHeight: 'auto'"> </select>
+            </td>
+            <td style="float:left;padding-left: 8px;padding-top: 5px;">创建时间:</td>
+            <td style="float:left">
+                <input id="searchStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                至
+                <input id="searchEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+            </td>
+            <td style="float:left">
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetSearch()">重置</a>
+                <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doSearch()">搜索</a>
+            </td>
+        </tr>
+    </table>
+</div>

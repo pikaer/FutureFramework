@@ -7,7 +7,7 @@ namespace Future.Model.Enum.Letter
     /// </summary>
     public enum SchoolTypeEnum
     {
-        [Description("其他/都可以")]
+        [Description("其他")]
         Default = 0,
 
         [Description("学院/大学")]

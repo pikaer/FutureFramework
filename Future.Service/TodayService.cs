@@ -147,6 +147,38 @@ namespace Future.Service
             return rtn;
         }
 
+        public PageResult<RealUserDTO> GetRealUserList(int pageIndex, int pageSize, long uId, string nickName, string openId, GenderEnum gender, DateTime? startDateTime, DateTime? endCreateTime)
+        {
+            var rtn = new PageResult<RealUserDTO>();
+            var entityList = letterDal.GetRealUserList(pageIndex, pageSize, uId, nickName, openId, gender,  startDateTime, endCreateTime);
+            if (entityList != null && entityList.Item1.NotEmpty())
+            {
+                var imageList = entityList.Item1.Select(a => new RealUserDTO()
+                {
+                    UId = a.UId,
+                    GenderDesc = a.Gender.ToDescription(),
+                    SchoolTypeDesc = a.SchoolType.ToDescription(),
+                    LiveStateDesc = a.LiveState.ToDescription(),
+                    Gender = a.Gender,
+                    SchoolType = a.SchoolType,
+                    LiveState = a.LiveState,
+                    EntranceDate = a.EntranceDate,
+                    SchoolName = a.SchoolName,
+                    NickName = a.NickName,
+                    BirthDate = a.BirthDate,
+                    Province = a.Province,
+                    City = a.City,
+                    Area = a.Area,
+                    Signature = a.Signature,
+                    HeadPhotoPath = a.HeadPhotoPath.GetImgPath(),
+                    CreateTimeDesc = a.CreateTime.ToString()
+                }).ToList();
+                rtn.Rows = imageList;
+                rtn.Total = entityList.Item2;
+            }
+            return rtn;
+        }
+
         private void DeleteLocalImage(long imgId)
         {
             if (imgId <= 0)

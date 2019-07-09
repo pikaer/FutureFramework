@@ -298,7 +298,8 @@ namespace Future.Web.Controllers
                     gender = (GenderEnum)Convert.ToInt16(Request.Form["gender"]);
                 }
                 string nickName = Request.Form["NickName"];
-                
+                string openId= Request.Form["OpenId"];
+
                 var startDateTime = new DateTime();
                 if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
                 {
@@ -309,12 +310,13 @@ namespace Future.Web.Controllers
                 {
                     endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
                 }
-                
-                return new JsonResult(null);
+
+                var rtn = todayService.GetRealUserList(page, rows, uId, nickName, openId, gender, startDateTime, endCreateTime);
+                return new JsonResult(rtn);
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetSimulateUserList", ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetRealUserList", ex);
             }
         }
         
