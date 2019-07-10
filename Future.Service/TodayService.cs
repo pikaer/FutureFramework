@@ -8,6 +8,7 @@ using Future.Repository;
 using Future.Utility;
 using Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -156,6 +157,7 @@ namespace Future.Service
                 var imageList = entityList.Item1.Select(a => new RealUserDTO()
                 {
                     UId = a.UId,
+                    OpenId=a.OpenId,
                     GenderDesc = a.Gender.ToDescription(),
                     SchoolTypeDesc = a.SchoolType.ToDescription(),
                     LiveStateDesc = a.LiveState.ToDescription(),
@@ -250,6 +252,73 @@ namespace Future.Service
             {
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
             }
+        }
+
+        public PageResult<PickUpListDTO> GetRealUserPickUpList(int page, int rows, int uId)
+        {
+            var rtn = new PageResult<PickUpListDTO>();
+            var pickUpList = letterDal.PickUpListByParam(uId, page, rows);
+            if (pickUpList!=null&&pickUpList.Item1.NotEmpty())
+            {
+                var pickUps = new List<PickUpListDTO>();
+                foreach (var item in pickUpList.Item1)
+                {
+                    var pickUpUser = letterDal.LetterUser(item.MomentUId);
+                    if (pickUpUser == null)
+                    {
+                        continue;
+                    }
+                    var moment = letterDal.GetMoment(item.MomentId);
+                    if (moment == null)
+                    {
+                        continue;
+                    }
+                    var dto = new PickUpListDTO()
+                    {
+                        PickUpId = item.PickUpId,
+                        UId = item.MomentUId,
+                        HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
+                        NickName = pickUpUser.NickName,
+                        TextContent = moment.TextContent,
+                        ImgContent = moment.ImgContent.GetImgPath(),
+                        CreateTime = moment.CreateTime.GetDateDesc()
+                    };
+
+                    pickUps.Add(dto);
+                }
+                rtn.Rows = pickUps;
+                rtn.Total = pickUpList.Item2;
+            }
+            return rtn;
+        }
+
+        public object GetRealUserDiscussDetail(Guid pickUpId)
+        {
+            var rtn = new List<DiscussDetailDTO>();
+            var discussList = letterDal.DiscussList(pickUpId);
+            if (discussList.NotEmpty())
+            {
+                foreach (var item in discussList)
+                {
+                    var pickUpUser = letterDal.LetterUser(item.UId);
+                    if (pickUpUser == null)
+                    {
+                        continue;
+                    }
+                    var dto = new DiscussDetailDTO()
+                    {
+                        PickUpUId = item.UId,
+                        HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
+                        NickName = pickUpUser.NickName,
+                        TextContent = item.DiscussContent,
+                        RecentChatTime = item.UpdateTime.Value.GetDateDesc()
+                    };
+
+                    rtn.Add(dto);
+                }
+            }
+
+            return rtn;
         }
     }
 }

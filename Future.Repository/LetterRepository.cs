@@ -52,7 +52,30 @@ namespace Future.Repository
                          FETCH NEXT @FETCHCount ROWS ONLY";
             using (var Db = GetDbConnection())
             {
-                return Db.Query<PickUpEntity>(sql,new { UId = uId , OFFSETCount = (pageIndex - 1) * pageSize , FETCHCount = pageSize }).AsList();
+                return Db.Query<PickUpEntity>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+            }
+        }
+
+        public Tuple<List<PickUpEntity>, int> PickUpListByParam(long uId, int pageIndex, int pageSize)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql0 = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
+                            FROM dbo.letter_PickUp pick 
+                            Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
+                            Where PickUpUId=@UId and discuss.PickUpId is Null and IsPartnerDelete=0";
+
+                var sql1 = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
+                            FROM dbo.letter_PickUp pick 
+                            Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
+                            Where PickUpUId=@UId and discuss.PickUpId is Null and IsPartnerDelete=0
+                            Order by CreateTime desc 
+                            OFFSET @OFFSETCount ROWS 
+                            FETCH NEXT @FETCHCount ROWS ONLY";
+
+                int count = Db.Query<PickUpEntity>(sql0, new { UId = uId }).AsList().Count;
+                var list = Db.Query<PickUpEntity>(sql1, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+                return new Tuple<List<PickUpEntity>, int>(list, count);
             }
         }
 

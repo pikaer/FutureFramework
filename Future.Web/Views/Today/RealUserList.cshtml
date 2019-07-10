@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "模拟用户管理";
+    ViewBag.Title = "";
     Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
 }
 <head>
@@ -15,6 +15,7 @@
 
         function InitGrid(queryData) {
             $("#datagrid").datagrid({
+                title: "真实用户列表",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -22,7 +23,6 @@
                 idField: 'uId',
                 striped: true,
                 border: false,
-                iconCls: 'icon icon-tree',
                 url: '/Today/GetRealUserList',//获取列表数据
                 method: 'post',
                 autoRowHeight: false,
@@ -30,18 +30,20 @@
                 nowrap: false,   //换行
                 pagination: true,
                 pageSize: 10,
-                columns: [[
-                    {
-                        field: 'headPhotoPath', width: 60, title: "头像", sortable: true,
-                        formatter: function (value) {
-                            if (value != "" || value != null) {
-                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
-                            }
+                frozenColumns: [[
+                {
+                    field: 'headPhotoPath', width: 60, title: "头像", sortable: true,
+                    formatter: function (value) {
+                        if (value != "" || value != null) {
+                            return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
                         }
-                    },
-                    { field: 'uId', width: 50, title: "UId", sortable: true },
-                    { field: 'nickName', width: 80, title: "用户昵称", sortable: true },
-                    { field: 'genderDesc', width: 60, title: "性别", sortable: true },
+                    }
+                 },
+                { field: 'uId', width: 50, title: "UId", sortable: true },
+                { field: 'openId', width: 150, title: "OpenId", sortable: true },
+                { field: 'nickName', width: 80, title: "用户昵称", sortable: true },
+                { field: 'genderDesc', width: 60, title: "性别", sortable: true }]],
+                columns: [[
                     { field: 'liveStateDesc', width: 50, title: "状态", sortable: true },
                     { field: 'province', width: 80, title: "省份", sortable: true },
                     { field: 'city', width: 80, title: "城市", sortable: true },
@@ -63,13 +65,6 @@
         }
 
         function InitCombobox() {
-            $("#genderCombobox").combobox({
-                url: '/Main/GenderCombobox',
-                method: 'post',
-                valueField: 'selectKey',
-                textField: 'selectValue',
-                groupField: 'group'
-            });
             $("#searchGender").combobox({
                 url: '/Main/GenderCombobox',
                 method: 'post',
@@ -77,23 +72,9 @@
                 textField: 'selectValue',
                 groupField: 'group'
             });
-            $("#schoolTypeCombobox").combobox({
-                url: '/Main/SchoolTypeCombobox',
-                method: 'post',
-                valueField: 'selectKey',
-                textField: 'selectValue',
-                groupField: 'group'
-            });
-            $("#stateCombobox").combobox({
-                url: '/Main/LiveStateCombobox',
-                method: 'post',
-                valueField: 'selectKey',
-                textField: 'selectValue',
-                groupField: 'group'
-            });
 
         }
-        
+
         //删除
         function del() {
             var row = $('#datagrid').datagrid('getSelected');
@@ -152,7 +133,7 @@
             InitGrid(queryData);
         }
 
-        
+
     </script>
 </head>
 

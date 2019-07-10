@@ -319,7 +319,89 @@ namespace Future.Web.Controllers
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "GetRealUserList", ex);
             }
         }
-        
+
+        #endregion
+
+        #region RealUserMomentList(真实注册用户)
+        public IActionResult RealUserMomentList()
+        {
+            return View();
+        }
+
+        public JsonResult GetRealUserMomentList()
+        {
+            try
+            {
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                int uId = 0;
+                if (!string.IsNullOrEmpty(Request.Form["UId"]))
+                {
+                    uId = Convert.ToInt16(Request.Form["UId"]);
+                }
+                var gender = GenderEnum.All;
+                if (!Request.Form["Gender"].IsNullOrEmpty())
+                {
+                    gender = (GenderEnum)Convert.ToInt16(Request.Form["gender"]);
+                }
+                string nickName = Request.Form["NickName"];
+                string openId = Request.Form["OpenId"];
+
+                var startDateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+
+                var rtn = todayService.GetRealUserList(page, rows, uId, nickName, openId, gender, startDateTime, endCreateTime);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetRealUserList", ex);
+            }
+        }
+
+        public JsonResult GetRealUserPickUpList()
+        {
+            try
+            {
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                int uId = 0;
+                if (!string.IsNullOrEmpty(Request.Form["UId"]))
+                {
+                    uId = Convert.ToInt16(Request.Form["UId"]);
+                }
+               
+                var rtn = todayService.GetRealUserPickUpList(page, rows, uId);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetRealUserPickUpList", ex);
+            }
+        }
+
+        public JsonResult GetRealUserDiscussDetail()
+        {
+            try
+            {
+                Guid pickUpId = new Guid(Request.Form["PickUpId"]);
+
+                var rtn = todayService.GetRealUserDiscussDetail(pickUpId);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetRealUserDiscussDetail", ex);
+            }
+        }
         #endregion
     }
 }

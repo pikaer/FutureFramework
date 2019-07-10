@@ -141,18 +141,14 @@ function Clearnav() {
     var pp = $('#westAccordion').accordion('panels');
 
     $.each(pp, function (i, n) {
-        if (n) {
-            var t = n.panel('options').title;
-            $('#westAccordion').accordion('remove', t);
-        }
+        var t = n.panel('options').title;
+        $('#westAccordion').accordion('remove', t);
     });
     
     //删除2次
      $.each(pp, function (i, n) {
-        if (n) {
-            var t = n.panel('options').title;
-            $('#westAccordion').accordion('remove', t);
-        }
+         var t = n.panel('options').title;
+         $('#westAccordion').accordion('remove', t);
     });
 
     pp = $('#westAccordion').accordion('getSelected');

@@ -17,6 +17,7 @@
 
         function InitGrid(queryData) {
             $("#datagrid").datagrid({
+                title: "模拟用户列表",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -24,7 +25,6 @@
                 idField: 'uId',
                 striped: true,
                 border: false,
-                iconCls: 'icon icon-tree',
                 url: '/Today/GetSimulateUserList',//获取列表数据
                 method: 'post',
                 autoRowHeight: false,
@@ -34,10 +34,10 @@
                 pageSize: 10,
                 columns: [[
                     {
-                        field: 'headPhotoPath', width: 100, title: "头像", sortable: true,
+                        field: 'headPhotoPath', width: 60, title: "头像", sortable: true,
                         formatter: function (value) {
                             if (value != "" || value != null) {
-                                return "<img style=\"height: 100px;width: 100px;\" src=\"" + value + "\"/>";
+                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
                             }
                         }
                     },
