@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Future.Model.DTO.Letter;
 using Future.Model.Entity.Letter;
+using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using System;
 using System.Collections.Generic;
@@ -56,22 +57,35 @@ namespace Future.Repository
             }
         }
 
-        public Tuple<List<PickUpEntity>, int> PickUpListByParam(long uId, int pageIndex, int pageSize)
+        public Tuple<List<PickUpEntity>, int> PickUpListByParam(long uId, int pageIndex, int pageSize, PickUpTypeEnum pickType)
         {
             using (var Db = GetDbConnection())
             {
                 var sql0 = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
-                            FROM dbo.letter_PickUp pick 
-                            Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
-                            Where PickUpUId=@UId and discuss.PickUpId is Null and IsPartnerDelete=0";
+                            FROM dbo.letter_PickUp pick  ";
 
-                var sql1 = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
-                            FROM dbo.letter_PickUp pick 
-                            Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
-                            Where PickUpUId=@UId and discuss.PickUpId is Null and IsPartnerDelete=0
-                            Order by CreateTime desc 
-                            OFFSET @OFFSETCount ROWS 
-                            FETCH NEXT @FETCHCount ROWS ONLY";
+                switch (pickType)
+                {
+                    case PickUpTypeEnum.IsDelete:
+                        sql0 += "Where PickUpUId=@UId and  IsPartnerDelete=1 ";
+                        break;
+                    case PickUpTypeEnum.NoDelete:
+                        sql0 += "Where PickUpUId=@UId and  IsPartnerDelete=0 ";
+                        break;
+                    case PickUpTypeEnum.HasDiscuss:
+                        sql0 += @"inner Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
+                                  Where pick.PickUpUId = @UId ";
+                        break;
+                    case PickUpTypeEnum.NoDiscuss:
+                        sql0 += @"Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
+                                  Where pick.PickUpUId = @UId and discuss.PickUpId is Null ";
+                        break;
+                    default:
+                        sql0 += "Where PickUpUId=@UId ";
+                        break;
+                }
+
+                var sql1 = sql0+ @"Order by pick.CreateTime desc  OFFSET @OFFSETCount ROWS  FETCH NEXT @FETCHCount ROWS ONLY";
 
                 int count = Db.Query<PickUpEntity>(sql0, new { UId = uId }).AsList().Count;
                 var list = Db.Query<PickUpEntity>(sql1, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
@@ -277,7 +291,7 @@ namespace Future.Repository
 
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {
-            var sql = string.Format("{0} Where PickUpId='{1}' Order by CreateTime", SELECT_DiscussEntity, pickUpId);
+            var sql = string.Format("{0} Where PickUpId='{1}' Order by CreateTime desc", SELECT_DiscussEntity, pickUpId);
             using (var Db = GetDbConnection())
             {
                 return Db.Query<DiscussEntity>(sql).AsList();

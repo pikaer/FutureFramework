@@ -1,5 +1,6 @@
 ﻿using Future.Model.Entity.Letter;
 using Future.Model.Entity.Sys;
+using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service;
@@ -378,8 +379,14 @@ namespace Future.Web.Controllers
                 {
                     uId = Convert.ToInt16(Request.Form["UId"]);
                 }
-               
-                var rtn = todayService.GetRealUserPickUpList(page, rows, uId);
+
+                var pickType = PickUpTypeEnum.All;
+                if (!string.IsNullOrEmpty(Request.Form["PickUpType"]))
+                {
+                    pickType = (PickUpTypeEnum)Convert.ToInt16(Request.Form["PickUpType"]);
+                }
+
+                var rtn = todayService.GetRealUserPickUpList(page, rows, uId, pickType);
                 return new JsonResult(rtn);
             }
             catch (Exception ex)
@@ -393,7 +400,7 @@ namespace Future.Web.Controllers
             try
             {
                 Guid pickUpId = new Guid(Request.Form["PickUpId"]);
-
+                
                 var rtn = todayService.GetRealUserDiscussDetail(pickUpId);
                 return new JsonResult(rtn);
             }

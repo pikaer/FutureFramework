@@ -254,10 +254,10 @@ namespace Future.Service
             }
         }
 
-        public PageResult<PickUpListDTO> GetRealUserPickUpList(int page, int rows, int uId)
+        public PageResult<PickUpListDTO> GetRealUserPickUpList(int page, int rows, int uId, PickUpTypeEnum pickType)
         {
             var rtn = new PageResult<PickUpListDTO>();
-            var pickUpList = letterDal.PickUpListByParam(uId, page, rows);
+            var pickUpList = letterDal.PickUpListByParam(uId, page, rows, pickType);
             if (pickUpList!=null&&pickUpList.Item1.NotEmpty())
             {
                 var pickUps = new List<PickUpListDTO>();

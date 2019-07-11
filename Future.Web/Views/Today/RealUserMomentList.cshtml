@@ -8,6 +8,7 @@
     <script type="text/javascript">
         $(function () {
             InitGrid(null);
+            InitCombobox();
         });
 
         function InitGrid(queryData) {
@@ -54,7 +55,7 @@
 
         function InitPickUpListGrid(queryData) {
             $("#pickUpListGrid").datagrid({
-                title: "当前能看到的动态",
+                title: "该用户获取的动态",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -84,8 +85,9 @@
                         }
                     }
                 ]],
+                toolbar: "#tbPickUp",
                 onClickRow: function (rowIndex, rowData) {
-                    doPDiscussDetailSearch(rowData.pickUpId);
+                    doDiscussDetailSearch(rowData.pickUpId);
                 }
             });
         }
@@ -127,6 +129,19 @@
             });
         }
 
+        function InitCombobox() {
+            $("#searchPickUpType").combobox({
+                url: '/Main/PickUpTypeCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group',
+                onSelect: function () {
+                    doPickUpListSearch();
+                }           
+            });
+        }
+
         function reloadGrid() {
             $('#datagrid').datagrid('reload');
         }
@@ -146,12 +161,13 @@
 
         function doPickUpListSearch() {
             var queryData = {
-                UId: $("#hiddenId").val()
+                UId: $("#hiddenId").val(),
+                PickUpType: $("#searchPickUpType").combobox("getValue")
             };
             InitPickUpListGrid(queryData);
         }
 
-        function doPDiscussDetailSearch(pickUpId) {
+        function doDiscussDetailSearch(pickUpId) {
             var queryData = {
                 PickUpId: pickUpId
             };
@@ -166,7 +182,7 @@
 
     @*用户列表*@
     <div data-options="region:'west',split:true,collapsible:false" style="width: 26%">
-        <div id="tb">
+        <div id="tb" style="padding-top: 5px;padding-bottom: 5px;">
             <table cellpadding="0" cellspacing="0" style="width: 100%">
                 <tr>
                     <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
@@ -184,6 +200,15 @@
 
     @*用户捡到的*@
     <div data-options="region:'center',split:true,collapsible:false" style="width:37%;">
+        <div id="tbPickUp" style="padding-top: 5px;padding-bottom: 5px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%">
+                <tr>
+                    <td style="float:right;padding-right: 30px;">
+                        <select id="searchPickUpType" class="easyui-combobox" style="height:30px;width:100px" data-options="panelHeight: 'auto'" > </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <table id="pickUpListGrid"></table>
     </div>
 
