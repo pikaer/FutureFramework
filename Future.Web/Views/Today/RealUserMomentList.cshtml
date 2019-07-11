@@ -44,6 +44,7 @@
                 toolbar: "#tb",
                 onClickRow: function (index, row) {
                     $('#hiddenId').val(row.uId);
+                    $("#searchPickUpType").combobox('setValue', 0);
                     doPickUpListSearch();
                 },
                 onLoadSuccess: function (data) {
