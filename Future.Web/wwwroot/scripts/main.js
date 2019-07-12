@@ -1,9 +1,7 @@
 ﻿$(function () {
 
     LoadTopTree();
-    //tabClose();
-    //InitLeftTree();
-    //LoadFirstAccordTree();
+    LoadAccordTree(1);
 });
 
 //加载一级菜单
@@ -138,17 +136,19 @@ function hoverMenuItem() {
 }
 
 function Clearnav() {
+
     var pp = $('#westAccordion').accordion('panels');
 
-    $.each(pp, function (i, n) {
-        var t = n.panel('options').title;
-        $('#westAccordion').accordion('remove', t);
+    var titleArr = [];
+    pp.forEach(function (element, index) {
+        var t = element.panel('options').title;
+        titleArr.push(t);
     });
     
-    pp = $('#westAccordion').accordion('getSelected');
-    if (pp) {
-        var title = pp.panel('options').title;
-        $('#westAccordion').accordion('remove', title);
+    if (titleArr.length > 0) {
+        titleArr.forEach(function (element, index) {
+            $('#westAccordion').accordion('remove', element);
+        });
     }
 }
 

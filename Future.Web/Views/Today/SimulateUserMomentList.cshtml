@@ -6,7 +6,6 @@
     <script type="text/javascript">
         $(function () {
             InitGrid(null);
-            InitCombobox();
         });
 
         function InitGrid(queryData) {
@@ -19,7 +18,7 @@
                 idField: 'uId',
                 striped: true,
                 border: false,
-                url: '/Today/GetRealUserList',//获取列表数据
+                url: '/Today/GetSimulateUserList',//获取列表数据
                 method: 'post',
                 autoRowHeight: false,
                 queryParams: queryData,
@@ -42,19 +41,14 @@
                 toolbar: "#tb",
                 onClickRow: function (index, row) {
                     $('#hiddenId').val(row.uId);
-                    $("#searchPickUpType").combobox('setValue', 0);
-                    doPickUpListSearch();
-                },
-                onLoadSuccess: function (data) {
-                    $('#hiddenId').val(data.uId);
-                    doPickUpListSearch();
+                    doPublishListSearch();
                 }
             });
         }
 
-        function InitPickUpListGrid(queryData) {
-            $("#pickUpListGrid").datagrid({
-                title: "该用户获取的动态",
+        function InitPublishListGrid(queryData) {
+            $("#publishListGrid").datagrid({
+                title: "该用户发布的动态",
                 rownumbers: true,
                 fit: true,
                 singleSelect: true,
@@ -62,7 +56,7 @@
                 idField: 'uId',
                 striped: false,
                 border: false,
-                url: '/Today/GetRealUserPickUpList',//获取列表数据
+                url: '/Today/GetSimulateUserPublishList',//获取列表数据
                 method: 'post',
                 autoRowHeight: false,
                 queryParams: queryData,
@@ -73,9 +67,9 @@
                     {
                         field: 'formatter', sortable: false,
                         formatter: function (value, row) {
-                            var html = "<div style='float:left;padding-top:25px'><img style=\"border-radius: 100%;height: 60px;width: 60px;\" src=\"" + row.headImgPath + "\"/></div>";
-                            html += "<div style='float:left;padding-left:15px;padding-top:30px'><div style='clear:both'>" + row.nickName + "</div>";
-                            html += "<div style='clear:both;padding-top:10px'>" + row.createTime + "</div></div>";
+                            var html = "";
+                            html += "<div style='float:left;'><div style='clear:both'>发布时间：" + row.createTime + "</div></div>";
+                            html += "<div style='float:left;padding-left: 20px;'><div style='clear:both;'>被捡起次数：" + row.replyCount + "</div></div>";
                             html += "<div style='clear:both;padding-top:5px;height:100%;width: 100%'>" + row.textContent + "</div>";
                             if (row.imgContent != "" && row.imgContent != null) {
                                 html += "<div style='clear:both'><img style =\"height: 100%;width: 100%;\" src=\"" + row.imgContent + "\"/></div>";
@@ -84,59 +78,8 @@
                         }
                     }
                 ]],
-                toolbar: "#tbPickUp",
+                toolbar: "#tbPublish",
                 onClickRow: function (rowIndex, rowData) {
-                    doDiscussDetailSearch(rowData.pickUpId);
-                }
-            });
-        }
-
-        function InitDiscussListGrid(queryData) {
-            $("#discussListGrid").datagrid({
-                title: "动态互动列表",
-                rownumbers: true,
-                fit: true,
-                singleSelect: true,
-                remoteSort: false,//前台排序 true则为后台排序 需要传参
-                idField: 'pickUpId',
-                striped: false,
-                border: false,
-                url: '/Today/GetRealUserDiscussDetail',//获取列表数据
-                method: 'post',
-                autoRowHeight: false,
-                queryParams: queryData,
-                nowrap: false,   //换行
-                pagination: false,
-                columns: [[
-                    {
-                        field: 'headImgPath', width: 60, title: "头像", sortable: true,
-                        formatter: function (value) {
-                            if (value != "" || value != null) {
-                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
-                            }
-                        }
-                    },
-                    { field: 'textContent', width: 250, title: "互动内容", sortable: true },
-                    { field: 'recentChatTime', width: 150, title: "时间", sortable: true }
-                ]],
-                onDblClickCell: function () {
-                    editItem();
-                },
-                onClickRow: function (rowIndex, rowData) {
-                    $('#hiddenId').val(rowData.uId);
-                }
-            });
-        }
-
-        function InitCombobox() {
-            $("#searchPickUpType").combobox({
-                url: '/Main/PickUpTypeCombobox',
-                method: 'post',
-                valueField: 'selectKey',
-                textField: 'selectValue',
-                groupField: 'group',
-                onSelect: function () {
-                    doPickUpListSearch();
                 }
             });
         }
@@ -144,11 +87,7 @@
         function reloadGrid() {
             $('#datagrid').datagrid('reload');
         }
-
-        //重置
-        function resetSearch() {
-            $('#searchUId').val("");
-        }
+        
 
         //搜索
         function doSearch() {
@@ -158,21 +97,19 @@
             InitGrid(queryData);
         }
 
-        function doPickUpListSearch() {
+        function resetPublishListSearch() {
+            $('#searchStartDateTime').datetimebox('setValue', '');
+            $('#searchEndDateTime').datetimebox('setValue', '');
+        }
+
+        function doPublishListSearch() {
             var queryData = {
                 UId: $("#hiddenId").val(),
-                PickUpType: $("#searchPickUpType").combobox("getValue")
+                StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
             };
-            InitPickUpListGrid(queryData);
+            InitPublishListGrid(queryData);
         }
-
-        function doDiscussDetailSearch(pickUpId) {
-            var queryData = {
-                PickUpId: pickUpId
-            };
-            InitDiscussListGrid(queryData);
-        }
-
     </script>
 </head>
 
@@ -199,16 +136,22 @@
 
     @*用户捡到的*@
     <div data-options="region:'center',split:true,collapsible:false" style="width:37%;">
-        <div id="tbPickUp" style="padding-top: 5px;padding-bottom: 5px;">
+        <div id="tbPublish" style="padding-top: 5px;padding-bottom: 5px;">
             <table cellpadding="0" cellspacing="0" style="width: 100%">
                 <tr>
-                    <td style="float:right;padding-right: 30px;">
-                        <select id="searchPickUpType" class="easyui-combobox" style="height:30px;width:100px" data-options="panelHeight: 'auto'"> </select>
+                    <td style="float:left">
+                        <input id="searchStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                        至
+                        <input id="searchEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 145px" editable="fasle">
+                    </td>
+                    <td style="float:left">
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left: 10px" onclick="resetPublishListSearch()">重置</a>
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doPublishListSearch()">搜索</a>
                     </td>
                 </tr>
             </table>
         </div>
-        <table id="pickUpListGrid"></table>
+        <table id="publishListGrid"></table>
     </div>
 
     @*用户扔出去的*@

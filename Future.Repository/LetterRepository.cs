@@ -225,6 +225,37 @@ namespace Future.Repository
             }
         }
 
+        public Tuple<List<MomentEntity>, int> GetMomentList(int pageIndex, int pageSize, long uId, DateTime? startDateTime, DateTime? endCreateTime)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = new StringBuilder(SELECT_MomentEntity);
+                sql.Append(" where 1=1");
+
+                if (uId > 0)
+                {
+                    sql.AppendFormat("and UId={0} ", uId);
+                }
+                if (!startDateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime>'{0}' ", startDateTime.Value.ToString());
+                }
+
+                if (!endCreateTime.Equals(new DateTime()))
+                {
+                    sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
+                }
+
+                int count = Db.Query<MomentEntity>(sql.ToString()).AsList().Count;
+
+                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+
+                var list = Db.Query<MomentEntity>(sql.ToString()).AsList();
+
+                return new Tuple<List<MomentEntity>, int>(list, count);
+            }
+        }
+
         public List<PickUpEntity> PickUpListByMomentUId(long uId)
         {
             var sql = @"SELECT pick.PickUpId

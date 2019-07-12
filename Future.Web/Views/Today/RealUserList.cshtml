@@ -3,8 +3,12 @@
     Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
 }
 <head>
-    <title>权限树管理</title>
-
+    <style>
+        .datagrid-htable, .datagrid-btable, .datagrid-ftable {
+            color: #333;
+            border-collapse: separate;
+        }
+    </style>
     <script type="text/javascript" src="@Url.Content("~/scripts/ajaxfileupload.js")"></script>
     <script type="text/javascript">
         $(function () {
@@ -141,7 +145,7 @@
 <table id="datagrid" style="width: 100%"></table>
 
 <div id="tb">
-    <table cellpadding="0" cellspacing="0" style="width: 100%">
+    <table cellpadding="0" cellspacing="0" style="width: 100%;margin-top: 5px;">
         <tr>
             <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
             <td style="float:left;">

@@ -276,6 +276,45 @@ namespace Future.Web.Controllers
         }
         #endregion
 
+        #region SimulateUserList(模拟用户发布的动态)
+        public IActionResult SimulateUserMomentList()
+        {
+            return View();
+        }
+
+        public JsonResult GetSimulateUserPublishList()
+        {
+            try
+            {
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                int uId = 0;
+                if (!string.IsNullOrEmpty(Request.Form["UId"]))
+                {
+                    uId = Convert.ToInt16(Request.Form["UId"]);
+                }
+                var startDateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
+                {
+                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
+                }
+                var endCreateTime = new DateTime();
+                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
+                {
+                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
+                }
+
+                var rtn = todayService.GetSimulateUserPublishList(page, rows, uId,startDateTime, endCreateTime);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetSimulateUserPublishList", ex);
+            }
+        }
+
+        #endregion
+
         #region RealUserList(真实注册用户)
         public IActionResult RealUserList()
         {
@@ -323,49 +362,10 @@ namespace Future.Web.Controllers
 
         #endregion
 
-        #region RealUserMomentList(真实注册用户)
+        #region RealUserMomentList(真实注册用户动态)
         public IActionResult RealUserMomentList()
         {
             return View();
-        }
-
-        public JsonResult GetRealUserMomentList()
-        {
-            try
-            {
-                int page = Convert.ToInt16(Request.Form["page"]);
-                int rows = Convert.ToInt16(Request.Form["rows"]);
-                int uId = 0;
-                if (!string.IsNullOrEmpty(Request.Form["UId"]))
-                {
-                    uId = Convert.ToInt16(Request.Form["UId"]);
-                }
-                var gender = GenderEnum.All;
-                if (!Request.Form["Gender"].IsNullOrEmpty())
-                {
-                    gender = (GenderEnum)Convert.ToInt16(Request.Form["gender"]);
-                }
-                string nickName = Request.Form["NickName"];
-                string openId = Request.Form["OpenId"];
-
-                var startDateTime = new DateTime();
-                if (!string.IsNullOrWhiteSpace(Request.Form["StartCreateTime"]))
-                {
-                    startDateTime = Convert.ToDateTime(Request.Form["StartCreateTime"]);
-                }
-                var endCreateTime = new DateTime();
-                if (!string.IsNullOrWhiteSpace(Request.Form["EndCreateTime"]))
-                {
-                    endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
-                }
-
-                var rtn = todayService.GetRealUserList(page, rows, uId, nickName, openId, gender, startDateTime, endCreateTime);
-                return new JsonResult(rtn);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetRealUserList", ex);
-            }
         }
 
         public JsonResult GetRealUserPickUpList()

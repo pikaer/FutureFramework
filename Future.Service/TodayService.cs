@@ -292,6 +292,26 @@ namespace Future.Service
             return rtn;
         }
 
+        public PageResult<PublishMomentListDTO> GetSimulateUserPublishList(int page, int rows, long uId, DateTime startDateTime, DateTime endCreateTime)
+        {
+            var rtn = new PageResult<PublishMomentListDTO>();
+            var momentList= letterDal.GetMomentList(page, rows,uId, startDateTime, endCreateTime);
+            if (momentList != null && momentList.Item1.NotEmpty())
+            {
+                rtn.Rows = momentList.Item1.Select(a => new PublishMomentListDTO()
+                {
+                    MomentId=a.MomentId,
+                    TextContent=a.TextContent.Trim(),
+                    ImgContent=a.ImgContent.GetImgPath(),
+                    IsDelete=a.IsDelete,
+                    ReplyCount=a.ReplyCount,
+                    CreateTime=a.CreateTime.GetDateDesc()
+                }).ToList();
+                rtn.Total = momentList.Item2;
+            }
+            return rtn;
+        }
+
         public object GetRealUserDiscussDetail(Guid pickUpId)
         {
             var rtn = new List<DiscussDetailDTO>();
