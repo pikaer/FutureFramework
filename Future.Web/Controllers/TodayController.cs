@@ -303,13 +303,49 @@ namespace Future.Web.Controllers
                 {
                     endCreateTime = Convert.ToDateTime(Request.Form["EndCreateTime"]);
                 }
+                var state = MomentStateEnum.All;
+                if (!string.IsNullOrEmpty(Request.Form["MomentState"]))
+                {
+                    state = (MomentStateEnum)Convert.ToInt16(Request.Form["MomentState"]);
+                }
 
-                var rtn = todayService.GetSimulateUserPublishList(page, rows, uId,startDateTime, endCreateTime);
+                var rtn = todayService.GetSimulateUserPublishList(page, rows, uId, state,startDateTime, endCreateTime);
                 return new JsonResult(rtn);
             }
             catch (Exception ex)
             {
                 return ErrorJsonResult(ErrCodeEnum.InnerError, "GetSimulateUserPublishList", ex);
+            }
+        }
+
+        public JsonResult AddOrUpdateSimulateMoment(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<MomentEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = todayService.AddOrUpdateSimulateMoment(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddOrUpdateSimulateMoment", ex);
+            }
+        }
+
+        public JsonResult UpdateImgContent(Guid momentId, long imgId)
+        {
+            try
+            {
+                var res = todayService.UpdateImgContent(momentId, imgId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateImgContent", ex);
             }
         }
 

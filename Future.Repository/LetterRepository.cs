@@ -225,30 +225,47 @@ namespace Future.Repository
             }
         }
 
-        public Tuple<List<MomentEntity>, int> GetMomentList(int pageIndex, int pageSize, long uId, DateTime? startDateTime, DateTime? endCreateTime)
+        public Tuple<List<MomentEntity>, int> GetMomentList(int pageIndex, int pageSize, long uId, MomentStateEnum state, DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = new StringBuilder(SELECT_MomentEntity);
-                sql.Append(" where 1=1");
-
+                var sql = new StringBuilder("SELECT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.letter_Moment  moment where 1=1");
+               
                 if (uId > 0)
                 {
-                    sql.AppendFormat("and UId={0} ", uId);
+                    sql.AppendFormat("and moment.UId={0} ", uId);
                 }
                 if (!startDateTime.Equals(new DateTime()))
                 {
-                    sql.AppendFormat("and CreateTime>'{0}' ", startDateTime.Value.ToString());
+                    sql.AppendFormat("and moment.CreateTime>'{0}' ", startDateTime.Value.ToString());
                 }
 
                 if (!endCreateTime.Equals(new DateTime()))
                 {
-                    sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
+                    sql.AppendFormat("and moment.CreateTime<'{0}' ", endCreateTime.Value.ToString());
                 }
+
+                switch (state)
+                {
+                    case MomentStateEnum.CanUse:
+                        sql.AppendFormat("and moment.CreateTime<'{0}' ", DateTime.Now.ToString());
+                        break;
+                    case MomentStateEnum.CanNotUse:
+                        sql.AppendFormat("and moment.CreateTime>'{0}' ", DateTime.Now.ToString());
+                        break;
+                    case MomentStateEnum.CanNotPickUp:
+                        sql.Append("and moment.ReplyCount=0 ");
+                        break;
+                    case MomentStateEnum.HasDiscuss:
+                        sql.Append("Inner Join dbo.letter_PickUp pick on pick.MomentId=moment.MomentId" +
+                                   "Inner Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId");
+                        break;
+                }
+
 
                 int count = Db.Query<MomentEntity>(sql.ToString()).AsList().Count;
 
-                sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+                sql.AppendFormat(" order by moment.CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
 
                 var list = Db.Query<MomentEntity>(sql.ToString()).AsList();
 
@@ -319,7 +336,7 @@ namespace Future.Repository
                 return Db.Query<PickUpDTO>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
             }
         }
-
+        
         public List<DiscussEntity>DiscussList(Guid pickUpId)
         {
             var sql = string.Format("{0} Where PickUpId='{1}' Order by CreateTime desc", SELECT_DiscussEntity, pickUpId);
@@ -377,13 +394,14 @@ namespace Future.Repository
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
                           Inner join dbo.letter_LetterUser us On us.UId=moment.UId
                           Where moment.UId!=@UId  
+                            and moment.CreateTime<@CreateTime 
                             and pick.MomentId is Null 
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
                             and us.Gender!=@Gender
                           Order by moment.CreateTime desc";
-                return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender });
+                return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender , CreateTime =DateTime.Now});
             }
         }
 
@@ -499,7 +517,18 @@ namespace Future.Repository
             }
         }
 
-
+        public bool UpdateMomentImgContent(string shortUrl, Guid momentId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Moment
+                               SET ImgContent =@ImgContent
+                                  ,UpdateTime = @UpdateTime
+                               WHERE MomentId=@MomentId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId, ImgContent= shortUrl }) > 0;
+            }
+        }
+        
         public bool UpdateAvatarUrl(string avatarUrl,long uId)
         {
             using (var Db = GetDbConnection())
@@ -543,6 +572,19 @@ namespace Future.Repository
                                ,UpdateTime= @UpdateTime
                           WHERE UId=@UId";
                 return Db.Execute(sql, userEntity) > 0;
+            }
+        }
+
+        public bool UpdateMoment(MomentEntity momentEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.letter_Moment
+                            SET TextContent = @TextContent
+                               ,CreateTime= @CreateTime
+                               ,UpdateTime= @UpdateTime
+                          WHERE MomentId=@MomentId";
+                return Db.Execute(sql, momentEntity) > 0;
             }
         }
 

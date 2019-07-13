@@ -292,10 +292,10 @@ namespace Future.Service
             return rtn;
         }
 
-        public PageResult<PublishMomentListDTO> GetSimulateUserPublishList(int page, int rows, long uId, DateTime startDateTime, DateTime endCreateTime)
+        public PageResult<PublishMomentListDTO> GetSimulateUserPublishList(int page, int rows, long uId, MomentStateEnum state, DateTime startDateTime, DateTime endCreateTime)
         {
             var rtn = new PageResult<PublishMomentListDTO>();
-            var momentList= letterDal.GetMomentList(page, rows,uId, startDateTime, endCreateTime);
+            var momentList= letterDal.GetMomentList(page, rows,uId, state, startDateTime, endCreateTime);
             if (momentList != null && momentList.Item1.NotEmpty())
             {
                 rtn.Rows = momentList.Item1.Select(a => new PublishMomentListDTO()
@@ -305,11 +305,62 @@ namespace Future.Service
                     ImgContent=a.ImgContent.GetImgPath(),
                     IsDelete=a.IsDelete,
                     ReplyCount=a.ReplyCount,
-                    CreateTime=a.CreateTime.GetDateDesc()
+                    CreateTime=a.CreateTime.GetDateDesc(),
+                    CanEdit=a.ReplyCount<=0
                 }).ToList();
                 rtn.Total = momentList.Item2;
             }
             return rtn;
+        }
+
+        public ResponseContext<bool> AddOrUpdateSimulateMoment(MomentEntity request)
+        {
+            bool success = true;
+            if (request.MomentId==new Guid())
+            {
+                request.UpdateTime = DateTime.Now;
+                request.MomentId = Guid.NewGuid();
+                success=letterDal.InsertMoment(request);
+            }
+            else
+            {
+                var moment = letterDal.GetMoment(request.MomentId);
+                if (moment == null)
+                {
+                    return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "动态不存在，请联系管理员");
+                }
+                if (moment.ReplyCount > 0)
+                {
+                    return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "该动态已被订阅，不能修改!");
+                }
+                request.UpdateTime = DateTime.Now;
+                success=letterDal.UpdateMoment(request);
+            }
+            return new ResponseContext<bool>(success);
+        }
+
+        public object UpdateImgContent(Guid momentId, long imgId)
+        {
+            if(momentId==new Guid())
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "动态不存在，请联系管理员");
+            }
+            var img = sysDal.ImgGallery(imgId);
+            if (img == null)
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "图片不存在");
+            }
+
+            bool success = letterDal.UpdateMomentImgContent(img.ShortUrl, momentId);
+            if (success)
+            {
+                sysDal.UpdateImgUseCount(imgId);
+                return new ResponseContext<bool>(success);
+            }
+            else
+            {
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, success);
+            }
         }
 
         public object GetRealUserDiscussDetail(Guid pickUpId)
@@ -333,7 +384,6 @@ namespace Future.Service
                         TextContent = item.DiscussContent,
                         RecentChatTime = item.UpdateTime.Value.GetDateDesc()
                     };
-
                     rtn.Add(dto);
                 }
             }

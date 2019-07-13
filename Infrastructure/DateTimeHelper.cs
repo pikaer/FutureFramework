@@ -40,7 +40,13 @@ namespace Infrastructure
                 var hour12 = now.AddHours(-12);    //    12小时前
                 var hour13 = now.AddHours(-13);    //    13小时前
                 var hour14 = now.AddHours(-14);    //    14小时前
-                if (datetime >= min1)
+                var hour15= now.AddHours(-15);    //    15小时前
+                var hour16 = now.AddHours(-16);    //    16小时前
+                var hour17 = now.AddHours(-17);    //    17小时前
+                var hour18 = now.AddHours(-18);    //    18小时前
+                var hour19 = now.AddHours(-19);    //    19小时前
+                var hour20 = now.AddHours(-20);    //    20小时前
+                if (datetime >= min1&& datetime<now)
                 {
                     rtn = "刚刚";
                 }
@@ -116,9 +122,33 @@ namespace Infrastructure
                 {
                     rtn = "13小时前";
                 }
-                else
+                else if(datetime >= hour15 && datetime < hour14)
                 {
                     rtn = "14小时前";
+                }
+                else if (datetime >= hour16 && datetime < hour15)
+                {
+                    rtn = "15小时前";
+                }
+                else if (datetime >= hour17 && datetime < hour16)
+                {
+                    rtn = "16小时前";
+                }
+                else if (datetime >= hour18 && datetime < hour17)
+                {
+                    rtn = "17小时前";
+                }
+                else if (datetime >= hour19 && datetime < hour18)
+                {
+                    rtn = "18小时前";
+                }
+                else if (datetime >= hour20 && datetime < hour19)
+                {
+                    rtn = "19小时前";
+                }
+                else
+                {
+                    rtn = datetime.ToShortDateString().ToString();
                 }
             }
             else if (datetime <= today && datetime > yestoday)

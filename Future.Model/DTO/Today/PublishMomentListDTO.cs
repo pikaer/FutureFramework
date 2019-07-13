@@ -34,5 +34,9 @@ namespace Future.Model.DTO.Today
         /// </summary>
         public string CreateTime { get; set; }
         
+        /// <summary>
+        /// 是否可编辑
+        /// </summary>
+        public bool CanEdit { get; set; }
     }
 }

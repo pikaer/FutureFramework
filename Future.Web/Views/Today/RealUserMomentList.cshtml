@@ -46,7 +46,7 @@
                     doPickUpListSearch();
                 },
                 onLoadSuccess: function (data) {
-                    $('#hiddenId').val(data.uId);
+                    $('#hiddenId').val(data.rows[0].uId);
                     doPickUpListSearch();
                 }
             });

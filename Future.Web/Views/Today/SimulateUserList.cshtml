@@ -149,8 +149,7 @@
             InitGridImg(null);
             $('#dlgImg').dialog('open');
         }
-
-        //删除
+        
         function updateAvatarUrl() {
             var row = $('#datagridImg').datagrid('getSelected');
             if (!row) {
@@ -216,7 +215,7 @@
                         reloadGrid();
                     }
                     else {
-                        $.messager.alert("提示", data.ResultMessage);
+                        $.messager.alert("提示", data.resultMessage);
                     }
                 });
         }
@@ -268,7 +267,7 @@
                                 reloadGrid();
                             }
                             else {
-                                $.messager.alert("提示", data.ResultMessage);
+                                $.messager.alert("提示", data.resultMessage);
                             }
                         });
                 }
@@ -281,19 +280,7 @@
         function reloadGrid() {
             $('#datagrid').datagrid('reload');
         }
-
-        //添加
-        function upLoadImage() {
-            var row = $('#datagrid').datagrid('getSelected');
-            if (!row) {
-                $.messager.alert('提示', '请选择对应的行!', 'info');
-                return;
-            }
-
-            $("#imageFlile").click();
-        }
-
-
+        
         //重置
         function resetSearch() {
             $('#searchUId').val("");
