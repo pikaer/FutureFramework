@@ -102,7 +102,7 @@ namespace Future.Utility
                 }
                 Task.Factory.StartNew(() =>
                 {
-                    WriteLog(level, tid, uid, platform, title, desc, "FutureLetter.Api", keyValuePairs);
+                    WriteLog(level, tid, uid, platform, title, desc, keyValuePairs);
                 });
             }
             catch
@@ -111,7 +111,7 @@ namespace Future.Utility
             }
         }
 
-        private void WriteLog(LogLevelEnum logLevel, Guid tid, long uid, string platform, string title, string content, string serverName, Dictionary<string, string> keyValuePairs = null)
+        private void WriteLog(LogLevelEnum logLevel, Guid tid, long uid, string platform,string title, string content,Dictionary<string, string> keyValuePairs = null)
         {
             //日志开关
             if (!ConfigHelper.GetBool("LogIsOpen"))
@@ -125,7 +125,7 @@ namespace Future.Utility
             {
                 return;
             }
-
+            
             var logEntity = new LogEntity()
             {
                 LogId = Guid.NewGuid(),
@@ -135,7 +135,7 @@ namespace Future.Utility
                 Platform = platform,
                 LogTitle = title,
                 LogContent = content,
-                ServiceName = serverName,
+                ServiceName = ConfigHelper.GetString("ServiceName"),
                 CreateTime = DateTime.Now
             };
             logDal.InsertLogs(logEntity);

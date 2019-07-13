@@ -339,7 +339,13 @@ namespace Future.Service
             return new ResponseContext<bool>(success);
         }
 
-        public object UpdateImgContent(Guid momentId, long imgId)
+        public ResponseContext<bool> DeleteSimulateMoment(Guid momentId)
+        {
+            bool success = letterDal.DeleteSimulateMoment(momentId);
+            return new ResponseContext<bool>(success);
+        }
+
+        public ResponseContext<bool> UpdateImgContent(Guid momentId, long imgId)
         {
             if(momentId==new Guid())
             {
@@ -363,7 +369,7 @@ namespace Future.Service
             }
         }
 
-        public object GetRealUserDiscussDetail(Guid pickUpId)
+        public List<DiscussDetailDTO> GetRealUserDiscussDetail(Guid pickUpId)
         {
             var rtn = new List<DiscussDetailDTO>();
             var discussList = letterDal.DiscussList(pickUpId);

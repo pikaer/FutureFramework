@@ -349,6 +349,20 @@ namespace Future.Web.Controllers
             }
         }
 
+        public JsonResult DeleteSimulateMoment(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<MomentEntity>();
+                var res = todayService.DeleteSimulateMoment(request.MomentId);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteSimulateMoment", ex);
+            }
+        }
+
         #endregion
 
         #region RealUserList(真实注册用户)

@@ -229,39 +229,41 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = new StringBuilder("SELECT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.letter_Moment  moment where 1=1");
+                var sql = new StringBuilder("SELECT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.letter_Moment  moment");
                
+                switch (state)
+                {
+                    case MomentStateEnum.CanUse:
+                        sql.AppendFormat("where moment.CreateTime<'{0}' ", DateTime.Now.ToString());
+                        break;
+                    case MomentStateEnum.CanNotUse:
+                        sql.AppendFormat("where moment.CreateTime>'{0}' ", DateTime.Now.ToString());
+                        break;
+                    case MomentStateEnum.CanNotPickUp:
+                        sql.Append("where moment.ReplyCount=0 ");
+                        break;
+                    case MomentStateEnum.HasDiscuss:
+                        sql.Append(" Inner Join dbo.letter_PickUp pick on pick.MomentId=moment.MomentId" +
+                                   " Inner Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId where 1=1");
+                        break;
+                    default:
+                        sql.Append(" where 1=1 ");
+                        break;
+
+                }
+
                 if (uId > 0)
                 {
                     sql.AppendFormat("and moment.UId={0} ", uId);
                 }
                 if (!startDateTime.Equals(new DateTime()))
                 {
-                    sql.AppendFormat("and moment.CreateTime>'{0}' ", startDateTime.Value.ToString());
+                    sql.AppendFormat("and  moment.CreateTime>'{0}' ", startDateTime.Value.ToString());
                 }
-
                 if (!endCreateTime.Equals(new DateTime()))
                 {
-                    sql.AppendFormat("and moment.CreateTime<'{0}' ", endCreateTime.Value.ToString());
+                    sql.AppendFormat("and  moment.CreateTime<'{0}' ", endCreateTime.Value.ToString());
                 }
-
-                switch (state)
-                {
-                    case MomentStateEnum.CanUse:
-                        sql.AppendFormat("and moment.CreateTime<'{0}' ", DateTime.Now.ToString());
-                        break;
-                    case MomentStateEnum.CanNotUse:
-                        sql.AppendFormat("and moment.CreateTime>'{0}' ", DateTime.Now.ToString());
-                        break;
-                    case MomentStateEnum.CanNotPickUp:
-                        sql.Append("and moment.ReplyCount=0 ");
-                        break;
-                    case MomentStateEnum.HasDiscuss:
-                        sql.Append("Inner Join dbo.letter_PickUp pick on pick.MomentId=moment.MomentId" +
-                                   "Inner Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId");
-                        break;
-                }
-
 
                 int count = Db.Query<MomentEntity>(sql.ToString()).AsList().Count;
 
@@ -747,12 +749,12 @@ namespace Future.Repository
             }
         }
 
-        public bool DeletePickUp(Guid pickUpId)
+        public bool DeleteSimulateMoment(Guid momentId)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"Delete dbo.letter_PickUp Where PickUpId=@PickUpId";
-                return Db.Execute(sql, new { PickUpId = pickUpId }) > 0;
+                var sql = @"Delete dbo.letter_Moment Where MomentId=@MomentId";
+                return Db.Execute(sql, new { MomentId = momentId }) > 0;
             }
         }
     }
