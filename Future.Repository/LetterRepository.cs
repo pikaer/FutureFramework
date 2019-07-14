@@ -229,7 +229,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = new StringBuilder("SELECT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.letter_Moment  moment");
+                var sql = new StringBuilder("SELECT DISTINCT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.letter_Moment  moment");
                
                 switch (state)
                 {
@@ -265,6 +265,8 @@ namespace Future.Repository
                     sql.AppendFormat("and  moment.CreateTime<'{0}' ", endCreateTime.Value.ToString());
                 }
 
+                sql.Append("Group by moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime ");
+
                 int count = Db.Query<MomentEntity>(sql.ToString()).AsList().Count;
 
                 sql.AppendFormat(" order by moment.CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
@@ -272,6 +274,45 @@ namespace Future.Repository
                 var list = Db.Query<MomentEntity>(sql.ToString()).AsList();
 
                 return new Tuple<List<MomentEntity>, int>(list, count);
+            }
+        }
+
+        public Tuple<List<PickUpEntity>, int> GetPickUpList(int pageIndex, int pageSize, Guid momentId, long uId, MomentPickUpEnum state)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = new StringBuilder("SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.IsUserDelete,pick.IsPartnerDelete,pick.CreateTime,pick.UpdateTime FROM dbo.letter_PickUp  pick ");
+
+                switch (state)
+                {
+                    case MomentPickUpEnum.NoDiscuss:
+                        sql.AppendFormat("Left Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId where disc.PickUpId is null and MomentId={0} ", momentId.ToString());
+                        break;
+                    case MomentPickUpEnum.HasDiscuss:
+                        sql.AppendFormat("Inner Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId and MomentId={0} ", momentId.ToString());
+                        break;
+                    case MomentPickUpEnum.IsDelete:
+                        sql.AppendFormat("where pick.IsPartnerDelete=1 and MomentId='{0}' ", momentId.ToString());
+                        break;
+                    case MomentPickUpEnum.NoDelete:
+                        sql.AppendFormat("where pick.IsPartnerDelete=0 and MomentId='{0}' ", momentId.ToString());
+                        break;
+                    default:
+                        sql.AppendFormat(" where MomentId='{0}' ", momentId.ToString());
+                        break;
+                }
+
+                if (uId > 0)
+                {
+                    sql.AppendFormat("and pick.PickUpUId={0} ", uId);
+                }
+                int count = Db.Query<PickUpEntity>(sql.ToString()).AsList().Count;
+
+                sql.AppendFormat(" order by pick.CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
+
+                var list = Db.Query<PickUpEntity>(sql.ToString()).AsList();
+
+                return new Tuple<List<PickUpEntity>, int>(list, count);
             }
         }
 

@@ -1,0 +1,384 @@
+﻿@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_EasyUiLayout.cshtml";
+}
+<head>
+    <script type="text/javascript">
+        $(function () {
+            $('#dlg').dialog('close');
+            InitGrid(null);
+        });
+
+        function InitGrid(queryData) {
+            $("#datagrid").datagrid({
+                title: "模拟用户列表",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'uId',
+                striped: true,
+                border: false,
+                url: '/Today/GetSimulateUserList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'headPhotoPath', width: 60, title: "头像", sortable: true,
+                        formatter: function (value) {
+                            if (value != "" || value != null) {
+                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
+                            }
+                        }
+                    },
+                    { field: 'uId', width: 60, title: "UId", sortable: true },
+                    { field: 'nickName', width: 90, title: "用户昵称", sortable: true },
+                    { field: 'genderDesc', width: 50, title: "性别", sortable: true }
+                ]],
+                toolbar: "#tb",
+                onClickRow: function (index, row) {
+                    $('#hiddenId').val(row.uId);
+                    resetPublishListSearch();
+                    doPublishListSearch();
+                },
+                onLoadSuccess: function (data) {
+                    $('#hiddenId').val(data.rows[0].uId);
+                    doPublishListSearch();
+                }
+            });
+        }
+
+        function InitPublishListGrid(queryData) {
+            $("#publishListGrid").datagrid({
+                title: "该用户发布的有互动的动态",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'uId',
+                striped: false,
+                border: false,
+                url: '/Today/GetSimulateUserPublishList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'formatter', sortable: false,
+                        formatter: function (value, row) {
+                            var html = "";
+                            html += "<div style='float:left;'><div style='clear:both'>生效时间：" + row.createTime + "</div></div>";
+                            html += "<div style='float:left;padding-left: 20px;'><div style='clear:both;'>被捡起次数：" + row.replyCount + "</div></div>";
+                            html += "<div style='clear:both;padding-top:5px;height:100%;width: 100%'>" + row.textContent + "</div>";
+                            if (row.imgContent != "" && row.imgContent != null) {
+                                html += "<div style='clear:both'><img style =\"height:219px;width: 219px;\" src=\"" + row.imgContent + "\"/></div>";
+                            }
+                            return html;
+                        }
+                    }
+                ]],
+                toolbar: "#tbPublish",
+                onClickRow: function (index, row) {
+                    $('#hiddenMomentId').val(row.momentId);
+                    doPickUpListSearch();
+                },
+                onLoadSuccess: function (data) {
+                    $('#hiddenMomentId').val(data.rows[0].momentId);
+                    doPickUpListSearch();
+                }
+            });
+        }
+
+        function InitPickUpGrid(queryData) {
+            $("#discussListGrid").datagrid({
+                title: "订阅该动态的用户",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'imgId',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/Today/SimulateMomentPickUpList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'formatter', sortable: false,
+                        formatter: function (value, row) {
+                            var html = "<div style='float:left;'><img style =\"height: 100px;width:100px\" src=\"" + row.headPhotoPath + "\"/></div>";
+                            html += "<div style='float:right;'><div style='clear:both;font-size: 10px;'>昵称：" + row.nickName + "</div>";
+                            html += "<div style='clear:both;padding-top:2px;font-size: 10px;'>UId：" + row.uId + "</div>";
+                            html += "<div style='clear:both;padding-top:2px;font-size: 10px;'>性别：" + row.genderDesc + "</div>";
+                            html += "<div style='clear:both;padding-top:2px;font-size: 10px;'>互动次数：" + row.discussCount + "</div>";
+                            html += "<div style='clear:both;padding-top:2px;font-size: 10px;'>订阅时间:" + row.createTime + "</div></div>";
+                            return html;
+                        }
+                    }
+                ]],
+                toolbar: "#tbPickUp",
+                onClickRow: function (index, row) {
+                    doDiscussDetailListSearch(row.pickUpId);
+                },
+                onLoadSuccess: function (data) {
+                    doDiscussDetailListSearch(data.rows[0].pickUpId);
+                }
+            });
+        }
+
+        function InitDiscussDetailGrid(queryData) {
+            $("#discussDetailGrid").datagrid({
+                title: "互动列表",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'imgId',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/Today/GetSimulateDiscussList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'headImgPath', width: 60, title: "头像", sortable: true,
+                        formatter: function (value) {
+                            if (value !== "" || value !== null) {
+                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
+                            }
+                        }
+                    },
+                    { field: 'textContent', width: 200, title: "互动内容", sortable: true },
+                    { field: 'recentChatTime', width: 50, title: "时间", sortable: true },
+                    {
+                        field: 'hasRead', width: 60, title: "状态", sortable: true,
+                        formatter: function (value, row) {
+                            var uid = $('#hiddenId').val();
+                            if (uid !== row.pickUpUId) {
+                                if (row.hasRead) {
+                                    return "对方已读";
+                                } else {
+                                    return "未读";
+                                }
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
+                ]],
+                toolbar: "#tbDiscussDetail"
+            });
+        }
+
+        //取消
+        function cancel() {
+            $('#dlg').dialog('close');
+        }
+
+        function addDiscussItem() {
+            var user = $('#datagrid').datagrid('getSelected');
+            if (!user) {
+                $.messager.alert('提示', '请选择对应的模拟用户!', 'info');
+                return;
+            }
+            $('#hiddenId').val(user.uId);
+
+            var row = $('#discussListGrid').datagrid('getSelected');
+            if (!row) {
+                $.messager.alert('提示', '请选择对应的行!', 'info');
+                return;
+            }
+            $('#hiddenPickUpId').val(row.pickUpId);
+            $('#textContentInput').val('');
+            $('#dlg').dialog('open');
+        }
+
+
+        //提交
+        function submit() {
+            var queryData = {
+                PickUpId: $('#hiddenPickUpId').val(),
+                UId: $("#hiddenId").val(),
+                DiscussContent: $("#textContentInput").val()
+            };
+            $.post("/Today/AddDiscuss",
+                { data: $.toJSON(queryData) },
+                function (data) {
+                    if (data.success) {
+                        //成功后刷新界面
+                        cancel();
+                        doDiscussDetailListSearch($('#hiddenPickUpId').val());
+                    }
+                    else {
+                        $.messager.alert("提示", data.resultMessage);
+                    }
+                });
+        }
+
+        function reloadGrid() {
+            $('#datagrid').datagrid('reload');
+        }
+
+        function reloadPublishGrid() {
+            $('#publishListGrid').datagrid('reload');
+        }
+        
+        //搜索
+        function doSearch() {
+            var queryData = {
+                UId: $("#searchUId").val()
+            };
+            InitGrid(queryData);
+        }
+
+        function resetPublishListSearch() {
+            $('#searchStartDateTime').datetimebox('setValue', '');
+            $('#searchEndDateTime').datetimebox('setValue', '');
+        }
+
+        function doPublishListSearch() {
+            var queryData = {
+                UId: $("#hiddenId").val(),
+                MomentState:1,
+                StartCreateTime: $('#searchStartDateTime').datetimebox('getValue'),
+                EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
+            };
+            InitPublishListGrid(queryData);
+        }
+        
+
+        function doPickUpListSearch() {
+            var momentId = $("#hiddenMomentId").val();
+            var queryData = {
+                MomentId: momentId,
+                UId: $("#searchPickUpUId").val()
+            };
+            InitPickUpGrid(queryData);
+        }
+
+        function doDiscussDetailListSearch(pickUpId) {
+            var queryData = {
+                PickUpId: pickUpId
+            };
+            InitDiscussDetailGrid(queryData);
+        }
+    </script>
+</head>
+
+<body id="mainLayout" class="easyui-layout">
+    <input id="hiddenId" type="hidden" />
+    <input id="hiddenMomentId" type="hidden" />
+    <input id="hiddenPickUpId" type="hidden" />
+
+    @*用户列表*@
+    <div data-options="region:'west',split:true,collapsible:false" style="width: 25%">
+        <div id="tb" style="padding-top: 5px;padding-bottom: 5px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%">
+                <tr>
+                    <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
+                    <td style="float:left;">
+                        <input id="searchUId" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+                    </td>
+                    <td style="float:left">
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left: 10px" onclick="doSearch()">搜索</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table id="datagrid" style="width: 100%"></table>
+    </div>
+
+    @*用户捡到的*@
+    <div data-options="region:'center',split:true,collapsible:true" style="width:23%">
+        <div id="tbPublish" style="padding-top: 5px;padding-bottom: 5px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%">
+                <tr>
+                    <td style="float:left">
+                        <input id="searchStartDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 125px" editable="fasle">
+                        至
+                        <input id="searchEndDateTime" type="text" class="easyui-datetimebox" style="height:25px;width: 125px" editable="fasle">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="float:left;padding-top:5px;">
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left:3px" onclick="resetPublishListSearch()">重置</a>
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left:5px" onclick="doPublishListSearch()">搜索</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table id="publishListGrid"></table>
+    </div>
+
+
+    @*动态捡起列表*@
+    <div data-options="region:'east',split:true,collapsible:true" style="width:52%">
+        <div style="float:left;width:260px;height: 100%;">
+            <div id="tbPickUp" style="padding-top: 5px;padding-bottom: 5px;">
+                <table cellpadding="0" cellspacing="0" style="width: 100%">
+                    <tr>
+                        <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
+                        <td style="float:left;">
+                            <input id="searchPickUpUId" class="easyui-validatebox textbox" type="text" style="height:25px;width:60px" />
+                        </td>
+                        <td style="float:left;">
+                            <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left:5px" onclick="doPickUpListSearch()">搜索</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table id="discussListGrid"></table>
+        </div>
+        <div style="float:left;height: 100%;border-left: 1px solid gray;">
+            <div id="tbDiscussDetail" style="padding-top: 5px;padding-bottom: 5px;">
+                <table cellpadding="0" cellspacing="0" style="width: 100%">
+                    <tr>
+                        <td style="float:left;">
+                            <a href="#" class="easyui-linkbutton" iconcls="icon icon-add" plain="true" onclick="addDiscussItem()">回复</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table id="discussDetailGrid"></table>
+        </div>
+    </div>
+
+
+
+    @*编辑框*@
+    <div id="dlg" class="easyui-dialog" title="回复" data-options="iconCls:'icon-save'" style="width:450px;height:260px;padding:10px;display:none">
+        <div style="padding: 5px">
+            <form id="ff">
+                <table class="groupTable">
+                    <tr>
+                        <td colspan="1">回复内容:</td>
+                        <td colspan="2" style="width: 300px;float: left;">
+                            <textarea id="textContentInput" style="height:120px;width: 100%"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <br />
+            <div align="center" style="float:left;margin-left:110px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" onclick="cancel()">取消</a></div>
+            <div align="center" style="float:right;margin-right:110px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" onclick="submit()">确定</a></div>
+        </div>
+    </div>
+</body>
+

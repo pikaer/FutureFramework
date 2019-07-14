@@ -78,16 +78,22 @@
                             var html = "";
                             html += "<div style='float:left;'><div style='clear:both'>生效时间：" + row.createTime + "</div></div>";
                             html += "<div style='float:left;padding-left: 20px;'><div style='clear:both;'>被捡起次数：" + row.replyCount + "</div></div>";
-                            html += "<div style='clear:both;padding-top:5px;height:100%;width: 100%'>" + row.textContent + "</div>";
+                            html += "<div style='clear:both;padding-top:5px;height:100%;width: 400px'>" + row.textContent + "</div>";
                             if (row.imgContent != "" && row.imgContent != null) {
-                                html += "<div style='clear:both'><img style =\"height: 100%;width: 100%;\" src=\"" + row.imgContent + "\"/></div>";
+                                html += "<div style='clear:both'><img style =\"height: 100%;width: 400px\" src=\"" + row.imgContent + "\"/></div>";
                             }
                             return html;
                         }
                     }
                 ]],
                 toolbar: "#tbPublish",
-                onClickRow: function (rowIndex, rowData) {
+                onClickRow: function (index, row) {
+                    $('#hiddenMomentId').val(row.momentId);
+                    doPickUpListSearch();
+                },
+                onLoadSuccess: function (data) {
+                    $('#hiddenMomentId').val(data.rows[0].momentId);
+                    doPickUpListSearch();
                 }
             });
         }
@@ -128,6 +134,43 @@
                 onDblClickCell: function () {
                     updateImgContent();
                 }
+            });
+        }
+
+        function InitPickUpGrid(queryData) {
+            $("#discussListGrid").datagrid({
+                title: "订阅该动态的用户",
+                rownumbers: true,
+                fit: true,
+                singleSelect: true,
+                remoteSort: false,//前台排序 true则为后台排序 需要传参
+                idField: 'imgId',
+                striped: true,
+                border: false,
+                iconCls: 'icon icon-tree',
+                url: '/Today/SimulateMomentPickUpList',//获取列表数据
+                method: 'post',
+                autoRowHeight: false,
+                queryParams: queryData,
+                nowrap: false,   //换行
+                pagination: true,
+                pageSize: 10,
+                columns: [[
+                    {
+                        field: 'headPhotoPath', width: 60, title: "头像", sortable: true,
+                        formatter: function (value) {
+                            if (value != "" || value != null) {
+                                return "<img style=\"height: 60px;width: 60px;\" src=\"" + value + "\"/>";
+                            }
+                        }
+                    },
+                    { field: 'uId', width: 60, title: "UId", sortable: true },
+                    { field: 'nickName', width: 80, title: "昵称", sortable: true },
+                    { field: 'genderDesc', width: 60, title: "性别", sortable: true },
+                    { field: 'discussCount', width: 80, title: "互动次数", sortable: true },
+                    { field: 'createTime', width: 100, title: "订阅时间", sortable: true }
+                ]],
+                toolbar: "#tbPickUp"
             });
         }
 
@@ -249,8 +292,7 @@
                 }
             });
         }
-
-
+        
         //更换选择图片
         function upLoadImage() {
             var row = $('#publishListGrid').datagrid('getSelected');
@@ -276,17 +318,21 @@
                 method: 'post',
                 valueField: 'selectKey',
                 textField: 'selectValue',
-                groupField: 'group',
-                onSelect: function () {
-                    doPickUpListSearch();
-                }
+                groupField: 'group'
+            });
+
+            $("#momentPickUpCombobox").combobox({
+                url: '/Main/MomentPickUpCombobox',
+                method: 'post',
+                valueField: 'selectKey',
+                textField: 'selectValue',
+                groupField: 'group'
             });
         }
 
         function reloadGrid() {
             $('#datagrid').datagrid('reload');
         }
-
 
         function reloadPublishGrid() {
             $('#publishListGrid').datagrid('reload');
@@ -314,6 +360,24 @@
                 EndCreateTime: $('#searchEndDateTime').datetimebox('getValue')
             };
             InitPublishListGrid(queryData);
+        }
+
+        function resetPickUpSearch() {
+            $("#searchPickUpUId").val('');
+            $("#momentPickUpCombobox").combobox('setValue', 0);
+        }
+
+        function doPickUpListSearch() {
+            var momentId = $("#hiddenMomentId").val();
+            if (momentId === null || momentId==='') {
+                return;
+            }
+            var queryData = {
+                MomentId: momentId,
+                UId: $("#searchPickUpUId").val(),
+                PickUpState: $("#momentPickUpCombobox").combobox("getValue")
+            };
+            InitPickUpGrid(queryData);
         }
 
         //重置
@@ -392,8 +456,25 @@
         <table id="publishListGrid"></table>
     </div>
 
-    @*用户扔出去的*@
+    @*互动列表*@
     <div data-options="region:'east',split:true,collapsible:false" style="width:37%;">
+        <div id="tbPickUp" style="padding-top: 5px;padding-bottom: 5px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%">
+                <tr>
+                    <td style="float:left;padding-left: 8px;padding-top: 5px;">UId: </td>
+                    <td style="float:left;">
+                        <input id="searchPickUpUId" class="easyui-validatebox textbox" type="text" style="height:25px;width:100px" />
+                    </td>
+                    <td style="float:left;margin-left:3px">
+                        <select id="momentPickUpCombobox" class="easyui-combobox" style="height:26px;width:100px" data-options="panelHeight: 'auto'"> </select>
+                    </td>
+                    <td style="float:left">
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-cancel" style="float:left;margin-left:3px" onclick="resetPickUpSearch()">重置</a>
+                        <a href="#" class="easyui-linkbutton" iconcls="icon icon-search" style="float:left;margin-left:5px" onclick="doPickUpListSearch()">搜索</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <table id="discussListGrid"></table>
     </div>
 
@@ -450,5 +531,7 @@
             <div align="center" style="float:right;margin-right:110px"><a href="#" class="easyui-linkbutton" iconcls="icon icon-ok" onclick="submit()">确定</a></div>
         </div>
     </div>
+
+
 </body>
 

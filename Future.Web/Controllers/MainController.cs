@@ -111,6 +111,10 @@ namespace Future.Web.Controllers
         {
             return new JsonResult(EnumHelper.ToSelectPicker(typeof(MomentStateEnum)));
         }
-        
+
+        public JsonResult MomentPickUpCombobox()
+        {
+            return new JsonResult(EnumHelper.ToSelectPicker(typeof(MomentPickUpEnum)));
+        }
     }
 }

@@ -76,9 +76,9 @@
                             var html = "<div style='float:left;padding-top:25px'><img style=\"border-radius: 100%;height: 60px;width: 60px;\" src=\"" + row.headImgPath + "\"/></div>";
                             html += "<div style='float:left;padding-left:15px;padding-top:30px'><div style='clear:both'>" + row.nickName + "</div>";
                             html += "<div style='clear:both;padding-top:10px'>" + row.createTime + "</div></div>";
-                            html += "<div style='clear:both;padding-top:5px;height:100%;width: 100%'>" + row.textContent + "</div>";
+                            html += "<div style='clear:both;padding-top:5px;height:100%;width:430px'>" + row.textContent + "</div>";
                             if (row.imgContent != "" && row.imgContent != null) {
-                                html += "<div style='clear:both'><img style =\"height: 100%;width: 100%;\" src=\"" + row.imgContent + "\"/></div>";
+                                html += "<div style='clear:both'><img style =\"height: 100%;width:430px\" src=\"" + row.imgContent + "\"/></div>";
                             }
                             return html;
                         }
@@ -87,6 +87,9 @@
                 toolbar: "#tbPickUp",
                 onClickRow: function (rowIndex, rowData) {
                     doDiscussDetailSearch(rowData.pickUpId);
+                },
+                onLoadSuccess: function (data) {
+                    doDiscussDetailSearch(data.rows[0].pickUpId);
                 }
             });
         }

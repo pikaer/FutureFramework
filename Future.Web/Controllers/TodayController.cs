@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Letter;
+﻿using Future.Model.DTO.Today;
+using Future.Model.Entity.Letter;
 using Future.Model.Entity.Sys;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
@@ -276,12 +277,12 @@ namespace Future.Web.Controllers
         }
         #endregion
 
-        #region SimulateUserList(模拟用户发布的动态)
+        #region SimulateUserMomentList(模拟用户发布的动态)
         public IActionResult SimulateUserMomentList()
         {
             return View();
         }
-
+        
         public JsonResult GetSimulateUserPublishList()
         {
             try
@@ -363,6 +364,82 @@ namespace Future.Web.Controllers
             }
         }
 
+        public JsonResult SimulateMomentPickUpList()
+        {
+            try
+            {
+                if (Request.Form["MomentId"].IsNullOrEmpty())
+                {
+                    return new JsonResult(new PageResult<MomentPickUpDTO>());
+                }
+                int page = Convert.ToInt16(Request.Form["page"]);
+                int rows = Convert.ToInt16(Request.Form["rows"]);
+                int uId = 0;
+                if (!string.IsNullOrEmpty(Request.Form["UId"]))
+                {
+                    uId = Convert.ToInt16(Request.Form["UId"]);
+                }
+                var state = MomentPickUpEnum.All;
+                if (!string.IsNullOrEmpty(Request.Form["PickUpState"]))
+                {
+                    state = (MomentPickUpEnum)Convert.ToInt16(Request.Form["PickUpState"]);
+                }
+
+                var momentId = new Guid(Request.Form["MomentId"]);
+
+                var rtn = todayService.SimulateMomentPickUpList(page, rows, momentId, uId, state);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "SimulateMomentPickUpList", ex);
+            }
+        }
+
+        #endregion
+
+        #region SimulateDiscussList 模拟用户动态评论列表
+        public IActionResult SimulateDiscussList()
+        {
+            return View();
+        }
+
+        public JsonResult GetSimulateDiscussList()
+        {
+            try
+            {
+                if (Request.Form["PickUpId"].IsNullOrEmpty())
+                {
+                    return new JsonResult(new PageResult<DiscussDetailDTO>());
+                }
+                var pickUpId = new Guid(Request.Form["PickUpId"]);
+
+                var rtn = todayService.GetSimulateDiscussList(pickUpId);
+                return new JsonResult(rtn);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetSimulateDiscussList", ex);
+            }
+        }
+
+        public JsonResult AddDiscuss(string data)
+        {
+            try
+            {
+                var request = data.JsonToObject<DiscussEntity>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                var res = todayService.AddDiscuss(request);
+                return new JsonResult(res);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddDiscuss", ex);
+            }
+        }
         #endregion
 
         #region RealUserList(真实注册用户)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Future.Model.DTO.Today
+﻿namespace Future.Model.DTO.Today
 {
     public class DiscussDetailDTO
     {
@@ -30,5 +26,10 @@ namespace Future.Model.DTO.Today
         /// 最近一次交谈时间
         /// </summary>
         public string RecentChatTime { get; set; }
+
+        /// <summary>
+        /// 对方是否已读
+        /// </summary>
+        public bool HasRead { get; set; }
     }
 }

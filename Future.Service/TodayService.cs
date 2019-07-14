@@ -396,5 +396,77 @@ namespace Future.Service
 
             return rtn;
         }
+
+        public PageResult<DiscussDetailDTO> GetSimulateDiscussList(Guid pickUpId)
+        {
+            var rtn = new PageResult<DiscussDetailDTO>();
+            var list = letterDal.DiscussList(pickUpId);
+            if (list.NotEmpty())
+            {
+                var rows = new List<DiscussDetailDTO>();
+                foreach(var item in list)
+                {
+                    var user = letterDal.LetterUser(item.UId);
+                    if (user == null)
+                    {
+                        continue;
+                    }
+                    rows.Add(new DiscussDetailDTO()
+                    {
+                         PickUpUId=item.UId,
+                         HeadImgPath= user.HeadPhotoPath.GetImgPath(),
+                         NickName=user.NickName,
+                         TextContent=item.DiscussContent.Trim(),
+                         RecentChatTime=item.CreateTime.GetDateDesc(),
+                         HasRead=item.HasRead
+                    });
+                }
+                rtn.Rows = rows;
+                rtn.Total = rows.Count;
+            }
+            return rtn;
+        }
+
+        public ResponseContext<bool> AddDiscuss(DiscussEntity request)
+        {
+            request.CreateTime = DateTime.Now;
+            request.UpdateTime = DateTime.Now;
+            request.DiscussId = Guid.NewGuid();
+            return new ResponseContext<bool>(letterDal.InsertDiscuss(request));
+        }
+
+        public PageResult<MomentPickUpDTO> SimulateMomentPickUpList(int page, int rows, Guid momentId,int uId, MomentPickUpEnum state)
+        {
+            var rtn = new PageResult<MomentPickUpDTO>();
+            var pickUpList = letterDal.GetPickUpList(page, rows, momentId, uId, state);
+            if(pickUpList!=null&& pickUpList.Item1.NotEmpty())
+            {
+                var list = new List<MomentPickUpDTO>();
+                foreach(var item in pickUpList.Item1)
+                {
+                    var user = letterDal.LetterUser(item.PickUpUId);
+                    if (user == null)
+                    {
+                        continue;
+                    }
+                    var discussList = letterDal.DiscussList(item.PickUpId);
+                    list.Add(new MomentPickUpDTO()
+                    {
+                        MomentId=item.MomentId,
+                        UId=item.PickUpUId,
+                        PickUpId=item.PickUpId,
+                        NickName=user.NickName,
+                        HeadPhotoPath=user.HeadPhotoPath.GetImgPath(),
+                        Gender=user.Gender,
+                        GenderDesc=user.Gender.ToDescription(),
+                        DiscussCount= discussList.IsNullOrEmpty()?0: discussList.Count,
+                        CreateTime=item.CreateTime.GetDateDesc()
+                    });
+                    rtn.Total = pickUpList.Item2;
+                    rtn.Rows = list;
+                }
+            }
+            return rtn;
+        }
     }
 }
