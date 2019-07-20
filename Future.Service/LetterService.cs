@@ -669,6 +669,88 @@ namespace Future.Service
                 }
             };
         }
+
+        /// <summary>
+        /// 用户收藏列表
+        /// </summary>
+        public ResponseContext<GetCollectListResponse> GetCollectList(RequestContext<GetCollectListRequest> request)
+        {
+            var response= new ResponseContext<GetCollectListResponse>
+            {
+                Content = new GetCollectListResponse()
+                {
+                    CollectList=new List<CollectType>()
+                }
+            };
+
+            var collectList = letterDal.CollectListByUId(request.Content.UId, request.Content.PageIndex, 20);
+            if (collectList.NotEmpty())
+            {
+                foreach(var item in collectList)
+                {
+                    response.Content.CollectList.Add(new CollectType()
+                    {
+                        CollectId=item.CollectId,
+                        MomentId=item.MomentId,
+                        TextContent=item.TextContent.Trim(),
+                        ImgContent=item.ImgContent.GetImgPath(),
+                        CreateTime=item.CreateTime.GetDateDesc()
+                    });
+                }
+            }
+            return response;
+        }
+
+        /// <summary>
+        /// 删除收藏
+        /// </summary>
+        public ResponseContext<DeleteCollectResponse> DeleteCollect(RequestContext<DeleteCollectRequest> request)
+        {
+            return new ResponseContext<DeleteCollectResponse>
+            {
+                Content = new DeleteCollectResponse()
+                {
+                    IsExecuteSuccess = letterDal.DeleteCollect(request.Content.CollectId)
+                }
+            };
+        }
+
+        /// <summary>
+        /// 添加收藏
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public ResponseContext<AddCollectResponse> AddCollect(RequestContext<AddCollectRequest> request)
+        {
+            var collect = letterDal.GetCollect(request.Content.MomentId,request.Content.UId);
+
+            bool success = false;
+            if (collect == null)
+            {
+                success=letterDal.InsertCollect(new CollectEntity()
+                {
+                    CollectId = Guid.NewGuid(),
+                    UId = request.Content.UId,
+                    MomentId=request.Content.MomentId,
+                    FromPage=request.Content.FromPage,
+                    CreateTime=DateTime.Now,
+                    UpdateTime=DateTime.Now
+                });
+            }
+            else
+            {
+                collect.UpdateTime = DateTime.Now;
+                success = letterDal.UpdateCollectUpdateTime(collect);
+            }
+
+            return new ResponseContext<AddCollectResponse>
+            {
+                Content = new AddCollectResponse()
+                {
+                    IsExecuteSuccess = success
+                }
+            };
+        }
         #endregion
 
         #region private Method

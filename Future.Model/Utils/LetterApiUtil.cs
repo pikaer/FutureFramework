@@ -849,4 +849,101 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
+    #region GetCollectList
+    public class GetCollectListRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 页码（分页传递数据）
+        /// </summary>
+        public int PageIndex { get; set; }
+    }
+
+    public class GetCollectListResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public List<CollectType> CollectList{ get; set; }
+    }
+
+    public class CollectType
+    {
+        /// <summary>
+        /// 收藏动态Id
+        /// </summary>
+        public Guid CollectId { get; set; }
+        
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+
+        /// <summary>
+        /// 图片内容（图片最多支持一张）
+        /// </summary>
+        public string ImgContent { get; set; }
+
+        /// <summary>
+        /// 收藏时间
+        /// </summary>
+        public string CreateTime { get; set; }
+    }
+    #endregion
+
+    #region AddCollect
+    public class AddCollectRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 收藏来源
+        /// </summary>
+        public string FromPage { get; set; }
+    }
+
+    public class AddCollectResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region DeleteCollect
+    public class DeleteCollectRequest
+    {
+        /// <summary>
+        /// 收藏动态Id
+        /// </summary>
+        public Guid CollectId { get; set; }
+    }
+
+    public class DeleteCollectResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
 }

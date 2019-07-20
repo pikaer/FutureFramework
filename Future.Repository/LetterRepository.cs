@@ -19,6 +19,7 @@ namespace Future.Repository
 
         private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsUserDelete,IsPartnerDelete,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
+        private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
 
         protected override DbEnum GetDbEnum()
         {
@@ -109,6 +110,25 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
+            }
+        }
+
+        public List<CollectDTO> CollectListByUId(long uId, int pageIndex, int pageSize)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT collect.CollectId
+                              ,moment.UId
+                              ,moment.MomentId
+                              ,moment.TextContent
+                        	  ,moment.ImgContent
+                              ,collect.CreateTime
+                        FROM dbo.letter_Collect collect
+                        Inner Join dbo.letter_Moment moment 
+                        On collect.MomentId=moment.MomentId
+                        Where collect.UId=@UId
+                        Order by collect.CreateTime desc OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
+                return Db.Query<CollectDTO>(sql, new { UId = uId, Skip = (pageIndex - 1) * pageSize, Take = pageSize }).AsList();
             }
         }
 
@@ -407,6 +427,15 @@ namespace Future.Repository
             }
         }
 
+        public CollectEntity GetCollect(Guid momentId,long uId)
+        {
+            var sql = SELECT_CollectEntity + @" Where MomentId=@MomentId and UId=@UId ";
+            using (var Db = GetDbConnection())
+            {
+                return Db.QueryFirstOrDefault<CollectEntity>(sql, new { MomentId = momentId, UId= uId });
+            }
+        }
+
         public List<MomentEntity> GetMomentByPageIndex(long uId, int pageIndex, int pageSize)
         {
             var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0
@@ -631,6 +660,16 @@ namespace Future.Repository
             }
         }
 
+        public bool UpdateCollectUpdateTime(CollectEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.letter_Collect
+                            SET UpdateTime= @UpdateTime
+                          WHERE CollectId=@CollectId";
+                return Db.Execute(sql, entity) > 0;
+            }
+        }
         /// <summary>
         /// 删除所有我主动捡起的瓶子
         /// </summary>
@@ -781,6 +820,27 @@ namespace Future.Repository
             }
         }
 
+        public bool InsertCollect(CollectEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.letter_Collect
+                                  (CollectId
+                                  ,UId
+                                  ,MomentId
+                                  ,FromPage
+                                  ,CreateTime
+                                  ,UpdateTime)
+                            VALUES
+                                  (@CollectId
+                                  ,@UId
+                                  ,@MomentId
+                                  ,@FromPage
+                                  ,@CreateTime
+                                  ,@UpdateTime)";
+                return Db.Execute(sql, entity) > 0;
+            }
+        }
         public bool DeleteDiscuss(Guid pickUpId)
         {
             using (var Db = GetDbConnection())
@@ -796,6 +856,15 @@ namespace Future.Repository
             {
                 var sql = @"Delete dbo.letter_Moment Where MomentId=@MomentId";
                 return Db.Execute(sql, new { MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool DeleteCollect(Guid collectId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.letter_Collect Where CollectId=@CollectId";
+                return Db.Execute(sql, new { CollectId = collectId }) > 0;
             }
         }
     }
