@@ -150,5 +150,20 @@
             删除发布的所有动态
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.GetCollectList">
+            <summary>
+            用户收藏列表
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.AddCollect">
+            <summary>
+            添加收藏
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DeleteCollect">
+            <summary>
+            删除收藏的动态
+            </summary>
+        </member>
     </members>
 </doc>

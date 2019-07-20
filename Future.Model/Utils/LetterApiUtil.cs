@@ -246,6 +246,11 @@ namespace Future.Model.Utils
         public Guid PickUpId { get; set; }
 
         /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
         /// 用户Id
         /// </summary>
         public long UId { get; set; }

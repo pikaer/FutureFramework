@@ -181,6 +181,7 @@ namespace Future.Service
                     var dto = new PickUpType()
                     {
                         PickUpId = item.PickUpId,
+                        MomentId= item.MomentId,
                         UId = item.MomentUId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
@@ -245,7 +246,8 @@ namespace Future.Service
                 response.Content.PickUpList.Add(new PickUpType()
                 {
                     PickUpId = pickUp.PickUpId,
-                    UId= moment.UId,
+                    MomentId= pickUp.MomentId,
+                    UId = moment.UId,
                     HeadImgPath= letterUser.HeadPhotoPath.GetImgPath(),
                     NickName= letterUser.NickName,
                     TextContent= moment.TextContent.Trim(),
