@@ -646,7 +646,7 @@ namespace Future.Repository
                 return Db.Execute(sql, userEntity) > 0;
             }
         }
-
+        
         public bool UpdateMoment(MomentEntity momentEntity)
         {
             using (var Db = GetDbConnection())
@@ -865,6 +865,15 @@ namespace Future.Repository
             {
                 var sql = @"Delete dbo.letter_Collect Where CollectId=@CollectId";
                 return Db.Execute(sql, new { CollectId = collectId }) > 0;
+            }
+        }
+
+        public bool DeleteAllCollect(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.letter_Collect Where UId=@UId";
+                return Db.Execute(sql, new { UId = uId }) > 0;
             }
         }
     }

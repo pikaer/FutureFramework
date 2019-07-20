@@ -1159,5 +1159,46 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "DeleteCollect", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 删除收藏的动态
+        /// </summary>
+        [HttpPost]
+        public JsonResult DeleteAllCollect()
+        {
+            RequestContext<DeleteAllCollectRequest> request = null;
+            ResponseContext<DeleteAllCollectResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<DeleteAllCollectRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null||request.Content.UId<=0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.DeleteAllCollect(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "DeleteAllCollect", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "DeleteAllCollect", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }

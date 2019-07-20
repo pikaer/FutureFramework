@@ -685,7 +685,14 @@ namespace Future.Service
                 }
             };
 
-            var collectList = letterDal.CollectListByUId(request.Content.UId, request.Content.PageIndex, 20);
+            int pageSize = 200;
+            string collectPageSize = JsonSettingHelper.AppSettings["CollectListPageSize"];
+            if (!collectPageSize.IsNullOrEmpty())
+            {
+                pageSize = Convert.ToInt32(collectPageSize);
+            }
+
+            var collectList = letterDal.CollectListByUId(request.Content.UId, request.Content.PageIndex, pageSize);
             if (collectList.NotEmpty())
             {
                 foreach(var item in collectList)
@@ -750,6 +757,22 @@ namespace Future.Service
                 Content = new AddCollectResponse()
                 {
                     IsExecuteSuccess = success
+                }
+            };
+        }
+
+        /// <summary>
+        /// 清空所有收藏
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public ResponseContext<DeleteAllCollectResponse> DeleteAllCollect(RequestContext<DeleteAllCollectRequest> request)
+        {
+            return new ResponseContext<DeleteAllCollectResponse>
+            {
+                Content = new DeleteAllCollectResponse()
+                {
+                    IsExecuteSuccess = letterDal.DeleteAllCollect(request.Content.UId)
                 }
             };
         }

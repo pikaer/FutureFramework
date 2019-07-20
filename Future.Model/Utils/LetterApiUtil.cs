@@ -951,4 +951,23 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
+
+    #region DeleteAllCollect
+    public class DeleteAllCollectRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class DeleteAllCollectResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
 }

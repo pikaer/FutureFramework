@@ -165,5 +165,10 @@
             删除收藏的动态
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.DeleteAllCollect">
+            <summary>
+            删除收藏的动态
+            </summary>
+        </member>
     </members>
 </doc>
