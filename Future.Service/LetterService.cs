@@ -99,7 +99,7 @@ namespace Future.Service
             var discussList = letterDal.DiscussList(request.Content.PickUpId);
             if (discussList.NotEmpty())
             {
-                foreach (var item in discussList)
+                foreach (var item in discussList.OrderBy(a=>a.CreateTime))
                 {
                     var pickUpUser = letterDal.LetterUser(item.UId);
                     if (pickUpUser == null)

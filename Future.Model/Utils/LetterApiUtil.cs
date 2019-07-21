@@ -665,6 +665,11 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
+
+        /// <summary>
+        ///0： 默认只获取用户信息，1：获取金币信息
+        /// </summary>
+        public int Type { get; set; }
     }
 
     public class BasicUserInfoResponse
@@ -697,6 +702,8 @@ namespace Future.Model.Utils
         /// 个性签名
         /// </summary>
         public string Signature { get; set; }
+
+        public int TotalCoin { get; set; }
     }
     #endregion
 
