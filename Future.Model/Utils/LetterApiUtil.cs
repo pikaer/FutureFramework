@@ -114,6 +114,55 @@ namespace Future.Model.Utils
     }
     #endregion
 
+    #region MomentDetail（动态详情）
+    public class MomentDetailRequest
+    {
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+    }
+
+    public class MomentDetailResponse
+    {
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 动态发布用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 头像路径
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+
+        /// <summary>
+        /// 图片内容
+        /// </summary>
+        public string ImgContent { get; set; }
+
+        /// <summary>
+        /// 最近一次交谈时间
+        /// </summary>
+        public string CreateTime { get; set; }
+    }
+   
+    #endregion
+
     #region DiscussList（动态评论）
     public class DiscussDetailRequest
     {
@@ -890,6 +939,11 @@ namespace Future.Model.Utils
         public Guid MomentId { get; set; }
 
         /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+        /// <summary>
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
@@ -918,6 +972,11 @@ namespace Future.Model.Utils
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
 
         /// <summary>
         /// 收藏来源

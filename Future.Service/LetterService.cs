@@ -316,6 +316,37 @@ namespace Future.Service
         }
 
         /// <summary>
+        /// 动态详情
+        /// </summary>
+        public ResponseContext<MomentDetailResponse> MomentDetail(RequestContext<MomentDetailRequest> request)
+        {
+            var response = new ResponseContext<MomentDetailResponse>()
+            {
+                Content=new MomentDetailResponse()
+            };
+            var moment = letterDal.GetMoment(request.Content.MomentId);
+            if (moment != null)
+            {
+                var user = letterDal.LetterUser(moment.UId);
+                if (user != null)
+                {
+                    response.Content = new MomentDetailResponse()
+                    {
+                        MomentId = moment.MomentId,
+                        UId = moment.UId,
+                        NickName= user.NickName.Trim(),
+                        HeadImgPath=user.HeadPhotoPath.GetImgPath(),
+                        TextContent = moment.TextContent.Trim(),
+                        ImgContent = moment.ImgContent.GetImgPath(),
+                        CreateTime = moment.CreateTime.GetDateDesc()
+                    };
+                }
+                
+            }
+            return response;
+        }
+
+        /// <summary>
         /// 更新用户信息并返回UId
         /// </summary>
         public ResponseContext<SetUserInfoResponse> SetUserInfo(RequestContext<SetUserInfoRequest> request)
@@ -701,7 +732,8 @@ namespace Future.Service
                     {
                         CollectId=item.CollectId,
                         MomentId=item.MomentId,
-                        TextContent=item.TextContent.Trim(),
+                        PickUpId=item.PickUpId,
+                        TextContent =item.TextContent.Trim(),
                         ImgContent=item.ImgContent.GetImgPath(),
                         CreateTime=item.CreateTime.GetDateDesc()
                     });
@@ -741,7 +773,8 @@ namespace Future.Service
                     CollectId = Guid.NewGuid(),
                     UId = request.Content.UId,
                     MomentId=request.Content.MomentId,
-                    FromPage=request.Content.FromPage,
+                    PickUpId = request.Content.PickUpId,
+                    FromPage =request.Content.FromPage,
                     CreateTime=DateTime.Now,
                     UpdateTime=DateTime.Now
                 });

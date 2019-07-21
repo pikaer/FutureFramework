@@ -23,6 +23,11 @@ namespace Future.Model.Entity.Letter
         public Guid MomentId { get; set; }
 
         /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+        /// <summary>
         /// 收藏来源
         /// </summary>
         public string FromPage { get; set; }

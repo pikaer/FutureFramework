@@ -19,7 +19,7 @@ namespace Future.Repository
 
         private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsUserDelete,IsPartnerDelete,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
-        private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
+        private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
 
         protected override DbEnum GetDbEnum()
         {
@@ -122,6 +122,7 @@ namespace Future.Repository
                               ,moment.MomentId
                               ,moment.TextContent
                         	  ,moment.ImgContent
+                              ,collect.PickUpId
                               ,collect.CreateTime
                         FROM dbo.letter_Collect collect
                         Inner Join dbo.letter_Moment moment 
@@ -828,6 +829,7 @@ namespace Future.Repository
                                   (CollectId
                                   ,UId
                                   ,MomentId
+                                  ,PickUpId
                                   ,FromPage
                                   ,CreateTime
                                   ,UpdateTime)
@@ -835,6 +837,7 @@ namespace Future.Repository
                                   (@CollectId
                                   ,@UId
                                   ,@MomentId
+                                  ,@PickUpId
                                   ,@FromPage
                                   ,@CreateTime
                                   ,@UpdateTime)";

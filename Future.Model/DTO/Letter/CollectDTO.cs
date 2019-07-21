@@ -14,10 +14,15 @@ namespace Future.Model.DTO.Letter
         /// </summary>
         public long UId { get; set; }
 
-        /// <summary>
+        /// <summary> 
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
 
         /// <summary>
         /// 文本内容
