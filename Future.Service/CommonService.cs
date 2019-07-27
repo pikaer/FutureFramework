@@ -152,6 +152,11 @@ namespace Future.Service
             }
             if (changeValue != 0)
             {
+                //金币余额为0时不再继续扣除
+                if (UserTotalCoin(uId) <= 0&& changeValue<0)
+                {
+                    return true;
+                }
                 var coinDetail = new CoinDetailEntity()
                 {
                     CoinDetailId = Guid.NewGuid(),
@@ -170,7 +175,7 @@ namespace Future.Service
                     return letterDal.UpdateUserTotalCoin(coin.CoinId, coin.UId, changeValue);
                 }
             }
-            return false;
+            return true;
         }
     }
 
