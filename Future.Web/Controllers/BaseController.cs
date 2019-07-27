@@ -16,7 +16,6 @@ namespace Future.Web.Controllers
     {
         protected const string UserKey = "CurrentUser";
         
-        private readonly LogHelper LogHelper = SingletonProvider<LogHelper>.Instance;
 
         #region Base
         /// <summary>
@@ -39,7 +38,7 @@ namespace Future.Web.Controllers
             //todo 记录ex异常日志
             if (string.IsNullOrEmpty(title) || ex != null)
             {
-                LogHelper.Error(title, code.ToDescription(), ex);
+                LogHelper.ErrorAsync(title, code.ToDescription(), ex);
             }
             return new JsonResult(new ResponseContext<object>(false,code,null));
         }

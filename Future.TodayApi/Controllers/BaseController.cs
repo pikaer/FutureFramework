@@ -14,7 +14,6 @@ namespace Future.TodayApi.Controllers
     /// </summary>
     public class BaseController : Controller
     {
-        private readonly LogHelper LogHelper = SingletonProvider<LogHelper>.Instance;
         /// <summary>
         /// 处理请求数据流
         /// </summary>
@@ -39,7 +38,7 @@ namespace Future.TodayApi.Controllers
         {
             if (string.IsNullOrEmpty(title) || ex != null)
             {
-                LogHelper.Error(title, code.ToDescription(), ex);
+                LogHelper.ErrorAsync(title, code.ToDescription(), ex);
             }
 
             return new JsonResult(new ResponseContext<object>(false, code, null));

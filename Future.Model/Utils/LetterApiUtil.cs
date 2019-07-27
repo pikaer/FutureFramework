@@ -1036,4 +1036,22 @@ namespace Future.Model.Utils
         public bool IsExecuteSuccess { get; set; }
     }
     #endregion
+
+    #region UserCoinInfo
+    public class UserCoinInfoRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class UserCoinInfoResponse
+    {
+        /// <summary>
+        /// 总金币数
+        /// </summary>
+        public int TotalCoin { get; set; }
+    }
+    #endregion
 }

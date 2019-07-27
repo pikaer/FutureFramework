@@ -23,6 +23,8 @@ namespace Future.Service
 
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
+        private readonly UserBiz userBiz = SingletonProvider<UserBiz>.Instance;
+
         public string GetStaffName(long userId)
         {
             if (userId <= 0)
@@ -263,7 +265,7 @@ namespace Future.Service
                 var pickUps = new List<PickUpListDTO>();
                 foreach (var item in pickUpList.Item1)
                 {
-                    var pickUpUser = letterDal.LetterUser(item.MomentUId);
+                    var pickUpUser = userBiz.LetterUserByUId(item.MomentUId);
                     if (pickUpUser == null)
                     {
                         continue;
@@ -377,7 +379,7 @@ namespace Future.Service
             {
                 foreach (var item in discussList)
                 {
-                    var pickUpUser = letterDal.LetterUser(item.UId);
+                    var pickUpUser = userBiz.LetterUserByUId(item.UId);
                     if (pickUpUser == null)
                     {
                         continue;
@@ -406,7 +408,7 @@ namespace Future.Service
                 var rows = new List<DiscussDetailDTO>();
                 foreach(var item in list)
                 {
-                    var user = letterDal.LetterUser(item.UId);
+                    var user = userBiz.LetterUserByUId(item.UId);
                     if (user == null)
                     {
                         continue;
@@ -444,7 +446,7 @@ namespace Future.Service
                 var list = new List<MomentPickUpDTO>();
                 foreach(var item in pickUpList.Item1)
                 {
-                    var user = letterDal.LetterUser(item.PickUpUId);
+                    var user = userBiz.LetterUserByUId(item.PickUpUId);
                     if (user == null)
                     {
                         continue;

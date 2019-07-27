@@ -1,4 +1,5 @@
 ﻿using Future.Model.Entity.Letter;
+using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
@@ -18,6 +19,8 @@ namespace Future.Service
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
         private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
+
+        private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
         /// <summary>
         /// 捡到的回复过的瓶子列表
@@ -78,7 +81,7 @@ namespace Future.Service
             {
                 return response;
             }
-            var user= letterDal.LetterUser(moment.UId);
+            var user= userBiz.LetterUserByUId(moment.UId);
             if (user == null)
             {
                 return response;
@@ -101,7 +104,7 @@ namespace Future.Service
             {
                 foreach (var item in discussList.OrderBy(a=>a.CreateTime))
                 {
-                    var pickUpUser = letterDal.LetterUser(item.UId);
+                    var pickUpUser = userBiz.LetterUserByUId(item.UId);
                     if (pickUpUser == null)
                     {
                         continue;
@@ -168,7 +171,7 @@ namespace Future.Service
             {
                 foreach (var item in pickUpList)
                 {
-                    var pickUpUser = letterDal.LetterUser(item.MomentUId);
+                    var pickUpUser = userBiz.LetterUserByUId(item.MomentUId);
                     if (pickUpUser == null)
                     {
                         continue;
@@ -209,7 +212,7 @@ namespace Future.Service
                     PickUpList = new List<PickUpType>()
                 }
             };
-            var user= letterDal.LetterUser(request.Content.UId);
+            var user= userBiz.LetterUserByUId(request.Content.UId);
             if (user == null)
             {
                 return response;
@@ -238,7 +241,7 @@ namespace Future.Service
             if (success)
             {
                 letterDal.UpdatePickCount(moment.MomentId);
-                var letterUser= letterDal.LetterUser(moment.UId);
+                var letterUser= userBiz.LetterUserByUId(moment.UId);
                 if (letterUser == null)
                 {
                     return response;
@@ -254,6 +257,9 @@ namespace Future.Service
                     ImgContent= moment.ImgContent.GetImgPath(),
                     CreateTime= moment.CreateTime.GetDateDesc()
                 });
+
+                string remark = string.Format("用户UId={0},捡起一个瓶子，消耗金币", request.Content.UId);
+                userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, remark);
             }
             return response;
         }
@@ -279,6 +285,11 @@ namespace Future.Service
             };
 
             response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
+            if (response.Content.IsExecuteSuccess)
+            {
+                string remark = string.Format("用户UId={0},发布动态，奖励金币", request.Content.UId);
+                userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, remark);
+            }
             return response;
         }
 
@@ -327,7 +338,7 @@ namespace Future.Service
             var moment = letterDal.GetMoment(request.Content.MomentId);
             if (moment != null)
             {
-                var user = letterDal.LetterUser(moment.UId);
+                var user = userBiz.LetterUserByUId(moment.UId);
                 if (user != null)
                 {
                     response.Content = new MomentDetailResponse()
@@ -467,6 +478,11 @@ namespace Future.Service
             if (moment != null)
             {
                 response.Content.IsExecuteSuccess= letterDal.UpdatePickUpReport(pickUp.MomentId);
+                if (response.Content.IsExecuteSuccess)
+                {
+                    string remark = string.Format("被UId={0}的用户举报，MomentId={1}", moment.UId, moment.MomentId.ToString());
+                    userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.ReportedDeducted, remark);
+                }
             }
             return response;
         }
@@ -595,7 +611,7 @@ namespace Future.Service
         public ResponseContext<BasicUserInfoResponse> BasicUserInfo(RequestContext<BasicUserInfoRequest> request)
         {
             var response = new ResponseContext<BasicUserInfoResponse>();
-            var userInfo = letterDal.LetterUser(request.Content.UId);
+            var userInfo = userBiz.LetterUserByUId(request.Content.UId);
             if (userInfo == null)
             {
                 return response;
@@ -609,6 +625,10 @@ namespace Future.Service
                 BasicUserInfo= BasicUserInfo(userInfo),
                 PlaceInfo=PlaceInfo(userInfo)
             };
+            if (request.Content.Type == 1)
+            {
+                response.Content.TotalCoin = userBiz.UserTotalCoin(userInfo.UId);
+            }
             return response;
         }
 
@@ -647,7 +667,7 @@ namespace Future.Service
         public ResponseContext<GetUserInfoResponse> GetUserInfo(RequestContext<GetUserInfoRequest> request)
         {
             var response = new ResponseContext<GetUserInfoResponse>();
-            var userInfo = letterDal.LetterUser(request.Content.UId);
+            var userInfo = userBiz.LetterUserByUId(request.Content.UId);
             if (userInfo == null)
             {
                 return response;
@@ -778,6 +798,15 @@ namespace Future.Service
                     CreateTime=DateTime.Now,
                     UpdateTime=DateTime.Now
                 });
+                if(success)
+                {
+                    var moment = letterDal.GetMoment(request.Content.MomentId);
+                    if (moment != null)
+                    {
+                        string remark = string.Format("被CollectUId={0}的用户收藏，MomentId={1}", collect.UId, collect.MomentId.ToString());
+                        userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.CollectedReward, remark);
+                    }
+                }
             }
             else
             {
@@ -806,6 +835,17 @@ namespace Future.Service
                 Content = new DeleteAllCollectResponse()
                 {
                     IsExecuteSuccess = letterDal.DeleteAllCollect(request.Content.UId)
+                }
+            };
+        }
+
+        public ResponseContext<UserCoinInfoResponse> UserCoinInfo(RequestContext<UserCoinInfoRequest> request)
+        {
+            return new ResponseContext<UserCoinInfoResponse>
+            {
+                Content = new UserCoinInfoResponse()
+                {
+                    TotalCoin = userBiz.UserTotalCoin(request.Content.UId)
                 }
             };
         }
@@ -914,7 +954,9 @@ namespace Future.Service
 
             return sb.ToString().TrimEnd('•');
         }
+
         
+
         #endregion
     }
 }

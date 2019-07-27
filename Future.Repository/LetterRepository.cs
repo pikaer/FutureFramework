@@ -21,6 +21,10 @@ namespace Future.Repository
 
         private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
 
+        private readonly string SELECT_CoinEntity = "SELECT CoinId,UId,TotalCoin,CreateTime,UpdateTime FROM dbo.letter_Coin ";
+
+        private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.letter_CoinDetail ";
+
         protected override DbEnum GetDbEnum()
         {
             return DbEnum.LetterService;
@@ -478,6 +482,15 @@ namespace Future.Repository
             }
         }
 
+        public CoinEntity GetCoinByUId(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = SELECT_CoinEntity + @" Where UId=@UId ";
+                return Db.QueryFirstOrDefault<CoinEntity>(sql, new { UId = uId });
+            }
+        }
+
         public int UnReadCount(Guid pickUpId, long uId)
         {
             using (var Db = GetDbConnection())
@@ -509,6 +522,18 @@ namespace Future.Repository
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
                 return Db.Execute(sql, new { UpdateTime =DateTime.Now, MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool UpdateUserTotalCoin(long coinId,long uId,int changeValue)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Coin
+                               SET TotalCoin =TotalCoin + @ChangeValue
+                                  ,UpdateTime = @UpdateTime
+                               WHERE CoinId=@CoinId and UId=@UId ";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, CoinId = coinId,UId= uId, ChangeValue = changeValue }) > 0;
             }
         }
 
@@ -671,35 +696,6 @@ namespace Future.Repository
                 return Db.Execute(sql, entity) > 0;
             }
         }
-        /// <summary>
-        /// 删除所有我主动捡起的瓶子
-        /// </summary>
-        public bool DeleteAllPickBottle(Guid pickUpId)
-        {
-            using (var Db = GetDbConnection())
-            {
-                string sql = @"UPDATE dbo.letter_PickUp
-                               SET IsPartnerDelete =1
-                                  ,UpdateTime = @UpdateTime
-                               WHERE PickUpId=@PickUpId";
-                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
-            }
-        }
-
-        /// <summary>
-        /// 删除所有我扔出去的被别人捡起的瓶子
-        /// </summary>
-        public bool DeleteAllPublishBottle(Guid pickUpId)
-        {
-            using (var Db = GetDbConnection())
-            {
-                string sql = @"UPDATE dbo.letter_PickUp
-                               SET IsUserDelete =1
-                                  ,UpdateTime = @UpdateTime
-                               WHERE PickUpId=@PickUpId";
-                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
-            }
-        }
         
         public bool InsertMoment(MomentEntity momentEntity)
         {
@@ -821,6 +817,52 @@ namespace Future.Repository
             }
         }
 
+        public bool InsertCoin(CoinEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.letter_Coin
+                                   (UId
+                                   ,TotalCoin
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@UId
+                                   ,@TotalCoin
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, entity) > 0;
+            }
+        }
+
+        public bool InsertCoinDetail(CoinDetailEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.letter_CoinDetail
+                                  (CoinDetailId
+                                  ,UId
+                                  ,CoinId
+                                  ,ChangeValue
+                                  ,CoinChangeType
+                                  ,Remark
+                                  ,OperateUser
+                                  ,CreateTime
+                                  ,UpdateTime)
+                            VALUES
+                                  (@CoinDetailId
+                                  ,@UId
+                                  ,@CoinId
+                                  ,@ChangeValue
+                                  ,@CoinChangeType
+                                  ,@Remark
+                                  ,@OperateUser
+                                  ,@CreateTime
+                                  ,@UpdateTime)";
+                return Db.Execute(sql, entity) > 0;
+            }
+        }
+
         public bool InsertCollect(CollectEntity entity)
         {
             using (var Db = GetDbConnection())
@@ -844,6 +886,37 @@ namespace Future.Repository
                 return Db.Execute(sql, entity) > 0;
             }
         }
+
+        /// <summary>
+        /// 删除所有我主动捡起的瓶子
+        /// </summary>
+        public bool DeleteAllPickBottle(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsPartnerDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
+            }
+        }
+
+        /// <summary>
+        /// 删除所有我扔出去的被别人捡起的瓶子
+        /// </summary>
+        public bool DeleteAllPublishBottle(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsUserDelete =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
+            }
+        }
+
         public bool DeleteDiscuss(Guid pickUpId)
         {
             using (var Db = GetDbConnection())

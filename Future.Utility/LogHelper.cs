@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Future.Utility
 {
-    public class LogHelper
+    public static class LogHelper
     {
-        private readonly LogRepository logDal = SingletonProvider<LogRepository>.Instance;
+        private readonly static LogRepository logDal = SingletonProvider<LogRepository>.Instance;
         /// <summary>
         /// Debug日志
         /// </summary>
@@ -19,7 +19,19 @@ namespace Future.Utility
         /// <param name="content">日志内容</param>
         /// <param name="head">公共请求头</param>
         /// <param name="keyValuePairs">附件标签</param>
-        public void Debug(string title, string content, RequestHead head = null, Dictionary<string, string> keyValuePairs = null)
+        public static void Debug(string title, string content,Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
+        {
+            WriteLog(LogLevelEnum.Debug, title, content, head, keyValuePairs);
+        }
+
+        /// <summary>
+        /// Debug日志
+        /// </summary>
+        /// <param name="title">日志标题</param>
+        /// <param name="content">日志内容</param>
+        /// <param name="head">公共请求头</param>
+        /// <param name="keyValuePairs">附件标签</param>
+        public static void DebugAsync(string title, string content, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
         {
             WriteLogAsync(LogLevelEnum.Debug, title, content, head, keyValuePairs);
         }
@@ -31,7 +43,19 @@ namespace Future.Utility
         /// <param name="content">日志内容</param>
         /// <param name="head">公共请求头</param>
         /// <param name="keyValuePairs">附件标签</param>
-        public void Info(string title, string content, RequestHead head = null, Dictionary<string, string> keyValuePairs = null)
+        public static void Info(string title, string content, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
+        {
+            WriteLog(LogLevelEnum.Info, title, content, head, keyValuePairs);
+        }
+
+        /// <summary>
+        /// Info日志
+        /// </summary>
+        /// <param name="title">日志标题</param>
+        /// <param name="content">日志内容</param>
+        /// <param name="head">公共请求头</param>
+        /// <param name="keyValuePairs">附件标签</param>
+        public static void InfoAsync(string title, string content, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
         {
             WriteLogAsync(LogLevelEnum.Info, title, content, head, keyValuePairs);
         }
@@ -43,7 +67,19 @@ namespace Future.Utility
         /// <param name="content">日志内容</param>
         /// <param name="head">公共请求头</param>
         /// <param name="keyValuePairs">附件标签</param>
-        public void Warn(string title, string content, RequestHead head = null, Dictionary<string, string> keyValuePairs = null)
+        public static void Warn(string title, string content, Dictionary<string, string> keyValuePairs = null,RequestHead head = null)
+        {
+            WriteLog(LogLevelEnum.Warn, title, content, head, keyValuePairs);
+        }
+
+        /// <summary>
+        /// Warn日志
+        /// </summary>
+        /// <param name="title">日志标题</param>
+        /// <param name="content">日志内容</param>
+        /// <param name="head">公共请求头</param>
+        /// <param name="keyValuePairs">附件标签</param>
+        public static void WarnAsync(string title, string content, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
         {
             WriteLogAsync(LogLevelEnum.Warn, title, content, head, keyValuePairs);
         }
@@ -56,7 +92,12 @@ namespace Future.Utility
         /// <param name="ex">Exception</param>
         /// <param name="head">公共请求头</param>
         /// <param name="keyValuePairs">附件标签</param>
-        public void Error(string title, string content, Exception ex = null, RequestHead head = null, Dictionary<string, string> keyValuePairs = null)
+        public static void Error(string title, string content, Exception ex = null, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
+        {
+            WriteLog(LogLevelEnum.Error, title, content, head, keyValuePairs, ex);
+        }
+
+        public static void ErrorAsync(string title, string content, Exception ex = null, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
         {
             WriteLogAsync(LogLevelEnum.Error, title, content, head, keyValuePairs, ex);
         }
@@ -69,15 +110,23 @@ namespace Future.Utility
         /// <param name="ex">Exception</param>
         /// <param name="head">公共请求头</param>
         /// <param name="keyValuePairs">附件标签</param>
-        public void Fatal(string title, string content, Exception ex = null, RequestHead head = null, Dictionary<string, string> keyValuePairs = null)
+        public static void Fatal(string title, string content, Exception ex = null, Dictionary<string, string> keyValuePairs = null, RequestHead head = null)
         {
-            WriteLogAsync(LogLevelEnum.Fatal, title, content, head, keyValuePairs, ex);
+            WriteLog(LogLevelEnum.Fatal, title, content, head, keyValuePairs, ex);
         }
 
         /// <summary>
         /// 异步写入日志到数据库
         /// </summary>
-        private void WriteLogAsync(LogLevelEnum level, string title, string content, RequestHead head = null, Dictionary<string, string> keyValuePairs = null, Exception ex = null)
+        private static void WriteLogAsync(LogLevelEnum level, string title, string content, RequestHead head = null, Dictionary<string, string> keyValuePairs = null, Exception ex = null)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                WriteLog(level, title, content, head, keyValuePairs);
+            });
+        }
+
+        private static void WriteLog(LogLevelEnum level, string title, string content, RequestHead head = null, Dictionary<string, string> keyValuePairs = null, Exception ex = null)
         {
             try
             {
@@ -100,10 +149,7 @@ namespace Future.Utility
                     uid = head.UId;
                     platform = head.Platform;
                 }
-                Task.Factory.StartNew(() =>
-                {
-                    WriteLog(level, tid, uid, platform, title, desc, keyValuePairs);
-                });
+                WriteLog(level, tid, uid, platform, title, desc, keyValuePairs);
             }
             catch
             {
@@ -111,7 +157,7 @@ namespace Future.Utility
             }
         }
 
-        private void WriteLog(LogLevelEnum logLevel, Guid tid, long uid, string platform,string title, string content,Dictionary<string, string> keyValuePairs = null)
+        private static void WriteLog(LogLevelEnum logLevel, Guid tid, long uid, string platform,string title, string content,Dictionary<string, string> keyValuePairs = null)
         {
             //日志开关
             if (!ConfigHelper.GetBool("LogIsOpen"))
@@ -166,7 +212,7 @@ namespace Future.Utility
             }
         }
 
-        public void WriteServiceLog(ServiceLogEntity serviceLogEntity)
+        public static void WriteServiceLog(ServiceLogEntity serviceLogEntity)
         {
             //日志开关
             if (!ConfigHelper.GetBool("ServiceLogIsOpen"))
