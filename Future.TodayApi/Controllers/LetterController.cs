@@ -1243,7 +1243,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 删除收藏的动态
+        /// 用户金币余额信息
         /// </summary>
         [HttpPost]
         public JsonResult UserCoinInfo()
@@ -1280,6 +1280,47 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "UserCoinInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 用户金币余额详情
+        /// </summary>
+        [HttpPost]
+        public JsonResult CoinDetail()
+        {
+            RequestContext<CoinDetailRequest> request = null;
+            ResponseContext<CoinDetailResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<CoinDetailRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.CoinDetail(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "CoinDetail", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "CoinDetail", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
     }

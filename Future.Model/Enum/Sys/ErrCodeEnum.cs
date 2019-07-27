@@ -57,5 +57,8 @@ namespace Future.Model.Enum.Sys
 
         [Description("该用户不存在")]
         UserNoExist = 80001,
+
+        [Description("用户金币余额不足")]
+        CoinEmpty = 80002,
     }
 }

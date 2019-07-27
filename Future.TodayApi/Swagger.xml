@@ -177,7 +177,12 @@
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.UserCoinInfo">
             <summary>
-            删除收藏的动态
+            用户金币余额信息
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.CoinDetail">
+            <summary>
+            用户金币余额详情
             </summary>
         </member>
     </members>

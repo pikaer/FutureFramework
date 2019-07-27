@@ -217,6 +217,10 @@ namespace Future.Service
             {
                 return response;
             }
+            if (userBiz.UserTotalCoin(request.Content.UId) <= 0)
+            {
+                return new ResponseContext<PickUpResponse>(false, ErrCodeEnum.CoinEmpty, null, "金币余额不足，快去发布动态赚金币吧");
+            }
             int pickUpCount = 20;
             if (!string.IsNullOrEmpty(JsonSettingHelper.AppSettings["PickUpCount"]))
             {
@@ -257,9 +261,8 @@ namespace Future.Service
                     ImgContent= moment.ImgContent.GetImgPath(),
                     CreateTime= moment.CreateTime.GetDateDesc()
                 });
-
-                string remark = string.Format("用户UId={0},捡起一个瓶子，消耗金币", request.Content.UId);
-                userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, remark);
+                
+                userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");
             }
             return response;
         }
@@ -287,8 +290,7 @@ namespace Future.Service
             response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
             if (response.Content.IsExecuteSuccess)
             {
-                string remark = string.Format("用户UId={0},发布动态，奖励金币", request.Content.UId);
-                userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, remark);
+                userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, "发布动态，奖励金币");
             }
             return response;
         }
@@ -480,8 +482,7 @@ namespace Future.Service
                 response.Content.IsExecuteSuccess= letterDal.UpdatePickUpReport(pickUp.MomentId);
                 if (response.Content.IsExecuteSuccess)
                 {
-                    string remark = string.Format("被UId={0}的用户举报，MomentId={1}", moment.UId, moment.MomentId.ToString());
-                    userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.ReportedDeducted, remark);
+                    userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.ReportedDeducted, "动态被举报，扣除金币");
                 }
             }
             return response;
@@ -803,8 +804,7 @@ namespace Future.Service
                     var moment = letterDal.GetMoment(request.Content.MomentId);
                     if (moment != null)
                     {
-                        string remark = string.Format("被CollectUId={0}的用户收藏，MomentId={1}", collect.UId, collect.MomentId.ToString());
-                        userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.CollectedReward, remark);
+                        userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.CollectedReward, "发布的动态被别人收藏，奖励金币");
                     }
                 }
             }
@@ -849,6 +849,44 @@ namespace Future.Service
                 }
             };
         }
+
+        /// <summary>
+        /// 金币明细
+        /// </summary>
+        public ResponseContext<CoinDetailResponse> CoinDetail(RequestContext<CoinDetailRequest> request)
+        {
+            var response = new ResponseContext<CoinDetailResponse>
+            {
+                Content = new CoinDetailResponse()
+            };
+            var coinDetailList = userBiz.CoinDetailListByUId(request.Content.UId);
+            if (coinDetailList.NotEmpty())
+            {
+                var incomeDetailList = new List<CoinDetailType>();
+                var expendDetailList = new List<CoinDetailType>();
+                foreach (var item in coinDetailList.OrderByDescending(a=>a.CreateTime))
+                {
+                    var dto = new CoinDetailType()
+                    {
+                        Description=item.Remark,
+                        CreateTime=item.CreateTime.GetDateDesc(),
+                        ChangeValue=item.ChangeValue>0?string.Format("+{0}", item.ChangeValue): string.Format("-{0}",-1*item.ChangeValue)
+                    };
+                    if (item.ChangeValue > 0)
+                    {
+                        incomeDetailList.Add(dto);
+                    }
+                    else
+                    {
+                        expendDetailList.Add(dto);
+                    }
+                }
+                response.Content.IncomeDetailList = incomeDetailList;
+                response.Content.ExpendDetailList = expendDetailList;
+            }
+            return response;
+        }
+
         #endregion
 
         #region private Method
@@ -954,9 +992,7 @@ namespace Future.Service
 
             return sb.ToString().TrimEnd('•');
         }
-
         
-
         #endregion
     }
 }

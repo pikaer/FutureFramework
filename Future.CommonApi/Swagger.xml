@@ -4,6 +4,11 @@
         <name>Future.CommonApi</name>
     </assembly>
     <members>
+        <member name="T:Future.CommonApi.Controllers.BaseController">
+            <summary>
+            控制器基类
+            </summary>
+        </member>
         <member name="M:Future.CommonApi.Controllers.BaseController.GetInputString">
             <summary>
             处理请求数据流

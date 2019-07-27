@@ -1054,4 +1054,45 @@ namespace Future.Model.Utils
         public int TotalCoin { get; set; }
     }
     #endregion
+
+    #region CoinDetail
+    public class CoinDetailRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class CoinDetailResponse
+    {
+        /// <summary>
+        /// 收入明细
+        /// </summary>
+        public List<CoinDetailType> IncomeDetailList { get; set; }
+
+        /// <summary>
+        /// 支出明细
+        /// </summary>
+        public List<CoinDetailType> ExpendDetailList { get; set; }
+    }
+
+    public class CoinDetailType
+    {
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string CreateTime { get; set; }
+
+        /// <summary>
+        /// 金币改变值
+        /// </summary>
+        public string ChangeValue { get; set; }
+    }
+    #endregion
 }

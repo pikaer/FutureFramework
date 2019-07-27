@@ -453,6 +453,19 @@ namespace Future.Repository
             }
         }
 
+        public List<CoinDetailEntity> GetCoinDetailListByUId(long uId, int pageIndex, int pageSize)
+        {
+            var sql = SELECT_CoinDetailEntity + @" Where UId=@UId 
+                                               Order by CreateTime desc 
+                                               OFFSET @OFFSETCount ROWS 
+                                               FETCH NEXT @FETCHCount ROWS ONLY";
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<CoinDetailEntity>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+            }
+        }
+
+
         public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender)
         {
             using (var Db = GetDbConnection())

@@ -38,11 +38,6 @@ namespace Future.Service
         /// 通过UId获取用户金币明细列表
         /// </summary>
         List<CoinDetailEntity> CoinDetailListByUId(long uId);
-
-        /// <summary>
-        /// 通过CoinId获取用户金币明细列表
-        /// </summary>
-        List<CoinDetailEntity> CoinDetailListByCoinId(long coinId);
     }
 
     #region Implement
@@ -66,15 +61,17 @@ namespace Future.Service
                 });
             });
         }
-
-        public List<CoinDetailEntity> CoinDetailListByCoinId(long coinId)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public List<CoinDetailEntity> CoinDetailListByUId(long uId)
         {
-            throw new System.NotImplementedException();
+            int pageSize = 200;
+            string coinPageSize = JsonSettingHelper.AppSettings["CoinDetailListSize"];
+            if (!coinPageSize.IsNullOrEmpty())
+            {
+                pageSize = Convert.ToInt32(coinPageSize);
+            }
+
+            return letterDal.GetCoinDetailListByUId(uId,1, pageSize);
         }
         
         public LetterUserEntity LetterUserByUId(long uId)
