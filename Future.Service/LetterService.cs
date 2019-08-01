@@ -425,10 +425,22 @@ namespace Future.Service
         {
             var response = new ResponseContext<GetOpenIdResponse>();
 
-            string myAppid = JsonSettingHelper.AppSettings["LetterAppId"];
-            string mySecret = JsonSettingHelper.AppSettings["LetterSecret"];
-
-            string url = string.Format("https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
+            string myAppid = string.Empty;
+            string mySecret = string.Empty;
+            string url = string.Empty;
+            if (request.Head.Channel == ChannelEnum.QQ_MiniApp)
+            {
+                myAppid = JsonSettingHelper.AppSettings["BingoAppId"];
+                mySecret = JsonSettingHelper.AppSettings["BingoSecret"];
+                url = string.Format("https://api.q.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
+            }
+            else
+            {
+                myAppid = JsonSettingHelper.AppSettings["LetterAppId"];
+                mySecret = JsonSettingHelper.AppSettings["LetterSecret"];
+                url = string.Format("https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
+            }
+            
             response.Content = HttpHelper.HttpGet<GetOpenIdResponse>(url);
             return response;
         }
