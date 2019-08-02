@@ -354,7 +354,6 @@ namespace Future.Service
                         CreateTime = moment.CreateTime.GetDateDesc()
                     };
                 }
-                
             }
             return response;
         }
@@ -381,7 +380,7 @@ namespace Future.Service
                     Province = request.Content.Province,
                     City = request.Content.City,
                     HeadPhotoPath = request.Content.AvatarUrl,
-                    Signature= "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。",
+                    Signature= "",
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
@@ -635,7 +634,7 @@ namespace Future.Service
                 NickName= userInfo.NickName.Trim(),
                 HeadPhotoPath= userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
-                BasicUserInfo= BasicUserInfo(userInfo),
+                BasicUserInfo= TextCut(BasicUserInfo(userInfo)),
                 PlaceInfo=PlaceInfo(userInfo)
             };
             if (request.Content.Type == 1)
