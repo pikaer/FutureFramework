@@ -22,6 +22,9 @@ namespace Future.Model.Enum.Letter
         [Description("运营活动发放")]
         ActivityReward = 5,
 
+        [Description("首次注册赠送金币")]
+        FirstLoginReward = 6,
+
         [Description("捡瓶子消耗")]
         PickUpDeducted = 100,
 

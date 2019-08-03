@@ -1,5 +1,6 @@
 ﻿using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
+using System;
 
 namespace Future.Model.Entity.Letter
 {
@@ -96,5 +97,10 @@ namespace Future.Model.Entity.Letter
         public string Signature { get; set; }
 
         public bool IsDelete { get; set; }
+
+        /// <summary>
+        /// 最近登录时间
+        /// </summary>
+        public DateTime? LastLoginTime { get; set; }
     }
 }

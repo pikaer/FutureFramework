@@ -343,7 +343,7 @@ namespace Future.Service
 
         public ResponseContext<bool> DeleteSimulateMoment(Guid momentId)
         {
-            bool success = letterDal.DeleteSimulateMoment(momentId);
+            bool success = letterDal.DeleteMoment(momentId);
             return new ResponseContext<bool>(success);
         }
 

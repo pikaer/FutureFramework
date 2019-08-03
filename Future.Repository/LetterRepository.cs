@@ -13,7 +13,7 @@ namespace Future.Repository
     {
         private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
 
-        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
+        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
@@ -464,8 +464,7 @@ namespace Future.Repository
                 return Db.Query<CoinDetailEntity>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
             }
         }
-
-
+        
         public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender)
         {
             using (var Db = GetDbConnection())
@@ -685,7 +684,19 @@ namespace Future.Repository
                 return Db.Execute(sql, userEntity) > 0;
             }
         }
-        
+
+        public bool UpdateLastLoginTime(LetterUserEntity userEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.letter_LetterUser
+                            SET LastLoginTime= @LastLoginTime
+                               ,UpdateTime= @UpdateTime
+                          WHERE UId=@UId";
+                return Db.Execute(sql, userEntity) > 0;
+            }
+        }
+
         public bool UpdateMoment(MomentEntity momentEntity)
         {
             using (var Db = GetDbConnection())
@@ -804,6 +815,7 @@ namespace Future.Repository
                                   ,WeChatNo
                                   ,HeadPhotoPath
                                   ,Signature
+                                  ,LastLoginTime
                                   ,CreateTime
                                   ,UpdateTime)
                             VALUES
@@ -824,6 +836,7 @@ namespace Future.Repository
                                   ,@WeChatNo
                                   ,@HeadPhotoPath
                                   ,@Signature
+                                  ,@LastLoginTime
                                   ,@CreateTime
                                   ,@UpdateTime)";
                 return Db.Execute(sql, userEntity) > 0;
@@ -939,7 +952,7 @@ namespace Future.Repository
             }
         }
 
-        public bool DeleteSimulateMoment(Guid momentId)
+        public bool DeleteMoment(Guid momentId)
         {
             using (var Db = GetDbConnection())
             {

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Future.Service
 {
@@ -381,6 +382,7 @@ namespace Future.Service
                     City = request.Content.City,
                     HeadPhotoPath = request.Content.AvatarUrl,
                     Signature= "",
+                    LastLoginTime=DateTime.Now,
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
@@ -408,11 +410,14 @@ namespace Future.Service
                     response.Content.UId = letterDal.LetterUser(0, request.Content.OpenId).UId;
                 }
                 response.Content.IsExecuteSuccess = success;
+
+                userBiz.CoinChangeAsync(response.Content.UId, CoinChangeEnum.FirstLoginReward, "新注册用户赠送金币");
             }
             else
             {
                 response.Content.UId = userInfoEntity.UId;
                 response.Content.IsExecuteSuccess = true;
+                UpdateLastLoginTime(userInfoEntity);
             }
             return response;
         }
@@ -704,6 +709,17 @@ namespace Future.Service
 
         public ResponseContext<DeleteMomentResponse> DeleteMoment(RequestContext<DeleteMomentRequest> request)
         {
+            var moment = letterDal.GetMoment(request.Content.MomentId);
+            //物理删除
+            if(moment!=null&& moment.ReplyCount == 0)
+            {
+                if (!string.IsNullOrEmpty(moment.ImgContent))
+                {
+                    string path = JsonSettingHelper.AppSettings["SetImgPath"] + moment.ImgContent;
+                    System.IO.File.Delete(path);
+                }
+                letterDal.DeleteMoment(request.Content.MomentId);
+            }
             return new ResponseContext<DeleteMomentResponse>
             {
                 Content = new DeleteMomentResponse()
@@ -1002,6 +1018,31 @@ namespace Future.Service
             }
 
             return sb.ToString().TrimEnd('•');
+        }
+
+        /// <summary>
+        /// 更新最新登录时间
+        /// </summary>
+        /// <param name="user"></param>
+        private void UpdateLastLoginTime(LetterUserEntity user)
+        {
+            if (user.LastLoginTime.HasValue)
+            {
+                //今天首次登录
+                if (user.LastLoginTime.Value < DateTime.Now.Date)
+                {
+                    userBiz.CoinChangeAsync(user.UId, CoinChangeEnum.SignReward, string.Format("{0}登录签到奖励金币", DateTime.Now.ToShortDateString()));
+                }
+            }
+            else
+            {
+                user.LastLoginTime = DateTime.Now;
+            }
+
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.UpdateLastLoginTime(user);
+            });
         }
         
         #endregion

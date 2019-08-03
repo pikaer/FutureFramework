@@ -132,6 +132,9 @@ namespace Future.Service
                     case CoinChangeEnum.ActivityReward:
                         config = "ActivityRewardValue";
                         break;
+                    case CoinChangeEnum.FirstLoginReward:
+                        config = "FirstLoginRewardValue";
+                        break;
                     case CoinChangeEnum.PickUpDeducted:
                         config = "PickUpDeductedValue";
                         break;
