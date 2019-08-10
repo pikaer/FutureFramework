@@ -77,7 +77,7 @@ namespace Future.Web.Controllers
         /// <param name="key">键</param>
         /// <param name="value">值</param>  
         /// <param name="minutes">过期时长，单位：分钟</param>      
-        protected void SetCookies(string key, string value, int minutes = 30)
+        protected void SetCookies(string key, string value, int minutes = 60*24)
         {
             HttpContext.Response.Cookies.Append(key, value, new CookieOptions
             {

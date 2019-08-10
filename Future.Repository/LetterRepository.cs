@@ -494,6 +494,8 @@ namespace Future.Repository
             }
         }
 
+
+
         public CoinEntity GetCoinByUId(long uId)
         {
             using (var Db = GetDbConnection())

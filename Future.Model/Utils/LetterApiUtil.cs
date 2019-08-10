@@ -276,7 +276,11 @@ namespace Future.Model.Utils
         /// 页码（分页传递数据）
         /// </summary>
         public int PageIndex { get; set; }
-
+        
+        /// <summary>
+        /// 动态类别
+        /// </summary>
+        public MomentTypeEnum MomentType { get; set; }
     }
 
     public class PickUpListResponse
