@@ -53,7 +53,7 @@ namespace Future.Service
                         UId= item.UId,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
-                        TextContent = TextCut(item.DiscussContent),
+                        TextContent = TextCut(item.TextContent),
                         UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
                         RecentChatTime = item.CreateTime.GetDateDesc()
                     };
@@ -149,7 +149,7 @@ namespace Future.Service
         }
 
         /// <summary>
-        /// 捡起但没有回复的漂流瓶列表
+        /// 捡起的漂流瓶列表
         /// </summary>
         public ResponseContext<PickUpListResponse> PickUpList(RequestContext<PickUpListRequest> request)
         {
@@ -167,31 +167,21 @@ namespace Future.Service
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize, request.Content.MomentType);
             if (pickUpList.NotEmpty())
             {
                 foreach (var item in pickUpList)
                 {
-                    var pickUpUser = userBiz.LetterUserByUId(item.MomentUId);
-                    if (pickUpUser == null)
-                    {
-                        continue;
-                    }
-                    var moment= letterDal.GetMoment(item.MomentId);
-                    if (moment == null)
-                    {
-                        continue;
-                    }
                     var dto = new PickUpType()
                     {
                         PickUpId = item.PickUpId,
                         MomentId= item.MomentId,
-                        UId = item.MomentUId,
-                        HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
-                        NickName = pickUpUser.NickName,
-                        TextContent = moment.TextContent,
-                        ImgContent = moment.ImgContent.GetImgPath(),
-                        CreateTime = moment.CreateTime.GetDateDesc()
+                        UId = item.UId,
+                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                        NickName = item.NickName,
+                        TextContent = item.TextContent,
+                        ImgContent = item.ImgContent.GetImgPath(),
+                        CreateTime = item.CreateTime.GetDateDesc()
                     };
 
                     response.Content.PickUpList.Add(dto);
@@ -227,7 +217,7 @@ namespace Future.Service
             {
                 pickUpCount= Convert.ToInt16(JsonSettingHelper.AppSettings["PickUpCount"]);
             }
-            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender);
+            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType);
             if (moment == null)
             {
                 return response;

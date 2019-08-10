@@ -52,7 +52,7 @@
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.PickUpList">
             <summary>
-            首页瓶子捡起列表(捡起但没有回复的漂流瓶列表)
+            捡起的漂流瓶列表
             </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.MyMomentList">

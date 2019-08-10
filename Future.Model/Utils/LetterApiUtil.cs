@@ -252,6 +252,11 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
+
+        /// <summary>
+        /// 动态类别
+        /// </summary>
+        public MomentTypeEnum MomentType { get; set; }
     }
 
     public class PickUpResponse

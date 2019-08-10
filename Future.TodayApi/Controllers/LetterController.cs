@@ -165,7 +165,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null)
+                if (request.Content == null||request.Content.UId<=0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -183,7 +183,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 首页瓶子捡起列表(捡起但没有回复的漂流瓶列表)
+        /// 捡起的漂流瓶列表
         /// </summary>
         [HttpPost]
         public JsonResult PickUpList()

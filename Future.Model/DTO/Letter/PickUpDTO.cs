@@ -9,10 +9,15 @@ namespace Future.Model.DTO.Letter
         /// </summary>
         public Guid PickUpId { get; set; }
 
+        public Guid MomentId { get; set; }
+
         /// <summary>
         /// 最近一条评论内容
         /// </summary>
-        public string DiscussContent { get; set; }
+        public string TextContent { get; set; }
+        
+
+        public string ImgContent { get; set; }
 
         /// <summary>
         /// 参与评论的用户

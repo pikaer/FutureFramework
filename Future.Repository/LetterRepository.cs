@@ -47,18 +47,36 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpEntity> PickUpListByPageIndex(long uId, int pageIndex, int pageSize)
+        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize,MomentTypeEnum momentType)
         {
-            var sql = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
-                         FROM dbo.letter_PickUp pick 
-                         Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
-                         Where PickUpUId=@UId and discuss.PickUpId is Null and IsPartnerDelete=0
-                         Order by CreateTime desc 
-                         OFFSET @OFFSETCount ROWS 
-                         FETCH NEXT @FETCHCount ROWS ONLY";
+            var sql = @"SELECT pick.PickUpId,
+                               pick.MomentId,
+                               useinfo.UId,
+                               useinfo.NickName,
+                               useinfo.HeadPhotoPath,
+                               moment.TextContent,
+                               moment.ImgContent,
+                               moment.CreateTime
+                        FROM dbo.letter_PickUp pick 
+                        Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
+                        Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
+                        Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0 ";
+            if(momentType== MomentTypeEnum.TextMoment)
+            {
+                sql = sql + " and (moment.ImgContent is null or moment.ImgContent='' )";
+            }
+            if(momentType== MomentTypeEnum.ImgMoment)
+            {
+                sql = sql + " and moment.ImgContent is not null and moment.ImgContent!='' ";
+            }
+
+            sql = sql + @" Order by pick.CreateTime desc 
+                           OFFSET @OFFSETCount ROWS
+                           FETCH NEXT @FETCHCount ROWS ONLY";
+
             using (var Db = GetDbConnection())
             {
-                return Db.Query<PickUpEntity>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+                return Db.Query<PickUpDTO>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
             }
         }
 
@@ -367,7 +385,7 @@ namespace Future.Repository
                 var sql = @"SELECT *
 				            From    (SELECT pick.PickUpId,
 				          				 dis1Temp.CreateTime,
-                                           dis1Temp.DiscussContent,
+                                         dis1Temp.DiscussContent as 'TextContent',
 				          			     us.UId,
 				          				 us.NickName,
 				          			     us.HeadPhotoPath
@@ -465,7 +483,7 @@ namespace Future.Repository
             }
         }
         
-        public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender)
+        public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType)
         {
             using (var Db = GetDbConnection())
             {
@@ -488,8 +506,18 @@ namespace Future.Repository
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
-                            and us.Gender!=@Gender
-                          Order by moment.CreateTime desc";
+                            and us.Gender!=@Gender";
+                if (momentType == MomentTypeEnum.TextMoment)
+                {
+                    sql = sql + " and (moment.ImgContent is Null or moment.ImgContent='' )";
+                }
+
+                if(momentType == MomentTypeEnum.ImgMoment)
+                {
+                    sql = sql + " and moment.ImgContent is not null and moment.ImgContent!='' ";
+                }
+
+                sql = sql + " Order by moment.CreateTime desc";
                 return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender , CreateTime =DateTime.Now});
             }
         }
