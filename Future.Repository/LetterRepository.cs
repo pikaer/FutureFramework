@@ -517,7 +517,7 @@ namespace Future.Repository
                     sql = sql + " and moment.ImgContent is not null and moment.ImgContent!='' ";
                 }
 
-                sql = sql + " Order by moment.CreateTime desc";
+                sql = sql + " Order by moment.CreateTime desc ,moment.ReplyCount ";
                 return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender , CreateTime =DateTime.Now});
             }
         }

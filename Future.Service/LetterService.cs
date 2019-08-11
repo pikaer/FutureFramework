@@ -53,7 +53,7 @@ namespace Future.Service
                         UId= item.UId,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
-                        TextContent = TextCut(item.TextContent),
+                        TextContent = TextCut(item.TextContent,15),
                         UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
                         RecentChatTime = item.CreateTime.GetDateDesc()
                     };
@@ -170,6 +170,10 @@ namespace Future.Service
             var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize, request.Content.MomentType);
             if (pickUpList.NotEmpty())
             {
+                if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
+                {
+                    pickUpList = pickUpList.OrderBy(a => a.CreateTime).ToList();
+                }
                 foreach (var item in pickUpList)
                 {
                     var dto = new PickUpType()
@@ -184,6 +188,10 @@ namespace Future.Service
                         CreateTime = item.CreateTime.GetDateDesc()
                     };
 
+                    if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
+                    {
+                        dto.TextContent = TextCut(dto.TextContent, 18);
+                    }
                     response.Content.PickUpList.Add(dto);
                 }
             }
@@ -629,7 +637,7 @@ namespace Future.Service
                 NickName= userInfo.NickName.Trim(),
                 HeadPhotoPath= userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
-                BasicUserInfo= TextCut(BasicUserInfo(userInfo)),
+                BasicUserInfo= TextCut(BasicUserInfo(userInfo),15),
                 PlaceInfo=PlaceInfo(userInfo)
             };
             if (request.Content.Type == 1)
@@ -943,19 +951,19 @@ namespace Future.Service
         /// <summary>
         /// 文本截取处理
         /// </summary>
-        private string TextCut(string text)
+        private string TextCut(string text,int pos)
         {
             if (string.IsNullOrEmpty(text)|| string.IsNullOrWhiteSpace(text))
             {
                 return text;
             }
-            else if (text.Length < 15)
+            else if (text.Length < pos)
             {
                 return text;
             }
             else
             {
-                string result = text.Substring(0, 15);
+                string result = text.Substring(0, pos);
                 return result + "...";
             }
         }
@@ -1023,6 +1031,7 @@ namespace Future.Service
                 {
                     userBiz.CoinChangeAsync(user.UId, CoinChangeEnum.SignReward, string.Format("{0}登录签到奖励金币", DateTime.Now.ToShortDateString()));
                 }
+                user.LastLoginTime = DateTime.Now;
             }
             else
             {
