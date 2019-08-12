@@ -380,6 +380,8 @@ namespace Future.Service
                     City = request.Content.City,
                     HeadPhotoPath = request.Content.AvatarUrl,
                     Signature= "",
+                    BirthDate="2000-01-01",
+                    EntranceDate="2000-07-01",
                     LastLoginTime=DateTime.Now,
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
