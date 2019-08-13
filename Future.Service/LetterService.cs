@@ -249,6 +249,10 @@ namespace Future.Service
                 {
                     return response;
                 }
+                if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
+                {
+                    moment.TextContent = TextCut(moment.TextContent, 18);
+                }
                 response.Content.PickUpList.Add(new PickUpType()
                 {
                     PickUpId = pickUp.PickUpId,
