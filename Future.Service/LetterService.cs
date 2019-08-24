@@ -181,6 +181,8 @@ namespace Future.Service
                         PickUpId = item.PickUpId,
                         MomentId= item.MomentId,
                         UId = item.UId,
+                        Gender=item.Gender,
+                        Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
                         TextContent = item.TextContent,

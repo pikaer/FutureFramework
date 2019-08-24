@@ -52,6 +52,8 @@ namespace Future.Repository
             var sql = @"SELECT pick.PickUpId,
                                pick.MomentId,
                                useinfo.UId,
+                               useinfo.Gender,
+                               useinfo.BirthDate,
                                useinfo.NickName,
                                useinfo.HeadPhotoPath,
                                moment.TextContent,

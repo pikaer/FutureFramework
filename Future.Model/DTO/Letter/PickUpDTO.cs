@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Future.Model.Enum.Sys;
+using System;
 
 namespace Future.Model.DTO.Letter
 {
@@ -33,6 +34,13 @@ namespace Future.Model.DTO.Letter
         /// 用户头像路径
         /// </summary>
         public string HeadPhotoPath { get; set; }
+
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 生日（2018-08-20）
+        /// </summary>
+        public string BirthDate { get; set; }
 
         /// <summary>
         /// 创建时间
