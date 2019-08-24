@@ -383,9 +383,9 @@ namespace Future.Service
                     OpenId = request.Content.OpenId,
                     Gender = (GenderEnum)request.Content.Gender,
                     NickName = request.Content.NickName,
-                    Country= request.Content.Country,
-                    Province = request.Content.Province,
-                    City = request.Content.City,
+                    Country= "全部",
+                    Province = "全部",
+                    City = "全部",
                     HeadPhotoPath = request.Content.AvatarUrl,
                     Signature= "",
                     BirthDate="2000-01-01",
@@ -1025,7 +1025,9 @@ namespace Future.Service
                 sb.Append("•");
             }
 
-            return sb.ToString().TrimEnd('•');
+            var rtn= sb.ToString().TrimEnd('•');
+
+            return rtn.IsNullOrEmpty() ? "远方" : rtn;
         }
 
         /// <summary>
