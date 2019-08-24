@@ -262,7 +262,9 @@ namespace Future.Service
                     UId = moment.UId,
                     HeadImgPath= letterUser.HeadPhotoPath.GetImgPath(),
                     NickName= letterUser.NickName,
-                    TextContent= moment.TextContent.Trim(),
+                    Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
+                    Gender= letterUser.Gender,
+                    TextContent = moment.TextContent.Trim(),
                     ImgContent= moment.ImgContent.GetImgPath(),
                     CreateTime= moment.CreateTime.GetDateDesc()
                 });
