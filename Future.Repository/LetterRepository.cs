@@ -65,14 +65,14 @@ namespace Future.Repository
                         Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0 ";
             if(momentType== MomentTypeEnum.TextMoment)
             {
-                sql = sql + " and (moment.ImgContent is null or moment.ImgContent='' )";
+                sql += " and (moment.ImgContent is null or moment.ImgContent='' )";
             }
             if(momentType== MomentTypeEnum.ImgMoment)
             {
-                sql = sql + " and moment.ImgContent is not null and moment.ImgContent!='' ";
+                sql += " and moment.ImgContent is not null and moment.ImgContent!='' ";
             }
 
-            sql = sql + @" Order by pick.CreateTime desc 
+            sql += @" Order by pick.CreateTime desc 
                            OFFSET @OFFSETCount ROWS
                            FETCH NEXT @FETCHCount ROWS ONLY";
 
@@ -511,15 +511,15 @@ namespace Future.Repository
                             and us.Gender!=@Gender";
                 if (momentType == MomentTypeEnum.TextMoment)
                 {
-                    sql = sql + " and (moment.ImgContent is Null or moment.ImgContent='' )";
+                    sql += " and (moment.ImgContent is Null or moment.ImgContent='' )";
                 }
 
                 if(momentType == MomentTypeEnum.ImgMoment)
                 {
-                    sql = sql + " and moment.ImgContent is not null and moment.ImgContent!='' ";
+                    sql += " and moment.ImgContent is not null and moment.ImgContent!='' ";
                 }
 
-                sql = sql + " Order by moment.CreateTime desc ,moment.ReplyCount ";
+                sql += " Order by moment.CreateTime desc ,moment.ReplyCount ";
                 return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender , CreateTime =DateTime.Now});
             }
         }
