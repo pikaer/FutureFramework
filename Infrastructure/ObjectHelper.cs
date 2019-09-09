@@ -14,14 +14,14 @@ namespace Infrastructure
         /// <returns> 转化后的指定类型的对象，转化失败返回类型的默认值 </returns>
         public static T JsonToObject<T>(this object value)
         {
-            T rtn = default(T);
+            T rtn = default;
             try
             {
                 rtn = JsonConvert.DeserializeObject<T>(value.ToString());
             }
             catch
             {
-                string txt = ("Json值:" + value.ToString() + "转换失败");
+                _ = ("Json值:" + value.ToString() + "转换失败");
             }
             return rtn;
         }

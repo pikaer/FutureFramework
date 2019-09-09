@@ -25,10 +25,7 @@ namespace Future.Repository
 
         private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.letter_CoinDetail ";
 
-        protected override DbEnum GetDbEnum()
-        {
-            return DbEnum.LetterService;
-        }
+        protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
         public LetterUserEntity LetterUser(long uId, string openId = "")
         {
