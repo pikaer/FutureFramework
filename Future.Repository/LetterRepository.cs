@@ -29,7 +29,7 @@ namespace Future.Repository
 
         public LetterUserEntity LetterUser(long uId, string openId = "")
         {
-            var sql = string.Empty;
+            string sql;
             if (!string.IsNullOrWhiteSpace(openId))
             {
                 sql = string.Format("{0} Where OpenId='{1}'", SELECT_LetterUserEntity, openId);

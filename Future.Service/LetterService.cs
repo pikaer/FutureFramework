@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Letter;
+﻿using Future.Model.DTO.Letter;
+using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
@@ -433,13 +434,13 @@ namespace Future.Service
         /// <summary>
         /// 获取用户小程序端唯一标示
         /// </summary>
-        public ResponseContext<GetOpenIdResponse> GetOpenId(RequestContext<GetOpenIdRequest> request)
+        public ResponseContext<BasicUserInfoResponse> GetOpenId(RequestContext<GetOpenIdRequest> request)
         {
-            var response = new ResponseContext<GetOpenIdResponse>();
+            var response = new ResponseContext<BasicUserInfoResponse>();
+            string mySecret;
+            string url;
 
-            string myAppid = string.Empty;
-            string mySecret = string.Empty;
-            string url = string.Empty;
+            string myAppid;
             if (request.Head.Channel == ChannelEnum.QQ_MiniApp)
             {
                 myAppid = JsonSettingHelper.AppSettings["BingoAppId"];
@@ -452,8 +453,87 @@ namespace Future.Service
                 mySecret = JsonSettingHelper.AppSettings["LetterSecret"];
                 url = string.Format("https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
             }
-            
-            response.Content = HttpHelper.HttpGet<GetOpenIdResponse>(url);
+
+            var openIdInfo = HttpHelper.HttpGet<GetOpenIdDTO>(url);
+            if(openIdInfo==null|| openIdInfo.OpenId.IsNullOrEmpty())
+            {
+                LogHelper.Fatal("GetOpenIdInfo", "获取OpenId异常",null, new Dictionary<string, string>()
+                {
+                    { "LoginCode",request.Content.LoginCode},
+                    { "Token",request.Head.Token},
+                    { "Platform",request.Head.Token},
+                    { "Channel",request.Head.Channel.ToDescription()},
+                    { "TransactionId",request.Head.TransactionId.ToString()}
+                });
+                return response;
+            }
+            var userInfo = letterDal.LetterUser(0, openIdInfo.OpenId);
+            if (userInfo == null)
+            {
+                userInfo = new LetterUserEntity()
+                {
+                    OpenId = openIdInfo.OpenId,
+                    Gender = 0,
+                    Country = "全部",
+                    Province = "全部",
+                    City = "全部",
+                    Signature = "",
+                    BirthDate = "2000-01-01",
+                    EntranceDate = "2000-07-01",
+                    LastLoginTime = DateTime.Now,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+
+                //使用模拟信息
+                string configStr = JsonSettingHelper.AppSettings["UseSimulateUserInfo"];
+                if (!string.IsNullOrEmpty(configStr))
+                {
+                    if (Convert.ToBoolean(configStr))
+                    {
+                        var imgList = sysDal.ImgGalleryList();
+                        if (imgList.NotEmpty())
+                        {
+                            var img = imgList.OrderBy(a => a.UseCount).First();
+                            userInfo.NickName = img.ImgName.Trim();
+                            userInfo.HeadPhotoPath = img.ShortUrl.Trim();
+
+                            sysDal.UpdateImgUseCount(img.ImgId);
+                        }
+                    }
+                }
+                bool success = letterDal.InsertLetterUser(userInfo);
+                if (success)
+                {
+                    userBiz.CoinChange(response.Content.UId, CoinChangeEnum.FirstLoginReward, "新注册用户赠送金币");
+
+                    userInfo = letterDal.LetterUser(0, openIdInfo.OpenId);
+                }
+            }
+
+            if (userInfo == null)
+            {
+                LogHelper.Fatal("GetUserInfo", "获取OpenId异常", null, new Dictionary<string, string>()
+                {
+                    { "LoginCode",request.Content.LoginCode},
+                    { "Token",request.Head.Token},
+                    { "Platform",request.Head.Token},
+                    { "Channel",request.Head.Channel.ToDescription()},
+                    { "TransactionId",request.Head.TransactionId.ToString()}
+                });
+                return response;
+            }
+
+            response.Content = new BasicUserInfoResponse
+            {
+                UId = userInfo.UId,
+                NickName = userInfo.NickName,
+                HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
+                BasicUserInfo = TextCut(BasicUserInfo(userInfo), 15),
+                PlaceInfo = PlaceInfo(userInfo),
+                Signature = userInfo.Signature,
+                TotalCoin = userBiz.UserTotalCoin(userInfo.UId)
+            };
             return response;
         }
 

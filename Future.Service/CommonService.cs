@@ -35,6 +35,16 @@ namespace Future.Service
         void CoinChangeAsync(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "");
 
         /// <summary>
+        /// 用户金币奖励和扣除同步操作
+        /// </summary>
+        /// <param name="uId">用户Id</param>
+        /// <param name="coinChangeType">改变类别</param>
+        /// <param name="remark">备注信息</param>
+        /// <param name="changeValue">改变金额（为0则系统取默认配置）</param>
+        /// <param name="operateUser">操作人（默认为系统）</param>
+        bool CoinChange(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "");
+
+        /// <summary>
         /// 通过UId获取用户金币明细列表
         /// </summary>
         List<CoinDetailEntity> CoinDetailListByUId(long uId);
@@ -50,15 +60,7 @@ namespace Future.Service
         {
             Task.Factory.StartNew(() =>
             {
-                OnCoinChange(uId, coinChangeType, remark, changeValue, operateUser);
-
-                LogHelper.Info("CoinChangeAsync", "用户金币变动", new Dictionary<string, string>()
-                {
-                    { "uId",uId.ToString()},
-                    { "coinChangeType",coinChangeType.ToString()},
-                    { "changeValue",changeValue.ToString()},
-                    { "remark",remark.ToString()}
-                });
+                CoinChange(uId, coinChangeType, remark, changeValue, operateUser);
             });
         }
         
@@ -93,7 +95,7 @@ namespace Future.Service
             return 0;
         }
 
-        private bool OnCoinChange(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "")
+        public bool CoinChange(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "")
         {
             var coin = letterDal.GetCoinByUId(uId);
             if (coin == null)
@@ -178,6 +180,14 @@ namespace Future.Service
                     return letterDal.UpdateUserTotalCoin(coin.CoinId, coin.UId, changeValue);
                 }
             }
+
+            LogHelper.Info("CoinChangeAsync", "用户金币变动", new Dictionary<string, string>()
+            {
+                { "uId",uId.ToString()},
+                { "coinChangeType",coinChangeType.ToString()},
+                { "changeValue",changeValue.ToString()},
+                { "remark",remark.ToString()}
+            });
             return true;
         }
     }

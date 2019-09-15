@@ -511,7 +511,7 @@ namespace Future.TodayApi.Controllers
         public JsonResult GetOpenId()
         {
             RequestContext<GetOpenIdRequest> request = null;
-            ResponseContext<GetOpenIdResponse> response = null;
+            ResponseContext<BasicUserInfoResponse> response = null;
             try
             {
                 string json = GetInputString();
