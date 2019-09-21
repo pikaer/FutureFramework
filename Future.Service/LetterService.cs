@@ -440,9 +440,8 @@ namespace Future.Service
                 bool success = letterDal.InsertLetterUser(userInfo);
                 if (success)
                 {
-                    userBiz.CoinChange(response.Content.UId, CoinChangeEnum.FirstLoginReward, "新注册用户赠送金币");
-
                     userInfo = letterDal.LetterUser(0, openIdInfo.OpenId);
+                    userBiz.CoinChange(userInfo.UId, CoinChangeEnum.FirstLoginReward, "新注册用户赠送金币");
                 }
             }
 
