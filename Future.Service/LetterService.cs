@@ -412,6 +412,7 @@ namespace Future.Service
                     Country = "全部",
                     Province = "全部",
                     City = "全部",
+                    Area= "全部",
                     Signature = "",
                     BirthDate = "2000-01-01",
                     EntranceDate = "2000-07-01",
