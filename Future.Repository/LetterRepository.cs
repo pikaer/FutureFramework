@@ -714,6 +714,20 @@ namespace Future.Repository
             }
         }
 
+        public bool UpdateUserBasicInfo(LetterUserEntity userEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"UPDATE dbo.letter_LetterUser
+                            SET Gender = @Gender
+                               ,NickName= @NickName
+                               ,HeadPhotoPath = @HeadPhotoPath
+                               ,UpdateTime= @UpdateTime
+                          WHERE UId=@UId";
+                return Db.Execute(sql, userEntity) > 0;
+            }
+        }
+
         public bool UpdateLastLoginTime(LetterUserEntity userEntity)
         {
             using (var Db = GetDbConnection())

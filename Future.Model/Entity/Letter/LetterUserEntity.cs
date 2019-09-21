@@ -22,7 +22,7 @@ namespace Future.Model.Entity.Letter
         public UserTypeEnum UserType { get; set; }
 
         /// <summary>
-        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知,此时一般是用户未授权
         /// </summary>
         public GenderEnum Gender { get; set; }
 

@@ -367,74 +367,9 @@ namespace Future.Service
         }
 
         /// <summary>
-        /// 更新用户信息并返回UId
-        /// </summary>
-        public ResponseContext<SetUserInfoResponse> SetUserInfo(RequestContext<SetUserInfoRequest> request)
-        {
-            var response = new ResponseContext<SetUserInfoResponse>()
-            {
-                Content = new SetUserInfoResponse()
-            };
-            
-            var userInfoEntity = letterDal.LetterUser(0, request.Content.OpenId);
-            if (userInfoEntity == null)
-            {
-                var entity = new LetterUserEntity()
-                {
-                    OpenId = request.Content.OpenId,
-                    Gender = (GenderEnum)request.Content.Gender,
-                    NickName = request.Content.NickName,
-                    Country= "全部",
-                    Province = "全部",
-                    City = "全部",
-                    HeadPhotoPath = request.Content.AvatarUrl,
-                    Signature= "",
-                    BirthDate="2000-01-01",
-                    EntranceDate="2000-07-01",
-                    LastLoginTime=DateTime.Now,
-                    CreateTime = DateTime.Now,
-                    UpdateTime = DateTime.Now
-                };
-
-                //使用模拟信息
-                string configStr = JsonSettingHelper.AppSettings["UseSimulateUserInfo"];
-                if (!string.IsNullOrEmpty(configStr))
-                {
-                    if (Convert.ToBoolean(configStr))
-                    {
-                        var imgList = sysDal.ImgGalleryList();
-                        if (imgList.NotEmpty())
-                        {
-                            var img = imgList.OrderBy(a => a.UseCount).First();
-                            entity.NickName = img.ImgName.Trim();
-                            entity.HeadPhotoPath= img.ShortUrl.Trim();
-
-                            sysDal.UpdateImgUseCount(img.ImgId);
-                        }
-                    }
-                }
-                bool success = letterDal.InsertLetterUser(entity);
-                if (success)
-                {
-                    response.Content.UId = letterDal.LetterUser(0, request.Content.OpenId).UId;
-                }
-                response.Content.IsExecuteSuccess = success;
-
-                userBiz.CoinChangeAsync(response.Content.UId, CoinChangeEnum.FirstLoginReward, "新注册用户赠送金币");
-            }
-            else
-            {
-                response.Content.UId = userInfoEntity.UId;
-                response.Content.IsExecuteSuccess = true;
-                UpdateLastLoginTime(userInfoEntity);
-            }
-            return response;
-        }
-
-        /// <summary>
         /// 获取用户小程序端唯一标示
         /// </summary>
-        public ResponseContext<BasicUserInfoResponse> GetOpenId(RequestContext<GetOpenIdRequest> request)
+        public ResponseContext<BasicUserInfoResponse> UserLogin(RequestContext<UserLoginRequest> request)
         {
             var response = new ResponseContext<BasicUserInfoResponse>();
             string mySecret;
@@ -523,10 +458,14 @@ namespace Future.Service
                 });
                 return response;
             }
-
+            else
+            {
+                UpdateLastLoginTime(userInfo);
+            }
             response.Content = new BasicUserInfoResponse
             {
                 UId = userInfo.UId,
+                Gender = userInfo.Gender,
                 NickName = userInfo.NickName,
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 BasicUserInfo = TextCut(BasicUserInfo(userInfo), 15),
@@ -724,7 +663,8 @@ namespace Future.Service
             response.Content = new BasicUserInfoResponse()
             {
                 UId= userInfo.UId,
-                NickName= userInfo.NickName.Trim(),
+                Gender= userInfo.Gender,
+                NickName = userInfo.NickName.Trim(),
                 HeadPhotoPath= userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
                 BasicUserInfo= TextCut(BasicUserInfo(userInfo),15),
@@ -901,7 +841,7 @@ namespace Future.Service
         {
             var collect = letterDal.GetCollect(request.Content.MomentId,request.Content.UId);
 
-            bool success = false;
+            bool success;
             if (collect == null)
             {
                 success=letterDal.InsertCollect(new CollectEntity()
@@ -936,6 +876,26 @@ namespace Future.Service
                     IsExecuteSuccess = success
                 }
             };
+        }
+
+        public ResponseContext<SetUserInfoResponse> SetUserInfo(RequestContext<SetUserInfoRequest> request)
+        {
+            var response = new ResponseContext<SetUserInfoResponse>()
+            {
+                Content = new SetUserInfoResponse()
+            };
+            var user = userBiz.LetterUserByUId(request.Content.UId);
+            if (user == null)
+            {
+                return response;
+            }
+            user.HeadPhotoPath = request.Content.AvatarUrl;
+            user.NickName= request.Content.NickName;
+            user.Gender = request.Content.Gender;
+            user.UpdateTime = DateTime.Now;
+            letterDal.UpdateUserBasicInfo(user);
+            response.Content.TotalCoin = userBiz.UserTotalCoin(request.Content.UId);
+            return response;
         }
 
         /// <summary>

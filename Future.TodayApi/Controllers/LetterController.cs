@@ -464,53 +464,12 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 存入用户信息
-        /// </summary>
-        [HttpPost]
-        public JsonResult SetUserInfo()
-        {
-            RequestContext<SetUserInfoRequest> request = null;
-            ResponseContext<SetUserInfoResponse> response = null;
-            try
-            {
-                string json = GetInputString();
-                if (string.IsNullOrEmpty(json))
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
-                }
-                request = json.JsonToObject<RequestContext<SetUserInfoRequest>>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                if (request.Head == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
-                }
-                if (request.Content == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
-                }
-                response = api.SetUserInfo(request);
-                return new JsonResult(response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "SetUserInfo", ex);
-            }
-            finally
-            {
-                WriteServiceLog(MODULE, "SetUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
-            }
-        }
-
-        /// <summary>
         /// 获取用户小程序唯一标识
         /// </summary>
         [HttpPost]
-        public JsonResult GetOpenId()
+        public JsonResult UserLogin()
         {
-            RequestContext<GetOpenIdRequest> request = null;
+            RequestContext<UserLoginRequest> request = null;
             ResponseContext<BasicUserInfoResponse> response = null;
             try
             {
@@ -519,7 +478,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
                 }
-                request = json.JsonToObject<RequestContext<GetOpenIdRequest>>();
+                request = json.JsonToObject<RequestContext<UserLoginRequest>>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
@@ -532,16 +491,16 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
-                response = api.GetOpenId(request);
+                response = api.UserLogin(request);
                 return new JsonResult(response);
             }
             catch (Exception ex)
             {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "GetOpenId", ex);
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UserLogin", ex);
             }
             finally
             {
-                WriteServiceLog(MODULE, "GetOpenId", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+                WriteServiceLog(MODULE, "UserLogin", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
 
@@ -870,6 +829,48 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "BasicUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 存入用户基础信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult SetUserInfo()
+        {
+            RequestContext<SetUserInfoRequest> request = null;
+            ResponseContext<SetUserInfoResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<SetUserInfoRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.SetUserInfo(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "SetUserInfo", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "SetUserInfo", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
 

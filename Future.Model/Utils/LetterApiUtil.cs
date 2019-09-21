@@ -420,35 +420,19 @@ namespace Future.Model.Utils
     public class SetUserInfoRequest
     {
         /// <summary>
-        /// 小程序端-用户唯一标示
+        /// 用户唯一标示
         /// </summary>
-        public string OpenId { get; set; }
+        public long UId { get; set; }
 
         /// <summary>
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
         /// </summary>
-        public int Gender { get; set; }
+        public GenderEnum Gender { get; set; }
 
         /// <summary>
         /// 用户昵称
         /// </summary>
         public string NickName { get; set; }
-
-        /// <summary>
-        /// 用户所在省份
-        /// </summary>
-        public string Province { get; set; }
-
-        /// <summary>
-        /// 用户所在城市
-        /// </summary>
-        public string City { get; set; }
-
-        /// <summary>
-        /// 用户所在国家
-        /// </summary>
-        public string Country { get; set; }
-
         /// <summary>
         /// 微信头像地址
         /// </summary>
@@ -458,19 +442,14 @@ namespace Future.Model.Utils
     public class SetUserInfoResponse
     {
         /// <summary>
-        /// 处理结果
+        /// 用户金币数
         /// </summary>
-        public bool IsExecuteSuccess { get; set; }
-
-        /// <summary>
-        /// 用户Id
-        /// </summary>
-        public long UId { get; set; }
+        public int TotalCoin { get; set; }
     }
     #endregion
 
-    #region GetOpenId
-    public class GetOpenIdRequest
+    #region UserLogin
+    public class UserLoginRequest
     {
         /// <summary>
         /// 用来获取小程序OpenId
@@ -688,6 +667,11 @@ namespace Future.Model.Utils
         /// 用户唯一标示
         /// </summary>
         public long UId { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
 
         /// <summary>
         /// 用户昵称
