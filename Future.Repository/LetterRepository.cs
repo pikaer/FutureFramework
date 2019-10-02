@@ -13,7 +13,7 @@ namespace Future.Repository
     {
         private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
 
-        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
+        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
@@ -723,6 +723,7 @@ namespace Future.Repository
                                ,NickName= @NickName
                                ,HeadPhotoPath = @HeadPhotoPath
                                ,UpdateTime= @UpdateTime
+                               ,IsRegister=1
                           WHERE UId=@UId";
                 return Db.Execute(sql, userEntity) > 0;
             }

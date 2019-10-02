@@ -99,6 +99,11 @@ namespace Future.Model.Entity.Letter
         public bool IsDelete { get; set; }
 
         /// <summary>
+        /// 是否已经注册账户
+        /// </summary>
+        public bool IsRegister { get; set; }
+
+        /// <summary>
         /// 最近登录时间
         /// </summary>
         public DateTime? LastLoginTime { get; set; }

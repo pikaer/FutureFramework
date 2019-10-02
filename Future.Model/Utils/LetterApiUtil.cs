@@ -697,6 +697,14 @@ namespace Future.Model.Utils
         /// </summary>
         public string Signature { get; set; }
 
+        /// <summary>
+        /// 是否已经注册账户
+        /// </summary>
+        public bool IsRegister { get; set; }
+
+        /// <summary>
+        /// 账户金币余额
+        /// </summary>
         public int TotalCoin { get; set; }
     }
     #endregion

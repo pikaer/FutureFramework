@@ -471,6 +471,7 @@ namespace Future.Service
                 BasicUserInfo = TextCut(BasicUserInfo(userInfo), 15),
                 PlaceInfo = PlaceInfo(userInfo),
                 Signature = userInfo.Signature,
+                IsRegister= userInfo.IsRegister,
                 TotalCoin = userBiz.UserTotalCoin(userInfo.UId)
             };
             return response;
@@ -665,7 +666,8 @@ namespace Future.Service
                 UId= userInfo.UId,
                 Gender= userInfo.Gender,
                 NickName = userInfo.NickName.Trim(),
-                HeadPhotoPath= userInfo.HeadPhotoPath.GetImgPath(),
+                IsRegister = userInfo.IsRegister,
+                HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
                 BasicUserInfo= TextCut(BasicUserInfo(userInfo),15),
                 PlaceInfo=PlaceInfo(userInfo)
