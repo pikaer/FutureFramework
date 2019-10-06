@@ -36,5 +36,15 @@ namespace Future.Model.Entity.Letter
         /// 瓶子捡起者是否删除
         /// </summary>
         public bool IsPartnerDelete { get; set; }
+
+        /// <summary>
+        /// 动态发布者最后删除时间
+        /// </summary>
+        public DateTime? UserLastDeleteTime { get; set; }
+
+        /// <summary>
+        /// 瓶子捡起者最后删除时间
+        /// </summary>
+        public DateTime? PartnerLastDeleteTime { get; set; }
     }
 }

@@ -97,7 +97,17 @@ namespace Future.Service.Implement
                 DiscussDetailList=new List<DiscussDetailType>()
             };
 
-            var discussList = letterDal.DiscussList(request.Content.PickUpId);
+            DateTime? deleteTime;
+            if (moment.UId == request.Head.UId)
+            {
+                deleteTime = pickUp.UserLastDeleteTime;
+            }
+            else
+            {
+                deleteTime = pickUp.PartnerLastDeleteTime;
+            }
+
+            var discussList = letterDal.DiscussList(request.Content.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
                 foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
@@ -466,11 +476,25 @@ namespace Future.Service.Implement
             }
             if(pickUp.MomentUId== request.Content.UId)
             {
-                letterDal.UpdatePickDelete(pickUp.PickUpId,1,0);
+                if (request.Content.DeleteType == 1)
+                {
+                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId, 1, 0);
+                }
+                else
+                {
+                    letterDal.UpdatePickDelete(pickUp.PickUpId, 1, 0);
+                }
             }
             else
             {
-                letterDal.UpdatePickDelete(pickUp.PickUpId,0,1);
+                if (request.Content.DeleteType == 1)
+                {
+                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId, 0, 1);
+                }
+                else
+                {
+                    letterDal.UpdatePickDelete(pickUp.PickUpId, 0, 1);
+                }
             }
             response.Content.IsExecuteSuccess = true;
             response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);

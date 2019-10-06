@@ -17,7 +17,7 @@ namespace Future.Repository
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
-        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsUserDelete,IsPartnerDelete,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
+        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsUserDelete,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
         private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
 
@@ -421,13 +421,21 @@ namespace Future.Repository
                 return Db.Query<PickUpDTO>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
             }
         }
-        
-        public List<DiscussEntity>DiscussList(Guid pickUpId)
+
+        public List<DiscussEntity> DiscussList(Guid pickUpId, DateTime? deleteTime = null)
         {
-            var sql = string.Format("{0} Where PickUpId='{1}' Order by CreateTime desc", SELECT_DiscussEntity, pickUpId);
+            string sql;
+            if(deleteTime!=null&& deleteTime.HasValue)
+            {
+                sql = SELECT_DiscussEntity + @" Where PickUpId=@PickUpId and CreateTime>@DeleteTime Order by CreateTime desc";
+            }
+            else
+            {
+                sql = SELECT_DiscussEntity + @" Where PickUpId=@PickUpId  Order by CreateTime desc";
+            }
             using (var Db = GetDbConnection())
             {
-                return Db.Query<DiscussEntity>(sql).AsList();
+                return Db.Query<DiscussEntity>(sql,new { PickUpId= pickUpId , DeleteTime = deleteTime}).AsList();
             }
         }
 
@@ -607,7 +615,40 @@ namespace Future.Repository
                                            }) > 0;
             }
         }
-        
+
+        public bool UpdatePickDeleteTime(Guid pickUpId, int isUserDelete, int isPartnerDelete)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql;
+                if (isUserDelete==1)
+                {
+                    sql = @"UPDATE dbo.letter_PickUp
+                               SET IsUserDelete =@IsUserDelete,
+                                   IsPartnerDelete=@IsPartnerDelete,
+                                   UserLastDeleteTime = @UpdateTime
+                                   UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                }
+                else
+                {
+                    sql = @"UPDATE dbo.letter_PickUp
+                               SET IsUserDelete =@IsUserDelete,
+                                   IsPartnerDelete=@IsPartnerDelete,
+                                   PartnerLastDeleteTime = @UpdateTime
+                                   UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                }
+                return Db.Execute(sql, new
+                {
+                    UpdateTime = DateTime.Now,
+                    PickUpId = pickUpId,
+                    IsUserDelete = isUserDelete,
+                    IsPartnerDelete = isPartnerDelete
+                }) > 0;
+            }
+        }
+
         public bool UpdatePickUpReport(Guid momentId)
         {
             using (var Db = GetDbConnection())
@@ -966,6 +1007,7 @@ namespace Future.Repository
             {
                 string sql = @"UPDATE dbo.letter_PickUp
                                SET IsPartnerDelete =1
+                                  ,PartnerLastDeleteTime = @UpdateTime
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
@@ -981,6 +1023,7 @@ namespace Future.Repository
             {
                 string sql = @"UPDATE dbo.letter_PickUp
                                SET IsUserDelete =1
+                                  ,UserLastDeleteTime = @UpdateTime
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;

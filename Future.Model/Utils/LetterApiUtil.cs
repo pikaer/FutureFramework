@@ -501,6 +501,10 @@ namespace Future.Model.Utils
         /// </summary>
         public Guid PickUpId { get; set; }
 
+        /// <summary>
+        /// 删除类别：0=默认只修改状态，1=删除所有聊天内容
+        /// </summary>
+        public int DeleteType { get; set; }
     }
 
     public class DeleteBottleResponse
