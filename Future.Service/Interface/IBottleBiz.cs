@@ -43,6 +43,11 @@ namespace Future.Service.Interface
         ResponseContext<MyMomentListResponse> MyMomentList(RequestContext<MyMomentListRequest> request);
 
         /// <summary>
+        /// 动态详情
+        /// </summary>
+        ResponseContext<MomentDetailResponse> MomentDetail(RequestContext<MomentDetailRequest> request);
+
+        /// <summary>
         /// 获取用户小程序端唯一标示
         /// </summary>
         ResponseContext<BasicUserInfoResponse> UserLogin(RequestContext<UserLoginRequest> request);

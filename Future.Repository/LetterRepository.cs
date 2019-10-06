@@ -17,7 +17,7 @@ namespace Future.Repository
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
-        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsUserDelete,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
+        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
         private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
 
@@ -59,7 +59,7 @@ namespace Future.Repository
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
-                        Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0 ";
+                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 ";
             if(momentType== MomentTypeEnum.TextMoment)
             {
                 sql += " and (moment.ImgContent is null or moment.ImgContent='' )";
@@ -598,53 +598,43 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdatePickDelete(Guid pickUpId,int isUserDelete, int isPartnerDelete)
+        public bool UpdatePickDelete(Guid pickUpId)
         {
             using (var Db = GetDbConnection())
             {
                 string sql = @"UPDATE dbo.letter_PickUp
-                               SET IsUserDelete =@IsUserDelete,
-                                   IsPartnerDelete=@IsPartnerDelete,
+                               SET IsPickUpDelete =1,
                                    UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
-                return Db.Execute(sql, new {
-                                              UpdateTime = DateTime.Now,
-                                              PickUpId = pickUpId,
-                                              IsUserDelete= isUserDelete,
-                                              IsPartnerDelete= isPartnerDelete
-                                           }) > 0;
+                return Db.Execute(sql, new {UpdateTime = DateTime.Now, PickUpId = pickUpId}) > 0;
             }
         }
 
-        public bool UpdatePickDeleteTime(Guid pickUpId, int isUserDelete, int isPartnerDelete)
+        public bool UpdatePickDeleteTime(Guid pickUpId,bool isUserDelete)
         {
             using (var Db = GetDbConnection())
             {
                 string sql;
-                if (isUserDelete==1)
+                if (isUserDelete)
                 {
                     sql = @"UPDATE dbo.letter_PickUp
-                               SET IsUserDelete =@IsUserDelete,
-                                   IsPartnerDelete=@IsPartnerDelete,
-                                   UserLastDeleteTime = @UpdateTime
+                               SET IsUserDelete =1,
+                                   UserLastDeleteTime = @UpdateTime,
                                    UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 }
                 else
                 {
                     sql = @"UPDATE dbo.letter_PickUp
-                               SET IsUserDelete =@IsUserDelete,
-                                   IsPartnerDelete=@IsPartnerDelete,
-                                   PartnerLastDeleteTime = @UpdateTime
+                               SET IsPartnerDelete=1,
+                                   PartnerLastDeleteTime = @UpdateTime,
                                    UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 }
                 return Db.Execute(sql, new
                 {
                     UpdateTime = DateTime.Now,
-                    PickUpId = pickUpId,
-                    IsUserDelete = isUserDelete,
-                    IsPartnerDelete = isPartnerDelete
+                    PickUpId = pickUpId
                 }) > 0;
             }
         }
@@ -660,6 +650,31 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
             }
         }
+
+        public bool UpdatePickUpUserDelete(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsUserDelete =0
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
+            }
+        }
+
+        public bool UpdatePickUpPartnerDelete(Guid pickUpId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsPartnerDelete =0
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
+            }
+        }
+
 
         public bool UpdateMomentDelete(Guid momentId)
         {

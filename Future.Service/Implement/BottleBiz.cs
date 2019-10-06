@@ -138,7 +138,20 @@ namespace Future.Service.Implement
             {
                 Content = new DiscussResponse()
             };
+            var pickUp = letterDal.PickUp(request.Content.PickUpId);
+            if (pickUp == null)
+            {
+                return response;
+            }
 
+            if(pickUp.MomentUId== request.Head.UId)
+            {
+                letterDal.UpdatePickUpUserDelete(request.Content.PickUpId);
+            }
+            else
+            {
+                letterDal.UpdatePickUpPartnerDelete(request.Content.PickUpId);
+            }
             var discuss = new DiscussEntity()
             {
                 DiscussId = Guid.NewGuid(),
@@ -171,10 +184,6 @@ namespace Future.Service.Implement
             var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize, request.Content.MomentType);
             if (pickUpList.NotEmpty())
             {
-                if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
-                {
-                    pickUpList = pickUpList.OrderBy(a => a.CreateTime).ToList();
-                }
                 foreach (var item in pickUpList)
                 {
                     var dto = new PickUpType()
@@ -476,24 +485,17 @@ namespace Future.Service.Implement
             }
             if(pickUp.MomentUId== request.Content.UId)
             {
-                if (request.Content.DeleteType == 1)
-                {
-                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId, 1, 0);
-                }
-                else
-                {
-                    letterDal.UpdatePickDelete(pickUp.PickUpId, 1, 0);
-                }
+                letterDal.UpdatePickDeleteTime(pickUp.PickUpId,true);
             }
             else
             {
                 if (request.Content.DeleteType == 1)
                 {
-                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId, 0, 1);
+                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId,false);
                 }
                 else
                 {
-                    letterDal.UpdatePickDelete(pickUp.PickUpId, 0, 1);
+                    letterDal.UpdatePickDelete(pickUp.PickUpId);
                 }
             }
             response.Content.IsExecuteSuccess = true;
@@ -534,7 +536,7 @@ namespace Future.Service.Implement
             var pickUpList = letterDal.PickUpListByPickUpUIdWithoutReply(request.Content.UId);
             foreach(var item in pickUpList)
             {
-                letterDal.UpdatePickDelete(item.PickUpId, 0, 1);
+                letterDal.UpdatePickDelete(item.PickUpId);
             }
             
             response.Content.IsExecuteSuccess = true;

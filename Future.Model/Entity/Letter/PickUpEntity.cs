@@ -28,6 +28,11 @@ namespace Future.Model.Entity.Letter
         public long PickUpUId { get; set; }
 
         /// <summary>
+        /// 漂流瓶列表中是否删除
+        /// </summary>
+        public bool IsPickUpDelete { get; set; }
+
+        /// <summary>
         /// 动态发布者是否已删除
         /// </summary>
         public bool IsUserDelete { get; set; }
