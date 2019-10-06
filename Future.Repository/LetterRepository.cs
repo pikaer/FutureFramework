@@ -610,7 +610,7 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdatePickDeleteTime(Guid pickUpId,bool isUserDelete)
+        public bool UpdatePickDeleteTime(Guid pickUpId,DateTime updateTime, bool isUserDelete)
         {
             using (var Db = GetDbConnection())
             {
@@ -633,7 +633,7 @@ namespace Future.Repository
                 }
                 return Db.Execute(sql, new
                 {
-                    UpdateTime = DateTime.Now,
+                    UpdateTime = updateTime,
                     PickUpId = pickUpId
                 }) > 0;
             }
@@ -747,6 +747,19 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, UId = uId }) > 0;
             }
         }
+
+        public bool UpdateHasRead(Guid pickUpId, long uId,DateTime readTime)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_Discuss
+                               SET HasRead =1
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId and UId!=@UId and CreateTime>@ReadTime";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, UId = uId, ReadTime= readTime }) > 0;
+            }
+        }
+
 
         public bool UpdateLetterUser(LetterUserEntity userEntity)
         {

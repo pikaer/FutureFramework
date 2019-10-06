@@ -483,21 +483,23 @@ namespace Future.Service.Implement
             {
                 return response;
             }
-            if(pickUp.MomentUId== request.Content.UId)
+            var updateTime = DateTime.Now;
+            if (pickUp.MomentUId== request.Content.UId)
             {
-                letterDal.UpdatePickDeleteTime(pickUp.PickUpId,true);
+                letterDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, true);
             }
             else
             {
                 if (request.Content.DeleteType == 1)
                 {
-                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId,false);
+                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, false);
                 }
                 else
                 {
                     letterDal.UpdatePickDelete(pickUp.PickUpId);
                 }
             }
+            letterDal.UpdateHasRead(pickUp.PickUpId, request.Content.UId, updateTime);
             response.Content.IsExecuteSuccess = true;
             response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
             return response;
