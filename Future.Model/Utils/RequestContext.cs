@@ -24,7 +24,7 @@ namespace Future.Model.Utils
         public RequestContext()
         {
             Head = new RequestHead();
-            Content = default(T);
+            Content = default;
         }
     }
 

@@ -4,6 +4,8 @@ using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
+using Future.Service.Implement;
+using Future.Service.Interface;
 using Future.Utility;
 using Infrastructure;
 using System;
@@ -12,9 +14,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Future.Service
+namespace Future.Service.Implement
 {
-    public class LetterService
+    public class BottleBiz: IBottleBiz
     {
         #region public Method
 
@@ -24,9 +26,6 @@ namespace Future.Service
 
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
-        /// <summary>
-        /// 捡到的回复过的瓶子列表
-        /// </summary>
         public ResponseContext<DiscussListResponse> DiscussList(RequestContext<DiscussListRequest> request)
         {
             var response = new ResponseContext<DiscussListResponse>()
@@ -66,9 +65,6 @@ namespace Future.Service
             return response;
         }
         
-        /// <summary>
-        /// 某个瓶子评论详情
-        /// </summary>
         public ResponseContext<DiscussDetailResponse> DiscussDetail(RequestContext<DiscussDetailRequest> request)
         {
             var response = new ResponseContext<DiscussDetailResponse>();
@@ -126,9 +122,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 评论某个瓶子
-        /// </summary>
         public ResponseContext<DiscussResponse> Discuss(RequestContext<DiscussRequest> request)
         {
             var response = new ResponseContext<DiscussResponse>()
@@ -149,9 +142,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 捡起的漂流瓶列表
-        /// </summary>
         public ResponseContext<PickUpListResponse> PickUpList(RequestContext<PickUpListRequest> request)
         {
             var response = new ResponseContext<PickUpListResponse>()
@@ -202,9 +192,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 捡一个瓶子
-        /// </summary>
         public ResponseContext<PickUpResponse> PickUp(RequestContext<PickUpRequest> request)
         {
             var response = new ResponseContext<PickUpResponse>()
@@ -275,9 +262,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 扔一个瓶子
-        /// </summary>
         public ResponseContext<PublishMomentResponse> PublishMoment(RequestContext<PublishMomentRequest> request)
         {
             var response = new ResponseContext<PublishMomentResponse>()
@@ -303,9 +287,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 我扔出去的所有动态
-        /// </summary>
         public ResponseContext<MyMomentListResponse> MyMomentList(RequestContext<MyMomentListRequest> request)
         {
             var response = new ResponseContext<MyMomentListResponse>()
@@ -336,9 +317,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 动态详情
-        /// </summary>
         public ResponseContext<MomentDetailResponse> MomentDetail(RequestContext<MomentDetailRequest> request)
         {
             var response = new ResponseContext<MomentDetailResponse>()
@@ -366,9 +344,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 获取用户小程序端唯一标示
-        /// </summary>
         public ResponseContext<BasicUserInfoResponse> UserLogin(RequestContext<UserLoginRequest> request)
         {
             var response = new ResponseContext<BasicUserInfoResponse>();
@@ -477,9 +452,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 删除单个瓶子
-        /// </summary>
         public ResponseContext<DeleteBottleResponse> DeleteBottle(RequestContext<DeleteBottleRequest> request)
         {
             var response = new ResponseContext<DeleteBottleResponse>()
@@ -505,9 +477,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 举报某个瓶子
-        /// </summary>
         public ResponseContext<ReportBottleResponse> ReportBottle(RequestContext<ReportBottleRequest> request)
         {
             var response = new ResponseContext<ReportBottleResponse>()
@@ -532,9 +501,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 清空未回复的所有瓶子
-        /// </summary>
         public ResponseContext<ClearAllBottleResponse> ClearAllBottle(RequestContext<ClearAllBottleRequest> request)
         {
             var response = new ResponseContext<ClearAllBottleResponse>()
@@ -551,9 +517,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 清空单个瓶子未读数量
-        /// </summary>
         public ResponseContext<ClearUnReadCountResponse> ClearUnReadCount(RequestContext<ClearUnReadCountRequest> request)
         {
             var response = new ResponseContext<ClearUnReadCountResponse>()
@@ -567,9 +530,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 未读总数量
-        /// </summary>
         public ResponseContext<UnReadTotalCountResponse> UnReadTotalCount(RequestContext<UnReadTotalCountRequest> request)
         {
             var response = new ResponseContext<UnReadTotalCountResponse>()
@@ -582,9 +542,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 删除回复过的所有瓶子
-        /// </summary>
         public ResponseContext<DeleteAllBottleResponse> DeleteAllBottle(RequestContext<DeleteAllBottleRequest> request)
         {
             var response = new ResponseContext<DeleteAllBottleResponse>()
@@ -624,11 +581,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 所有未读消息标为已读
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         public ResponseContext<ClearAllUnReadCountResponse> ClearAllUnReadCount(RequestContext<ClearAllUnReadCountRequest> request)
         {
             var response = new ResponseContext<ClearAllUnReadCountResponse>()
@@ -650,9 +602,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 用户基础信息
-        /// </summary>
         public ResponseContext<BasicUserInfoResponse> BasicUserInfo(RequestContext<BasicUserInfoRequest> request)
         {
             var response = new ResponseContext<BasicUserInfoResponse>();
@@ -679,9 +628,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 更新用户信息
-        /// </summary>
         public ResponseContext<UpdateUserInfoResponse> UpdateUserInfo(RequestContext<UpdateUserInfoRequest> request)
         {
             var response = new ResponseContext<UpdateUserInfoResponse>();
@@ -708,9 +654,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 获取用户完整信息
-        /// </summary>
         public ResponseContext<GetUserInfoResponse> GetUserInfo(RequestContext<GetUserInfoRequest> request)
         {
             var response = new ResponseContext<GetUserInfoResponse>();
@@ -781,9 +724,6 @@ namespace Future.Service
             };
         }
 
-        /// <summary>
-        /// 用户收藏列表
-        /// </summary>
         public ResponseContext<GetCollectListResponse> GetCollectList(RequestContext<GetCollectListRequest> request)
         {
             var response= new ResponseContext<GetCollectListResponse>
@@ -820,9 +760,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 删除收藏
-        /// </summary>
         public ResponseContext<DeleteCollectResponse> DeleteCollect(RequestContext<DeleteCollectRequest> request)
         {
             return new ResponseContext<DeleteCollectResponse>
@@ -834,11 +771,6 @@ namespace Future.Service
             };
         }
 
-        /// <summary>
-        /// 添加收藏
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         public ResponseContext<AddCollectResponse> AddCollect(RequestContext<AddCollectRequest> request)
         {
             var collect = letterDal.GetCollect(request.Content.MomentId,request.Content.UId);
@@ -900,11 +832,6 @@ namespace Future.Service
             return response;
         }
 
-        /// <summary>
-        /// 清空所有收藏
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         public ResponseContext<DeleteAllCollectResponse> DeleteAllCollect(RequestContext<DeleteAllCollectRequest> request)
         {
             return new ResponseContext<DeleteAllCollectResponse>
@@ -927,9 +854,6 @@ namespace Future.Service
             };
         }
 
-        /// <summary>
-        /// 金币明细
-        /// </summary>
         public ResponseContext<CoinDetailResponse> CoinDetail(RequestContext<CoinDetailRequest> request)
         {
             var response = new ResponseContext<CoinDetailResponse>

@@ -4,7 +4,8 @@ using Future.Model.Entity.Sys;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
-using Future.Service;
+using Future.Service.Implement;
+using Future.Service.Interface;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,7 +15,7 @@ namespace Future.Web.Controllers
 {
     public class TodayController : BaseController
     {
-        private readonly TodayService todayService = SingletonProvider<TodayService>.Instance;
+        private readonly ITodayBiz todayService = SingletonProvider<TodayBiz>.Instance;
         
         #region ImageGallery
         public IActionResult ImageGalleryList()

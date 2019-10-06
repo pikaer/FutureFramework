@@ -5,25 +5,24 @@ using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
+using Future.Service.Interface;
 using Future.Utility;
 using Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
-namespace Future.Service
+namespace Future.Service.Implement
 {
-    /// <summary>
-    /// 今日份小程序Web端后台业务层
-    /// </summary>
-    public class TodayService
+    public class TodayBiz: ITodayBiz
     {
         private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
 
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
-        private readonly UserBiz userBiz = SingletonProvider<UserBiz>.Instance;
+        private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
         public string GetStaffName(long userId)
         {
@@ -38,20 +37,20 @@ namespace Future.Service
             }
             return entity.StaffName;
         }
-        
+
         public PageResult<ImgGalleryDTO> GetImageGalleryList(int pageIndex, int pageSize, string imgName, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             var rtn = new PageResult<ImgGalleryDTO>();
             var entityList = sysDal.ImgGalleryList(pageIndex, pageSize, imgName, creater, startDateTime, endCreateTime);
-            if (entityList!=null&&entityList.Item1.NotEmpty())
+            if (entityList != null && entityList.Item1.NotEmpty())
             {
                 var imageList = entityList.Item1.Select(a => new ImgGalleryDTO()
                 {
-                    ImgId=a.ImgId,
-                    ImgName=a.ImgName,
-                    Url=a.ShortUrl.GetImgPath(),
-                    Remark=a.Remark,
-                    UseCount=a.UseCount,
+                    ImgId = a.ImgId,
+                    ImgName = a.ImgName,
+                    Url = a.ShortUrl.GetImgPath(),
+                    Remark = a.Remark,
+                    UseCount = a.UseCount,
                     CreateUser = GetStaffName(a.CreateUserId),
                     ModifyUser = GetStaffName(a.ModifyUserId),
                     CreateTimeDesc = a.CreateTime.ToString(),
@@ -118,21 +117,21 @@ namespace Future.Service
             }
         }
 
-        public PageResult<SimulateUserDTO> GetSimulateUserList(int pageIndex, int pageSize, long uId, string nickName, GenderEnum gender,long creater, DateTime? startDateTime, DateTime? endCreateTime)
+        public PageResult<SimulateUserDTO> GetSimulateUserList(int pageIndex, int pageSize, long uId, string nickName, GenderEnum gender, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             var rtn = new PageResult<SimulateUserDTO>();
-            var entityList = letterDal.GetSimulateUserList(pageIndex, pageSize, uId, nickName, gender,creater, startDateTime, endCreateTime);
-            if (entityList!=null&&entityList.Item1.NotEmpty())
+            var entityList = letterDal.GetSimulateUserList(pageIndex, pageSize, uId, nickName, gender, creater, startDateTime, endCreateTime);
+            if (entityList != null && entityList.Item1.NotEmpty())
             {
                 var imageList = entityList.Item1.Select(a => new SimulateUserDTO()
                 {
                     UId = a.UId,
                     GenderDesc = a.Gender.ToDescription(),
                     SchoolTypeDesc = a.SchoolType.ToDescription(),
-                    LiveStateDesc= a.LiveState.ToDescription(),
+                    LiveStateDesc = a.LiveState.ToDescription(),
                     Gender = a.Gender,
                     SchoolType = a.SchoolType,
-                    LiveState= a.LiveState,
+                    LiveState = a.LiveState,
                     EntranceDate = a.EntranceDate,
                     SchoolName = a.SchoolName,
                     NickName = a.NickName,
@@ -141,7 +140,7 @@ namespace Future.Service
                     City = a.City,
                     Area = a.Area,
                     Signature = a.Signature,
-                    HeadPhotoPath =a.HeadPhotoPath.GetImgPath(),
+                    HeadPhotoPath = a.HeadPhotoPath.GetImgPath(),
                     CreateTimeDesc = a.CreateTime.ToString()
                 }).ToList();
                 rtn.Rows = imageList;
@@ -153,13 +152,13 @@ namespace Future.Service
         public PageResult<RealUserDTO> GetRealUserList(int pageIndex, int pageSize, long uId, string nickName, string openId, GenderEnum gender, DateTime? startDateTime, DateTime? endCreateTime)
         {
             var rtn = new PageResult<RealUserDTO>();
-            var entityList = letterDal.GetRealUserList(pageIndex, pageSize, uId, nickName, openId, gender,  startDateTime, endCreateTime);
+            var entityList = letterDal.GetRealUserList(pageIndex, pageSize, uId, nickName, openId, gender, startDateTime, endCreateTime);
             if (entityList != null && entityList.Item1.NotEmpty())
             {
                 var imageList = entityList.Item1.Select(a => new RealUserDTO()
                 {
                     UId = a.UId,
-                    OpenId=a.OpenId,
+                    OpenId = a.OpenId,
                     GenderDesc = a.Gender.ToDescription(),
                     SchoolTypeDesc = a.SchoolType.ToDescription(),
                     LiveStateDesc = a.LiveState.ToDescription(),
@@ -190,7 +189,7 @@ namespace Future.Service
                 return;
             }
             var entity = sysDal.ImgGallery(imgId);
-            if (entity != null && !entity.ShortUrl.IsNullOrEmpty() &&!string.IsNullOrWhiteSpace(entity.ShortUrl))
+            if (entity != null && !entity.ShortUrl.IsNullOrEmpty() && !string.IsNullOrWhiteSpace(entity.ShortUrl))
             {
                 string path = JsonSettingHelper.AppSettings["SetImgPath"] + entity.ShortUrl;
                 File.Delete(path);
@@ -199,11 +198,11 @@ namespace Future.Service
 
         public ResponseContext<bool> AddOrUpdateSimulateUser(LetterUserEntity request)
         {
-            bool success = true;
+            bool success;
             if (request.UId <= 0)
             {
                 request.CreateTime = DateTime.Now;
-                request.UserType =UserTypeEnum.SimulationUser;
+                request.UserType = UserTypeEnum.SimulationUser;
                 request.UpdateTime = DateTime.Now;
                 success = letterDal.InsertLetterUser(request);
             }
@@ -238,10 +237,10 @@ namespace Future.Service
 
         public ResponseContext<bool> UpdateAvatarUrl(long uId, long imgId)
         {
-            var img=sysDal.ImgGallery(imgId);
+            var img = sysDal.ImgGallery(imgId);
             if (img == null)
             {
-                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false,"图片不存在");
+                return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "图片不存在");
             }
 
             bool success = letterDal.UpdateAvatarUrl(img.ShortUrl, uId);
@@ -260,7 +259,7 @@ namespace Future.Service
         {
             var rtn = new PageResult<PickUpListDTO>();
             var pickUpList = letterDal.PickUpListByParam(uId, page, rows, pickType);
-            if (pickUpList!=null&&pickUpList.Item1.NotEmpty())
+            if (pickUpList != null && pickUpList.Item1.NotEmpty())
             {
                 var pickUps = new List<PickUpListDTO>();
                 foreach (var item in pickUpList.Item1)
@@ -297,18 +296,18 @@ namespace Future.Service
         public PageResult<PublishMomentListDTO> GetSimulateUserPublishList(int page, int rows, long uId, MomentStateEnum state, DateTime startDateTime, DateTime endCreateTime)
         {
             var rtn = new PageResult<PublishMomentListDTO>();
-            var momentList= letterDal.GetMomentList(page, rows,uId, state, startDateTime, endCreateTime);
+            var momentList = letterDal.GetMomentList(page, rows, uId, state, startDateTime, endCreateTime);
             if (momentList != null && momentList.Item1.NotEmpty())
             {
                 rtn.Rows = momentList.Item1.Select(a => new PublishMomentListDTO()
                 {
-                    MomentId=a.MomentId,
-                    TextContent=a.TextContent.Trim(),
-                    ImgContent=a.ImgContent.GetImgPath(),
-                    IsDelete=a.IsDelete,
-                    ReplyCount=a.ReplyCount,
-                    CreateTime=a.CreateTime.GetDateDesc(),
-                    CanEdit=a.ReplyCount<=0
+                    MomentId = a.MomentId,
+                    TextContent = a.TextContent.Trim(),
+                    ImgContent = a.ImgContent.GetImgPath(),
+                    IsDelete = a.IsDelete,
+                    ReplyCount = a.ReplyCount,
+                    CreateTime = a.CreateTime.GetDateDesc(),
+                    CanEdit = a.ReplyCount <= 0
                 }).ToList();
                 rtn.Total = momentList.Item2;
             }
@@ -318,11 +317,11 @@ namespace Future.Service
         public ResponseContext<bool> AddOrUpdateSimulateMoment(MomentEntity request)
         {
             bool success = true;
-            if (request.MomentId==new Guid())
+            if (request.MomentId == new Guid())
             {
                 request.UpdateTime = DateTime.Now;
                 request.MomentId = Guid.NewGuid();
-                success=letterDal.InsertMoment(request);
+                success = letterDal.InsertMoment(request);
             }
             else
             {
@@ -336,7 +335,7 @@ namespace Future.Service
                     return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "该动态已被订阅，不能修改!");
                 }
                 request.UpdateTime = DateTime.Now;
-                success=letterDal.UpdateMoment(request);
+                success = letterDal.UpdateMoment(request);
             }
             return new ResponseContext<bool>(success);
         }
@@ -349,7 +348,7 @@ namespace Future.Service
 
         public ResponseContext<bool> UpdateImgContent(Guid momentId, long imgId)
         {
-            if(momentId==new Guid())
+            if (momentId == new Guid())
             {
                 return new ResponseContext<bool>(false, ErrCodeEnum.InnerError, false, "动态不存在，请联系管理员");
             }
@@ -406,7 +405,7 @@ namespace Future.Service
             if (list.NotEmpty())
             {
                 var rows = new List<DiscussDetailDTO>();
-                foreach(var item in list)
+                foreach (var item in list)
                 {
                     var user = userBiz.LetterUserByUId(item.UId);
                     if (user == null)
@@ -415,12 +414,12 @@ namespace Future.Service
                     }
                     rows.Add(new DiscussDetailDTO()
                     {
-                         PickUpUId=item.UId,
-                         HeadImgPath= user.HeadPhotoPath.GetImgPath(),
-                         NickName=user.NickName,
-                         TextContent=item.DiscussContent.Trim(),
-                         RecentChatTime=item.CreateTime.GetDateDesc(),
-                         HasRead=item.HasRead
+                        PickUpUId = item.UId,
+                        HeadImgPath = user.HeadPhotoPath.GetImgPath(),
+                        NickName = user.NickName,
+                        TextContent = item.DiscussContent.Trim(),
+                        RecentChatTime = item.CreateTime.GetDateDesc(),
+                        HasRead = item.HasRead
                     });
                 }
                 rtn.Rows = rows;
@@ -437,14 +436,14 @@ namespace Future.Service
             return new ResponseContext<bool>(letterDal.InsertDiscuss(request));
         }
 
-        public PageResult<MomentPickUpDTO> SimulateMomentPickUpList(int page, int rows, Guid momentId,int uId, MomentPickUpEnum state)
+        public PageResult<MomentPickUpDTO> SimulateMomentPickUpList(int page, int rows, Guid momentId, int uId, MomentPickUpEnum state)
         {
             var rtn = new PageResult<MomentPickUpDTO>();
             var pickUpList = letterDal.GetPickUpList(page, rows, momentId, uId, state);
-            if(pickUpList!=null&& pickUpList.Item1.NotEmpty())
+            if (pickUpList != null && pickUpList.Item1.NotEmpty())
             {
                 var list = new List<MomentPickUpDTO>();
-                foreach(var item in pickUpList.Item1)
+                foreach (var item in pickUpList.Item1)
                 {
                     var user = userBiz.LetterUserByUId(item.PickUpUId);
                     if (user == null)
@@ -454,15 +453,15 @@ namespace Future.Service
                     var discussList = letterDal.DiscussList(item.PickUpId);
                     list.Add(new MomentPickUpDTO()
                     {
-                        MomentId=item.MomentId,
-                        UId=item.PickUpUId,
-                        PickUpId=item.PickUpId,
-                        NickName=user.NickName,
-                        HeadPhotoPath=user.HeadPhotoPath.GetImgPath(),
-                        Gender=user.Gender,
-                        GenderDesc=user.Gender.ToDescription(),
-                        DiscussCount= discussList.IsNullOrEmpty()?0: discussList.Count,
-                        CreateTime=item.CreateTime.GetDateDesc()
+                        MomentId = item.MomentId,
+                        UId = item.PickUpUId,
+                        PickUpId = item.PickUpId,
+                        NickName = user.NickName,
+                        HeadPhotoPath = user.HeadPhotoPath.GetImgPath(),
+                        Gender = user.Gender,
+                        GenderDesc = user.Gender.ToDescription(),
+                        DiscussCount = discussList.IsNullOrEmpty() ? 0 : discussList.Count,
+                        CreateTime = item.CreateTime.GetDateDesc()
                     });
                     rtn.Total = pickUpList.Item2;
                     rtn.Rows = list;
@@ -472,3 +471,4 @@ namespace Future.Service
         }
     }
 }
+

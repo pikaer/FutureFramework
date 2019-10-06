@@ -1,57 +1,15 @@
 ﻿using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Repository;
+using Future.Service.Interface;
 using Future.Utility;
 using Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Future.Service
+namespace Future.Service.Implement
 {
-    /// <summary>
-    /// 用户信息
-    /// </summary>
-    public interface IUserBiz
-    {
-        /// <summary>
-        /// 通过UId获取用户信息
-        /// </summary>
-        LetterUserEntity LetterUserByUId(long uId);
-
-        /// <summary>
-        /// 获取用户账户总金币数量
-        /// </summary>
-        int UserTotalCoin(long uId);
-
-        /// <summary>
-        /// 用户金币奖励和扣除异步操作
-        /// </summary>
-        /// <param name="uId">用户Id</param>
-        /// <param name="coinChangeType">改变类别</param>
-        /// <param name="remark">备注信息</param>
-        /// <param name="changeValue">改变金额（为0则系统取默认配置）</param>
-        /// <param name="operateUser">操作人（默认为系统）</param>
-        void CoinChangeAsync(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "");
-
-        /// <summary>
-        /// 用户金币奖励和扣除同步操作
-        /// </summary>
-        /// <param name="uId">用户Id</param>
-        /// <param name="coinChangeType">改变类别</param>
-        /// <param name="remark">备注信息</param>
-        /// <param name="changeValue">改变金额（为0则系统取默认配置）</param>
-        /// <param name="operateUser">操作人（默认为系统）</param>
-        bool CoinChange(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "");
-
-        /// <summary>
-        /// 通过UId获取用户金币明细列表
-        /// </summary>
-        List<CoinDetailEntity> CoinDetailListByUId(long uId);
-    }
-
-    #region Implement
-    
     public class UserBiz : IUserBiz
     {
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
@@ -63,7 +21,7 @@ namespace Future.Service
                 CoinChange(uId, coinChangeType, remark, changeValue, operateUser);
             });
         }
-        
+
         public List<CoinDetailEntity> CoinDetailListByUId(long uId)
         {
             int pageSize = 200;
@@ -73,9 +31,9 @@ namespace Future.Service
                 pageSize = Convert.ToInt32(coinPageSize);
             }
 
-            return letterDal.GetCoinDetailListByUId(uId,1, pageSize);
+            return letterDal.GetCoinDetailListByUId(uId, 1, pageSize);
         }
-        
+
         public LetterUserEntity LetterUserByUId(long uId)
         {
             if (uId <= 0)
@@ -105,7 +63,7 @@ namespace Future.Service
                     UId = uId,
                     TotalCoin = 0,
                     CreateTime = DateTime.Now,
-                    UpdateTime = DateTime.Now               
+                    UpdateTime = DateTime.Now
                 };
                 bool success = letterDal.InsertCoin(coin);
                 if (success)
@@ -158,7 +116,7 @@ namespace Future.Service
             if (changeValue != 0)
             {
                 //金币余额为0时不再继续扣除
-                if (UserTotalCoin(uId) <= 0&& changeValue<0)
+                if (UserTotalCoin(uId) <= 0 && changeValue < 0)
                 {
                     return true;
                 }
@@ -191,7 +149,4 @@ namespace Future.Service
             return true;
         }
     }
-
-    #endregion
-
 }

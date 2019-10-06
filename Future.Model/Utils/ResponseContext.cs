@@ -13,7 +13,7 @@ namespace Future.Model.Utils
             Success = true;
             Code = ErrCodeEnum.Success;
             ResultMessage = ErrCodeEnum.Success.ToDescription();
-            Content = default(T);
+            Content = default;
         }
 
         public ResponseContext(T data)
@@ -42,13 +42,11 @@ namespace Future.Model.Utils
         /// true:成功
         /// false:失败
         /// </summary>
-
         public bool Success { get; set; }
 
         /// <summary>
         /// 错误码
         /// </summary>
-
         public ErrCodeEnum Code { get; set; }
 
         /// <summary>

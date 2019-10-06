@@ -1020,7 +1020,6 @@ namespace Future.Model.Utils
     }
     #endregion
 
-
     #region DeleteAllCollect
     public class DeleteAllCollectRequest
     {

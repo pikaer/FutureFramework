@@ -1,6 +1,7 @@
 ﻿using Future.Model.Enum.Sys;
 using Future.Model.Utils;
-using Future.Service;
+using Future.Service.Implement;
+using Future.Service.Interface;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,7 +17,7 @@ namespace Future.TodayApi.Controllers
     public class LetterController : BaseController
     {
         private readonly string MODULE = "LetterController";
-        private readonly LetterService api = SingletonProvider<LetterService>.Instance;
+        private readonly IBottleBiz api = SingletonProvider<BottleBiz>.Instance;
 
         /// <summary>
         /// 瓶子互动列表

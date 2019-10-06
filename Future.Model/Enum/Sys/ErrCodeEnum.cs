@@ -5,7 +5,7 @@ namespace Future.Model.Enum.Sys
     public enum ErrCodeEnum
     {
         [Description("操作成功")]
-        Success = 10000,
+        Success = 0,
 
         [Description("操作失败")]
         Failure = 9000,
