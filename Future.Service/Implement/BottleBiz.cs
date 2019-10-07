@@ -1016,7 +1016,8 @@ namespace Future.Service.Implement
                 sb.Append("•");
             }
 
-            if (!userInfo.Area.IsNullOrEmpty() && userInfo.Area.Trim() != userInfo.City.Trim() && userInfo.Area != "全部")
+            if (!userInfo.Area.IsNullOrEmpty()&&!userInfo.City.IsNullOrEmpty() && 
+                userInfo.Area.Trim() != userInfo.City.Trim() && userInfo.Area != "全部")
             {
                 sb.Append(userInfo.Area);
                 sb.Append("•");
