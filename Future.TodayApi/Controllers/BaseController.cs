@@ -25,7 +25,10 @@ namespace Future.TodayApi.Controllers
 
             if (!string.IsNullOrEmpty(json))
             {
-                while (json.IndexOf("\\/", StringComparison.Ordinal) != -1) json = json.Replace("\\/", "/");
+                while (json.IndexOf("\\/", StringComparison.Ordinal) != -1)
+                {
+                    json = json.Replace("\\/", "/");
+                }
             }
 
             return json;
@@ -36,7 +39,7 @@ namespace Future.TodayApi.Controllers
         /// </summary>
         protected JsonResult ErrorJsonResult(ErrCodeEnum code, string title = null, Exception ex = null)
         {
-            if (string.IsNullOrEmpty(title) || ex != null)
+            if (!string.IsNullOrEmpty(title) || ex != null)
             {
                 LogHelper.ErrorAsync(title, code.ToDescription(), ex);
             }
