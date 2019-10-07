@@ -13,7 +13,7 @@ namespace Infrastructure
         /// <summary>
         /// 配置监听响应链堆栈
         /// </summary>
-        private static Stack<KeyValuePair<string, FileSystemWatcher>> FileListeners = new Stack<KeyValuePair<string, FileSystemWatcher>>();
+        private static readonly Stack<KeyValuePair<string, FileSystemWatcher>> FileListeners = new Stack<KeyValuePair<string, FileSystemWatcher>>();
 
         /// <summary>
         /// 默认路径

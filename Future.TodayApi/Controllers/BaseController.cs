@@ -58,7 +58,7 @@ namespace Future.TodayApi.Controllers
                 UId = reqHead.UId,
                 Code = (int)code,
                 Msg = msg,
-                Platform = reqHead.Platform,
+                Platform = reqHead.Platform.ToString(),
                 TransactionId = reqHead.TransactionId,
                 CreateTime = DateTime.Now
             });

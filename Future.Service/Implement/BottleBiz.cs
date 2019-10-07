@@ -370,7 +370,7 @@ namespace Future.Service.Implement
             string url;
 
             string myAppid;
-            if (request.Head.Channel == ChannelEnum.QQ_MiniApp)
+            if (request.Head.Platform == ChannelEnum.QQ_MiniApp)
             {
                 myAppid = JsonSettingHelper.AppSettings["BingoAppId"];
                 mySecret = JsonSettingHelper.AppSettings["BingoSecret"];
@@ -391,7 +391,7 @@ namespace Future.Service.Implement
                     { "LoginCode",request.Content.LoginCode},
                     { "Token",request.Head.Token},
                     { "Platform",request.Head.Token},
-                    { "Channel",request.Head.Channel.ToDescription()},
+                    { "Channel",request.Head.Platform.ToDescription()},
                     { "TransactionId",request.Head.TransactionId.ToString()}
                 });
                 return response;
@@ -447,7 +447,7 @@ namespace Future.Service.Implement
                     { "LoginCode",request.Content.LoginCode},
                     { "Token",request.Head.Token},
                     { "Platform",request.Head.Token},
-                    { "Channel",request.Head.Channel.ToDescription()},
+                    { "Channel",request.Head.Platform.ToDescription()},
                     { "TransactionId",request.Head.TransactionId.ToString()}
                 });
                 return response;
@@ -478,13 +478,13 @@ namespace Future.Service.Implement
                 Content = new DeleteBottleResponse()
             };
 
-            var pickUp= letterDal.PickUp(request.Content.PickUpId);
+            var pickUp = letterDal.PickUp(request.Content.PickUpId);
             if (pickUp == null)
             {
                 return response;
             }
             var updateTime = DateTime.Now;
-            if (pickUp.MomentUId== request.Content.UId)
+            if (pickUp.MomentUId == request.Content.UId)
             {
                 letterDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, true);
             }

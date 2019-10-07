@@ -46,14 +46,9 @@ namespace Future.Model.Utils
         public long UId { get; set; }
 
         /// <summary>
-        /// 平台（小程序miniApp，android,ios,浏览器browser,h5)
-        /// </summary>
-        public string Platform { get; set; }
-
-        /// <summary>
         /// 渠道
         /// </summary>
-        public ChannelEnum Channel { get; set; }
+        public ChannelEnum Platform { get; set; }
 
         /// <summary>
         /// 事务号

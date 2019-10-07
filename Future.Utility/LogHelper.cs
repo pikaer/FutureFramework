@@ -147,7 +147,7 @@ namespace Future.Utility
                 {
                     tid = head.TransactionId;
                     uid = head.UId;
-                    platform = head.Platform;
+                    platform = head.Platform.ToString();
                 }
                 WriteLog(level, tid, uid, platform, title, desc, keyValuePairs);
             }

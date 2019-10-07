@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Future.Model.Entity.Sys;
-using Infrastructure;
 using System;
 using System.Collections.Generic;
 
@@ -47,6 +46,7 @@ namespace Future.Repository
                 return Db.QueryFirstOrDefault<int>(sql);
             }
         }
+
         public bool InsertLogs(LogEntity entity)
         {
             using (var Db = GetDbConnection())
