@@ -854,6 +854,9 @@ namespace Future.Service.Implement
             user.HeadPhotoPath = request.Content.AvatarUrl;
             user.NickName= request.Content.NickName;
             user.Gender = request.Content.Gender;
+            user.Country = request.Content.Country;
+            user.Province = request.Content.Province;
+            user.City = request.Content.City;
             user.UpdateTime = DateTime.Now;
             letterDal.UpdateUserBasicInfo(user);
             response.Content.TotalCoin = userBiz.UserTotalCoin(request.Content.UId);

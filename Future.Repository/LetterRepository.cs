@@ -792,6 +792,9 @@ namespace Future.Repository
                                ,NickName= @NickName
                                ,HeadPhotoPath = @HeadPhotoPath
                                ,UpdateTime= @UpdateTime
+                               ,Province = @Province
+                               ,City= @City
+                               ,Country= @Country
                                ,IsRegister=1
                           WHERE UId=@UId";
                 return Db.Execute(sql, userEntity) > 0;
