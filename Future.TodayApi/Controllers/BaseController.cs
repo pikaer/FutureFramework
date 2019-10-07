@@ -20,18 +20,19 @@ namespace Future.TodayApi.Controllers
         /// <returns></returns>
         protected string GetInputString()
         {
-            Stream req = Request.Body;
-            string json = new StreamReader(req).ReadToEnd();
-
-            if (!string.IsNullOrEmpty(json))
+            using (var streamReader = new StreamReader(Request.Body))
             {
-                while (json.IndexOf("\\/", StringComparison.Ordinal) != -1)
+                string json = streamReader.ReadToEnd();
+                if (!string.IsNullOrEmpty(json))
                 {
-                    json = json.Replace("\\/", "/");
+                    while (json.IndexOf("\\/", StringComparison.Ordinal) != -1)
+                    {
+                        json = json.Replace("\\/", "/");
+                    }
                 }
-            }
 
-            return json;
+                return json;
+            }
         }
 
         /// <summary>
