@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Letter;
+﻿using Future.Model.Entity.Hubs;
+using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Repository;
 using Future.Service.Interface;
@@ -147,6 +148,69 @@ namespace Future.Service.Implement
                 { "remark",remark.ToString()}
             });
             return true;
+        }
+
+        public OnLineUserHubEntity OnLineUser(long uId)
+        {
+            return letterDal.GetOnLineUser(uId);
+        }
+
+        public void InsertOnLineUserAsync(OnLineUserHubEntity onLineUser)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.InsertOnLineUser(onLineUser);
+            });
+        }
+
+        public void UpdateOnLineUserAsync(OnLineUserHubEntity onLineUser)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.UpdateOnLineUser(onLineUser);
+            });
+        }
+
+        public ChatListHubEntity ChatListHub(long uId)
+        {
+            return letterDal.ChatListHub(uId);
+        }
+
+        public void InsertChatListHubAsync(ChatListHubEntity chatListHub)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.InsertChatListHub(chatListHub);
+            });
+        }
+
+        public void UpdateChatListHubAsync(ChatListHubEntity chatListHub)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.UpdateChatListHub(chatListHub);
+            });
+        }
+
+        public OnChatHubEntity OnChatHub(long uId)
+        {
+            return letterDal.OnChatHub(uId);
+        }
+
+        public void InsertOnChatHubAsync(OnChatHubEntity userHub)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.InsertOnChatHub(userHub);
+            });
+        }
+
+        public void UpdateOnChatHubAsync(OnChatHubEntity userHub)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                letterDal.UpdateOnChatHub(userHub);
+            });
         }
     }
 }

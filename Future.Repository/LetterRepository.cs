@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Future.Model.DTO.Letter;
+using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
@@ -25,6 +26,12 @@ namespace Future.Repository
 
         private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.letter_CoinDetail ";
 
+        private readonly string SELECT_OnLineUserEntity = "SELECT OnLineId,UId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnLineUserHub ";
+
+        private readonly string SELECT_ChatListHubEntity = "SELECT ChatListHubId,UId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_ChatListHub ";
+
+        private readonly string SELECT_OnChatHubEntity = "SELECT OnChatHubId,UId,PartnerUId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnChatHub ";
+
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
         public LetterUserEntity LetterUser(long uId, string openId = "")
@@ -41,6 +48,33 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 return Db.QueryFirstOrDefault<LetterUserEntity>(sql);
+            }
+        }
+
+        public OnLineUserHubEntity GetOnLineUser(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} Where UId={1}", SELECT_OnLineUserEntity, uId);
+                return Db.QueryFirstOrDefault<OnLineUserHubEntity>(sql);
+            }
+        }
+
+        public ChatListHubEntity ChatListHub(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} Where UId={1}", SELECT_ChatListHubEntity, uId);
+                return Db.QueryFirstOrDefault<ChatListHubEntity>(sql);
+            }
+        }
+
+        public OnChatHubEntity OnChatHub(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} Where UId={1}", SELECT_OnChatHubEntity, uId);
+                return Db.QueryFirstOrDefault<OnChatHubEntity>(sql);
             }
         }
 
@@ -529,8 +563,6 @@ namespace Future.Repository
             }
         }
 
-
-
         public CoinEntity GetCoinByUId(long uId)
         {
             using (var Db = GetDbConnection())
@@ -675,7 +707,6 @@ namespace Future.Repository
             }
         }
 
-
         public bool UpdateMomentDelete(Guid momentId)
         {
             using (var Db = GetDbConnection())
@@ -687,7 +718,50 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, MomentId = momentId }) > 0;
             }
         }
-        
+
+        public bool UpdateOnLineUser(OnLineUserHubEntity onLineUser)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.hub_OnLineUserHub
+                               SET ConnectionId = @ConnectionId
+                                  ,IsOnLine = @IsOnLine
+                                  ,LastOnLineTime = @LastOnLineTime
+                                  ,UpdateTime = @UpdateTime
+                               WHERE OnLineId=@OnLineId";
+                return Db.Execute(sql, onLineUser) > 0;
+            }
+        }
+
+        public bool UpdateChatListHub(ChatListHubEntity chatListHub)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.hub_ChatListHub
+                               SET ConnectionId = @ConnectionId
+                                  ,IsOnLine = @IsOnLine
+                                  ,LastOnLineTime = @LastOnLineTime
+                                  ,UpdateTime = @UpdateTime
+                               WHERE ChatListHubId=@ChatListHubId";
+                return Db.Execute(sql, chatListHub) > 0;
+            }
+        }
+
+        public bool UpdateOnChatHub(OnChatHubEntity userHub)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.hub_OnChatHub
+                               SET ConnectionId = @ConnectionId
+                                  ,IsOnLine = @IsOnLine
+                                  ,PartnerUId = @PartnerUId
+                                  ,LastOnLineTime = @LastOnLineTime
+                                  ,UpdateTime = @UpdateTime
+                               WHERE OnChatHubId=@OnChatHubId";
+                return Db.Execute(sql, userHub) > 0;
+            }
+        }
+
         public bool UpdateMomentDelete(long uId)
         {
             using (var Db = GetDbConnection())
@@ -759,7 +833,6 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, UId = uId, ReadTime= readTime }) > 0;
             }
         }
-
 
         public bool UpdateLetterUser(LetterUserEntity userEntity)
         {
@@ -974,6 +1047,80 @@ namespace Future.Repository
                                    ,@CreateTime
                                    ,@UpdateTime)";
                 return Db.Execute(sql, entity) > 0;
+            }
+        }
+
+        public bool InsertChatListHub(ChatListHubEntity chatListHub)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.hub_ChatListHub
+                                   (ChatListHubId
+                                   ,UId
+                                   ,ConnectionId
+                                   ,IsOnLine
+                                   ,LastOnLineTime
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@ChatListHubId
+                                   ,@UId
+                                   ,@ConnectionId
+                                   ,@IsOnLine
+                                   ,@LastOnLineTime
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, chatListHub) > 0;
+            }
+        }
+
+        public bool InsertOnChatHub(OnChatHubEntity userHub)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.hub_ChatListHub
+                                   (OnChatHubId
+                                   ,UId
+                                   ,PartnerUId
+                                   ,ConnectionId
+                                   ,IsOnLine
+                                   ,LastOnLineTime
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@OnChatHubId
+                                   ,@UId
+                                   ,@PartnerUId
+                                   ,@ConnectionId
+                                   ,@IsOnLine
+                                   ,@LastOnLineTime
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, userHub) > 0;
+            }
+        }
+
+        public bool InsertOnLineUser(OnLineUserHubEntity onLineUser)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.hub_OnLineUserHub
+                                   (OnLineId
+                                   ,UId
+                                   ,ConnectionId
+                                   ,IsOnLine
+                                   ,LastOnLineTime
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@OnLineId
+                                   ,@UId
+                                   ,@ConnectionId
+                                   ,@IsOnLine
+                                   ,@LastOnLineTime
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, onLineUser) > 0;
             }
         }
 

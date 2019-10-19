@@ -389,7 +389,7 @@ namespace Future.Service.Implement
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         TextContent = item.DiscussContent,
-                        RecentChatTime = item.UpdateTime.Value.GetDateDesc()
+                        RecentChatTime = item.UpdateTime.Value.GetDateDesc(true)
                     };
                     rtn.Add(dto);
                 }
@@ -418,7 +418,7 @@ namespace Future.Service.Implement
                         HeadImgPath = user.HeadPhotoPath.GetImgPath(),
                         NickName = user.NickName,
                         TextContent = item.DiscussContent.Trim(),
-                        RecentChatTime = item.CreateTime.GetDateDesc(),
+                        RecentChatTime = item.CreateTime.GetDateDesc(true),
                         HasRead = item.HasRead
                     });
                 }

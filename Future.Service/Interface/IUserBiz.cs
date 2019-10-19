@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Letter;
+﻿using Future.Model.Entity.Hubs;
+using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using System.Collections.Generic;
 
@@ -43,5 +44,26 @@ namespace Future.Service.Interface
         /// 通过UId获取用户金币明细列表
         /// </summary>
         List<CoinDetailEntity> CoinDetailListByUId(long uId);
+
+        /// <summary>
+        /// 在线用户数据
+        /// </summary>
+        OnLineUserHubEntity OnLineUser(long uId);
+
+        void InsertOnLineUserAsync(OnLineUserHubEntity onLineUser);
+
+        void UpdateOnLineUserAsync(OnLineUserHubEntity onLineUser);
+
+        ChatListHubEntity ChatListHub(long uId);
+
+        void InsertChatListHubAsync(ChatListHubEntity chatListHub);
+
+        void UpdateChatListHubAsync(ChatListHubEntity chatListHub);
+
+        OnChatHubEntity OnChatHub(long uId);
+
+        void InsertOnChatHubAsync(OnChatHubEntity userHub);
+
+        void UpdateOnChatHubAsync(OnChatHubEntity userHub);
     }
 }

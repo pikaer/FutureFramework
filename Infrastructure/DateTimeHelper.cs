@@ -9,15 +9,17 @@ namespace Infrastructure
         /// 时间转义
         /// </summary>
         /// <param name="datetime">时间：2018-09-04 0630：30.000</param>
+        /// <param name="yyyyMMddHHmm">是否精确到时分秒</param>
         /// <returns></returns>
-        public static string GetDateDesc(this DateTime datetime)
+        public static string GetDateDesc(this DateTime datetime,bool yyyyMMddHHmm=false)
         {
-            var rtn = "";
+            string rtn;
 
             var now = DateTime.Now;
-            var today = DateTime.Now.Date;  //2018-9-4 0:00:00 今天凌晨
-            var yestoday = DateTime.Now.AddDays(-1).Date;  //2018-9-3 0:00:00  昨天凌晨
-            var beforeyestoday = DateTime.Now.AddDays(-2).Date;  //2018-9-2 0:00:00  前天凌晨
+            var today = now.Date;  //2018-9-4 0:00:00 今天凌晨
+            var yesterday = now.AddDays(-1).Date;  //2018-9-3 0:00:00  昨天凌晨
+            var lastWeek = now.AddDays(-7);  //最近一周
+            var lastYear = now.AddYears(-1); //最近一年
             if (datetime > today)
             {
                 var min1 = now.AddMinutes(-1);       //    1分钟前
@@ -46,6 +48,9 @@ namespace Infrastructure
                 var hour18 = now.AddHours(-18);    //    18小时前
                 var hour19 = now.AddHours(-19);    //    19小时前
                 var hour20 = now.AddHours(-20);    //    20小时前
+                var hour21 = now.AddHours(-21);    //    21小时前
+                var hour22 = now.AddHours(-22);    //    22小时前
+                var hour23 = now.AddHours(-23);    //    23小时前
                 if (datetime >= min1&& datetime<now)
                 {
                     rtn = "刚刚";
@@ -146,22 +151,59 @@ namespace Infrastructure
                 {
                     rtn = "19小时前";
                 }
+                else if (datetime >= hour21 && datetime < hour20)
+                {
+                    rtn = "20小时前";
+                }
+                else if (datetime >= hour22 && datetime < hour21)
+                {
+                    rtn = "21小时前";
+                }
+                else if (datetime >= hour23 && datetime < hour22)
+                {
+                    rtn = "22小时前";
+                }
                 else
                 {
-                    rtn = datetime.ToShortDateString().ToString();
+                    rtn = "23小时前";
                 }
             }
-            else if (datetime <= today && datetime > yestoday)
+            else if (datetime <= today && datetime > yesterday)
             {
                 rtn = "昨天";
             }
-            else if (datetime <= yestoday && datetime > beforeyestoday)
+            else if (datetime <= yesterday && datetime > lastWeek)
             {
-                rtn = "前天";
+                //周几
+                rtn = datetime.ToString("ddd");
+            }
+            else if (datetime <= lastYear && datetime > lastWeek)
+            {
+                if (yyyyMMddHHmm)
+                {
+                    //8月2日 20:23
+                    var date = datetime.GetDateTimeFormats('M')[0].ToString();
+                    var time = datetime.GetDateTimeFormats('t')[0].ToString();
+                    rtn = string.Format("{0} {1}", date, time);
+                }
+                else
+                {
+                    //8月2日
+                    rtn = datetime.GetDateTimeFormats('M')[0].ToString();
+                }
             }
             else
             {
-                rtn = datetime.ToShortDateString().ToString();
+                if (yyyyMMddHHmm)
+                {
+                    //2016年8月2日 20:23
+                    rtn = datetime.ToString("f");
+                }
+                else
+                {
+                    //2016年8月2日
+                    rtn = datetime.ToString("D");
+                }
             }
             return rtn;
         }

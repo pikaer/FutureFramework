@@ -93,7 +93,7 @@ namespace Future.Service.Implement
                 NickName= user.NickName.Trim(),
                 TextContent= moment.TextContent.Trim(),
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
-                CreateTime= moment.CreateTime.GetDateDesc(),
+                CreateTime= moment.CreateTime.GetDateDesc(true),
                 DiscussDetailList=new List<DiscussDetailType>()
             };
 
@@ -123,7 +123,7 @@ namespace Future.Service.Implement
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         TextContent = item.DiscussContent,
-                        RecentChatTime = item.UpdateTime.Value.GetDateDesc()
+                        RecentChatTime = item.UpdateTime.Value.GetDateDesc(true)
                     };
 
                     response.Content.DiscussDetailList.Add(dto);
@@ -356,7 +356,7 @@ namespace Future.Service.Implement
                         HeadImgPath=user.HeadPhotoPath.GetImgPath(),
                         TextContent = moment.TextContent.Trim(),
                         ImgContent = moment.ImgContent.GetImgPath(),
-                        CreateTime = moment.CreateTime.GetDateDesc()
+                        CreateTime = moment.CreateTime.GetDateDesc(true)
                     };
                 }
             }
@@ -415,23 +415,6 @@ namespace Future.Service.Implement
                     UpdateTime = DateTime.Now
                 };
 
-                //使用模拟信息
-                string configStr = JsonSettingHelper.AppSettings["UseSimulateUserInfo"];
-                if (!string.IsNullOrEmpty(configStr))
-                {
-                    if (Convert.ToBoolean(configStr))
-                    {
-                        var imgList = sysDal.ImgGalleryList();
-                        if (imgList.NotEmpty())
-                        {
-                            var img = imgList.OrderBy(a => a.UseCount).First();
-                            userInfo.NickName = img.ImgName.Trim();
-                            userInfo.HeadPhotoPath = img.ShortUrl.Trim();
-
-                            sysDal.UpdateImgUseCount(img.ImgId);
-                        }
-                    }
-                }
                 bool success = letterDal.InsertLetterUser(userInfo);
                 if (success)
                 {

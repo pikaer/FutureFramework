@@ -102,6 +102,16 @@ namespace Future.Utility
             WriteLogAsync(LogLevelEnum.Error, title, content, head, keyValuePairs, ex);
         }
 
+        public static void ErrorAsync(string title, string content, Exception ex = null)
+        {
+            WriteLogAsync(LogLevelEnum.Error, title, content, null, null, ex);
+        }
+
+        public static void ErrorAsync(string title,Exception ex)
+        {
+            WriteLogAsync(LogLevelEnum.Error, title, null, null, null, ex);
+        }
+
         /// <summary>
         /// Fatal致命错误日志
         /// </summary>
