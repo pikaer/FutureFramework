@@ -1078,7 +1078,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.hub_ChatListHub
+                var sql = @"INSERT INTO dbo.hub_OnChatHub
                                    (OnChatHubId
                                    ,UId
                                    ,PartnerUId

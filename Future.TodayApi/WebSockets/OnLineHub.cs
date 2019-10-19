@@ -16,6 +16,8 @@ namespace Future.TodayApi.WebSockets
     {
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
+        private readonly IBottleBiz bottle = SingletonProvider<BottleBiz>.Instance;
+
         /// <summary>
         /// 成功连接
         /// </summary>
@@ -91,6 +93,32 @@ namespace Future.TodayApi.WebSockets
             finally
             {
                 await base.OnDisconnectedAsync(exception);
+            }
+        }
+
+        /// <summary>
+        /// 订阅消息
+        /// </summary>
+        public async Task SubScribeMessage(long uId, Guid pickUpId)
+        {
+            try
+            {
+                var pickUp = bottle.GetPickUpEntity(pickUpId);
+
+                if (uId > 0 && pickUp != null)
+                {
+                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
+                    var userHub = userBiz.ChatListHub(partnerUId);
+                    if (userHub != null && userHub.IsOnLine)
+                    {
+                        //当对方正在互动列表页面停留,通知对方刷新页面
+                        await Clients.Client(userHub.ConnectionId).SendAsync("receive");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorAsync("ChatListHub.SubScribeMessage", ex);
             }
         }
     }

@@ -102,5 +102,31 @@ namespace Future.TodayApi.WebSockets
                 await base.OnDisconnectedAsync(exception);
             }
         }
+
+        /// <summary>
+        /// 订阅消息
+        /// </summary>
+        public async Task SubScribeMessage(long uId, Guid pickUpId)
+        {
+            try
+            {
+                var pickUp = bottle.GetPickUpEntity(pickUpId);
+
+                if (uId > 0 && pickUp != null)
+                {
+                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
+                    var userHub = userBiz.OnChatHub(partnerUId);
+                    if(userHub!=null&& userHub.IsOnLine&& userHub.PartnerUId== uId)
+                    {
+                        //当对方正在和自己聊天,通知对方刷新页面
+                        await Clients.Client(userHub.ConnectionId).SendAsync("receive");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorAsync("OnLineHub.SubScribeMessage", ex);
+            }
+        }
     }
 }
