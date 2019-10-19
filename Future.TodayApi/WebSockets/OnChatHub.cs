@@ -62,7 +62,7 @@ namespace Future.TodayApi.WebSockets
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorAsync("OnLineHub.OnConnectedAsync", ex);
+                LogHelper.ErrorAsync("OnChatHub.OnConnectedAsync", ex);
             }
             finally
             {
@@ -95,7 +95,7 @@ namespace Future.TodayApi.WebSockets
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorAsync("OnLineHub.OnDisconnectedAsync", ex);
+                LogHelper.ErrorAsync("OnChatHub.OnDisconnectedAsync", ex);
             }
             finally
             {
@@ -125,7 +125,7 @@ namespace Future.TodayApi.WebSockets
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorAsync("OnLineHub.SubScribeMessage", ex);
+                LogHelper.ErrorAsync("OnChatHub.SubScribeMessage", ex);
             }
         }
     }

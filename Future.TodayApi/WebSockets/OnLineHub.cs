@@ -108,7 +108,7 @@ namespace Future.TodayApi.WebSockets
                 if (uId > 0 && pickUp != null)
                 {
                     var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
-                    var userHub = userBiz.ChatListHub(partnerUId);
+                    var userHub = userBiz.OnLineUser(partnerUId);
                     if (userHub != null && userHub.IsOnLine)
                     {
                         //当对方正在互动列表页面停留,通知对方刷新页面
