@@ -177,7 +177,7 @@ namespace Infrastructure
                 //周几
                 rtn = datetime.ToString("ddd");
             }
-            else if (datetime <= lastYear && datetime > lastWeek)
+            else if (datetime <= lastWeek && datetime > lastYear) 
             {
                 if (yyyyMMddHHmm)
                 {
