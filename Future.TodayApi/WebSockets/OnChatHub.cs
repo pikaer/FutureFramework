@@ -17,6 +17,8 @@ namespace Future.TodayApi.WebSockets
     {
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
+        private readonly IBottleBiz bottle = SingletonProvider<BottleBiz>.Instance;
+
         /// <summary>
         /// 成功连接
         /// </summary>
@@ -27,9 +29,12 @@ namespace Future.TodayApi.WebSockets
             {
                 //用户连接信息同步到数据库目的：不同页面之间共享用户行为信息
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
-                long partnerUId = Convert.ToInt64(Context.GetHttpContext().Request.Query["PartnerUId"]);
-                if (uId > 0 && partnerUId > 0)
+                Guid pickUpId = Guid.Parse(Context.GetHttpContext().Request.Query["PickUpId"]);
+                var pickUp = bottle.GetPickUpEntity(pickUpId);
+
+                if (uId > 0&&pickUp!=null)
                 {
+                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
                     var userHub = userBiz.OnChatHub(uId);
                     if (userHub == null)
                     {
@@ -75,15 +80,13 @@ namespace Future.TodayApi.WebSockets
             try
             {
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
-                long partnerUId = Convert.ToInt64(Context.GetHttpContext().Request.Query["PartnerUId"]);
-                if (uId > 0&& partnerUId>0)
+                if (uId > 0)
                 {
                     var userHub = userBiz.OnChatHub(uId);
                     if (userHub != null)
                     {
                         userHub.ConnectionId = Context.ConnectionId;
                         userHub.IsOnLine = false;
-                        userHub.PartnerUId = partnerUId;
                         userHub.UpdateTime = DateTime.Now;
                         userHub.LastOnLineTime = DateTime.Now;
                         userBiz.UpdateOnChatHubAsync(userHub);

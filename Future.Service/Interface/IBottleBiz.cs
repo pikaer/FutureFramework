@@ -1,4 +1,6 @@
-﻿using Future.Model.Utils;
+﻿using Future.Model.Entity.Letter;
+using Future.Model.Utils;
+using System;
 
 namespace Future.Service.Interface
 {
@@ -151,5 +153,7 @@ namespace Future.Service.Interface
         /// 金币明细
         /// </summary>
         ResponseContext<CoinDetailResponse> CoinDetail(RequestContext<CoinDetailRequest> request);
+
+        PickUpEntity GetPickUpEntity(Guid pickUpId);
     }
 }

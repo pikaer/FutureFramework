@@ -902,6 +902,10 @@ namespace Future.Service.Implement
             return response;
         }
 
+        public PickUpEntity GetPickUpEntity(Guid pickUpId)
+        {
+            return letterDal.PickUp(pickUpId);
+        }
         #endregion
 
         #region private Method
