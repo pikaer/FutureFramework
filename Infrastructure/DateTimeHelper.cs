@@ -157,7 +157,7 @@ namespace Infrastructure
                 }
                 else if (datetime >= hour22 && datetime < hour21)
                 {
-                    rtn = "21小时前";
+                    rtn = "21小时前"
                 }
                 else if (datetime >= hour23 && datetime < hour22)
                 {
