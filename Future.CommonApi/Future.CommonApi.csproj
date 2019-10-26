@@ -6,7 +6,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath></OutputPath>
-    <DocumentationFile>D:\Code\FutureFramework\Future.CommonApi\Swagger.xml</DocumentationFile>
+    <DocumentationFile>E:\Code\Dontet\FutureFramework\Future.CommonApi\Swagger.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

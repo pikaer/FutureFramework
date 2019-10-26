@@ -5,9 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Code\FutureFramework\Future.TodayApi\Swagger.xml</DocumentationFile>
+    <DocumentationFile>E:\Code\Dontet\FutureFramework\Future.TodayApi\Swagger.xml</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />

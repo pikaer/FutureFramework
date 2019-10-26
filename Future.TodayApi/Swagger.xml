@@ -80,12 +80,7 @@
             删除已上传的图片
             </summary>
         </member>
-        <member name="M:Future.TodayApi.Controllers.LetterController.SetUserInfo">
-            <summary>
-            存入用户信息
-            </summary>
-        </member>
-        <member name="M:Future.TodayApi.Controllers.LetterController.GetOpenId">
+        <member name="M:Future.TodayApi.Controllers.LetterController.UserLogin">
             <summary>
             获取用户小程序唯一标识
             </summary>
@@ -129,6 +124,12 @@
             <summary>
             用户基础信息
             </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.SetUserInfo">
+            <summary>
+            存入用户基础信息
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.GetUserInfo">
             <summary>
@@ -183,6 +184,21 @@
         <member name="M:Future.TodayApi.Controllers.LetterController.CoinDetail">
             <summary>
             用户金币余额详情
+            </summary>
+        </member>
+        <member name="T:Future.TodayApi.Startup">
+            <summary>
+            启动页面
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             </summary>
         </member>
     </members>
