@@ -1,5 +1,4 @@
-﻿using Future.TodayApi.WebSockets;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -42,7 +41,6 @@ namespace Future.TodayApi
                 //true表示生成控制器描述，包含true的IncludeXmlComments重载应放在最后，或者两句都使用true
                 options.IncludeXmlComments(xmlPath, true);
             });
-            services.AddSignalR();
         }
 
         /// <summary>
@@ -72,14 +70,6 @@ namespace Future.TodayApi
                 action.ShowExtensions();
                 action.SwaggerEndpoint("/todayApi/swagger/v1/swagger.json", "V1 Docs");
                 action.RoutePrefix = string.Empty; ;
-            });
-
-            //集线器
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<OnLineHub>("/onLineHub");
-                routes.MapHub<OnChatHub>("/onChatHub");
-                routes.MapHub<ChatListHub>("/chatListHub");
             });
         }
     }

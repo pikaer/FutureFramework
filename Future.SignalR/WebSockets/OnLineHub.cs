@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
-namespace Future.TodayApi.WebSockets
+namespace Future.SignalR.WebSockets
 {
     /// <summary>
     /// 在线用户集线器
     /// </summary>
-    public class OnLineHub:Hub
+    public class OnLineHub : Hub
     {
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
@@ -26,6 +26,7 @@ namespace Future.TodayApi.WebSockets
         {
             try
             {
+                await base.OnConnectedAsync();
                 //用户连接信息同步到数据库目的：不同页面之间共享用户行为信息
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
                 if (uId > 0)
@@ -38,7 +39,7 @@ namespace Future.TodayApi.WebSockets
                             OnLineId = Guid.NewGuid(),
                             UId = uId,
                             ConnectionId = Context.ConnectionId,
-                            IsOnLine =true,
+                            IsOnLine = true,
                             CreateTime = DateTime.Now,
                             UpdateTime = DateTime.Now
                         };
@@ -53,13 +54,9 @@ namespace Future.TodayApi.WebSockets
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogHelper.ErrorAsync("OnLineHub.OnConnectedAsync", ex);
-            }
-            finally
-            {
-                await base.OnConnectedAsync();
             }
         }
 
@@ -81,7 +78,7 @@ namespace Future.TodayApi.WebSockets
                         onLineUser.ConnectionId = Context.ConnectionId;
                         onLineUser.IsOnLine = false;
                         onLineUser.UpdateTime = DateTime.Now;
-                        onLineUser.LastOnLineTime= DateTime.Now;
+                        onLineUser.LastOnLineTime = DateTime.Now;
                         userBiz.UpdateOnLineUserAsync(onLineUser);
                     }
                 }

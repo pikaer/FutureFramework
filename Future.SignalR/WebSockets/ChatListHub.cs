@@ -7,13 +7,12 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
-
-namespace Future.TodayApi.WebSockets
+namespace Future.SignalR.WebSockets
 {
     /// <summary>
-    /// 聊天集线器
+    /// 聊天列表集线器
     /// </summary>
-    public class OnChatHub : Hub
+    public class ChatListHub : Hub
     {
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
@@ -29,40 +28,34 @@ namespace Future.TodayApi.WebSockets
             {
                 //用户连接信息同步到数据库目的：不同页面之间共享用户行为信息
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
-                Guid pickUpId = Guid.Parse(Context.GetHttpContext().Request.Query["PickUpId"]);
-                var pickUp = bottle.GetPickUpEntity(pickUpId);
-
-                if (uId > 0&&pickUp!=null)
+                if (uId > 0)
                 {
-                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
-                    var userHub = userBiz.OnChatHub(uId);
-                    if (userHub == null)
+                    var chatListHub = userBiz.ChatListHub(uId);
+                    if (chatListHub == null)
                     {
-                        userHub = new OnChatHubEntity()
+                        chatListHub = new ChatListHubEntity()
                         {
-                            OnChatHubId = Guid.NewGuid(),
+                            ChatListHubId = Guid.NewGuid(),
                             UId = uId,
-                            PartnerUId = partnerUId,
                             ConnectionId = Context.ConnectionId,
                             IsOnLine = true,
                             CreateTime = DateTime.Now,
                             UpdateTime = DateTime.Now
                         };
-                        userBiz.InsertOnChatHubAsync(userHub);
+                        userBiz.InsertChatListHubAsync(chatListHub);
                     }
                     else
                     {
-                        userHub.ConnectionId = Context.ConnectionId;
-                        userHub.IsOnLine = true;
-                        userHub.PartnerUId = partnerUId;
-                        userHub.UpdateTime = DateTime.Now;
-                        userBiz.UpdateOnChatHubAsync(userHub);
+                        chatListHub.ConnectionId = Context.ConnectionId;
+                        chatListHub.IsOnLine = true;
+                        chatListHub.UpdateTime = DateTime.Now;
+                        userBiz.UpdateChatListHubAsync(chatListHub);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorAsync("OnChatHub.OnConnectedAsync", ex);
+                LogHelper.ErrorAsync("ChatListHub.OnConnectedAsync", ex);
             }
             finally
             {
@@ -82,20 +75,20 @@ namespace Future.TodayApi.WebSockets
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
                 if (uId > 0)
                 {
-                    var userHub = userBiz.OnChatHub(uId);
-                    if (userHub != null)
+                    var chatListHub = userBiz.ChatListHub(uId);
+                    if (chatListHub != null)
                     {
-                        userHub.ConnectionId = Context.ConnectionId;
-                        userHub.IsOnLine = false;
-                        userHub.UpdateTime = DateTime.Now;
-                        userHub.LastOnLineTime = DateTime.Now;
-                        userBiz.UpdateOnChatHubAsync(userHub);
+                        chatListHub.ConnectionId = Context.ConnectionId;
+                        chatListHub.IsOnLine = false;
+                        chatListHub.UpdateTime = DateTime.Now;
+                        chatListHub.LastOnLineTime = DateTime.Now;
+                        userBiz.UpdateChatListHubAsync(chatListHub);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorAsync("OnChatHub.OnDisconnectedAsync", ex);
+                LogHelper.ErrorAsync("ChatListHub.OnDisconnectedAsync", ex);
             }
             finally
             {
@@ -115,17 +108,17 @@ namespace Future.TodayApi.WebSockets
                 if (uId > 0 && pickUp != null)
                 {
                     var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
-                    var userHub = userBiz.OnChatHub(partnerUId);
-                    if(userHub!=null&& userHub.IsOnLine&& userHub.PartnerUId== uId)
+                    var userHub = userBiz.ChatListHub(partnerUId);
+                    if (userHub != null && userHub.IsOnLine)
                     {
-                        //当对方正在和自己聊天,通知对方刷新页面
+                        //当对方正在互动列表页面停留,通知对方刷新页面
                         await Clients.Client(userHub.ConnectionId).SendAsync("receive");
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorAsync("OnChatHub.SubScribeMessage", ex);
+                LogHelper.ErrorAsync("ChatListHub.SubScribeMessage", ex);
             }
         }
     }
