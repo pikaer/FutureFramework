@@ -26,10 +26,8 @@ namespace Future.Utility
             }
             var request = new MsgSecCheckRequestDTO()
             {
-                Access_token = token.Access_token,
                 Content = msg
             };
-
             var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO,MsgSecCheckResponseDTO>(url, request,20);
             return response != null && response.Errcode == 0;
         }

@@ -286,6 +286,9 @@ namespace Future.Service.Implement
                 Content = new PublishMomentResponse()
             };
 
+            //bool msgOk = WeChatHelper.MsgIsOk(request.Head.Platform, request.Content.TextContent);
+       
+
             var moment = new MomentEntity()
             {
                 MomentId = Guid.NewGuid(),

@@ -6,11 +6,6 @@
     public class MsgSecCheckRequestDTO
     {
         /// <summary>
-        /// 小程序全局唯一后台接口调用凭据
-        /// </summary>
-        public string Access_token { get; set; }
-
-        /// <summary>
         /// 要检测的文本内容，长度不超过 500KB
         /// </summary>
         public string Content { get; set; }

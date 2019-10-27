@@ -186,6 +186,12 @@
             用户金币余额详情
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.MsgSecCheck">
+            <summary>
+            文本内容安全检测
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Future.TodayApi.Startup">
             <summary>
             启动页面

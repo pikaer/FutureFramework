@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Raven.Abstractions.Connection;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,9 +13,9 @@ namespace Infrastructure
 {
     public class HttpHelper
     {
-        public static TOut HttpPost<TIn, TOut>(string url, TIn data, int secondTimeOut = 30)
+        public static TOut HttpPost<TIn, TOut>(string url, TIn data, int secondTimeOut = 30) 
         {
-            return HttpPost<TIn, TOut>(url, data, secondTimeOut,null, null);
+            return HttpPost<TIn, TOut>(url, data, secondTimeOut, null, null);
         }
 
         /// <summary>
@@ -39,16 +44,15 @@ namespace Infrastructure
                 {
                     if (contentType != null)
                     {
-                        httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
                     }
-                        
+
                     HttpResponseMessage response = client.PostAsync(url, httpContent).Result;
                     var json = response.Content.ReadAsStringAsync().Result;
                     return json.JsonToObject<TOut>();
                 }
             }
         }
-
 
         /// <summary>
         /// 发起POST异步请求
@@ -76,13 +80,41 @@ namespace Infrastructure
                 {
                     if (contentType != null)
                     {
-                        httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
                     }
 
                     HttpResponseMessage response = await client.PostAsync(url, httpContent);
                     var json = await response.Content.ReadAsStringAsync();
                     return json.JsonToObject<T>();
                 }
+            }
+        }
+
+
+        public static async Task<T> PostAsync<T>(string url, object data) where T : class, new()
+        {
+            try
+            {
+                HttpClient Client = new HttpClient();
+                string content = JsonConvert.SerializeObject(data);
+                var buffer = Encoding.UTF8.GetBytes(content);
+                var byteContent = new ByteArrayContent(buffer);
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await Client.PostAsync(url, byteContent).ConfigureAwait(false);
+                string result = await response.Content.ReadAsStringAsync();
+
+                var json = response.Content.ReadAsStringAsync().Result;
+                return json.JsonToObject<T>();
+
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                {
+                    string responseContent = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                    throw new Exception($"response :{responseContent}", ex);
+                }
+                throw;
             }
         }
 
@@ -146,5 +178,6 @@ namespace Infrastructure
                 return json.JsonToObject<T>();
             }
         }
+
     }
 }
