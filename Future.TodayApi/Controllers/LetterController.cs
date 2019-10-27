@@ -1325,5 +1325,47 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "CoinDetail", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 文本内容安全检测
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult MsgSecCheck()
+        {
+            RequestContext<MsgSecCheckRequest> request = null;
+            ResponseContext<MsgSecCheckResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<MsgSecCheckRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.TextContent.IsNullOrEmpty())
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.MsgSecCheck(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "MsgSecCheck", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "MsgSecCheck", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }

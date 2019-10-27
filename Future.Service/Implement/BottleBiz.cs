@@ -22,8 +22,6 @@ namespace Future.Service.Implement
 
         private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
 
-        private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
-
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
         public ResponseContext<DiscussListResponse> DiscussList(RequestContext<DiscussListRequest> request)
@@ -197,12 +195,12 @@ namespace Future.Service.Implement
                         NickName = item.NickName,
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
-                        CreateTime = item.CreateTime.GetDateDesc()
+                        CreateTime = item.CreateTime.GetDateDesc(true)
                     };
 
                     if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
                     {
-                        dto.TextContent = TextCut(dto.TextContent, 18);
+                        dto.TextContent = TextCut(dto.TextContent, 14);
                     }
                     response.Content.PickUpList.Add(dto);
                 }
@@ -366,24 +364,8 @@ namespace Future.Service.Implement
         public ResponseContext<BasicUserInfoResponse> UserLogin(RequestContext<UserLoginRequest> request)
         {
             var response = new ResponseContext<BasicUserInfoResponse>();
-            string mySecret;
-            string url;
 
-            string myAppid;
-            if (request.Head.Platform == ChannelEnum.QQ_MiniApp)
-            {
-                myAppid = JsonSettingHelper.AppSettings["BingoAppId"];
-                mySecret = JsonSettingHelper.AppSettings["BingoSecret"];
-                url = string.Format("https://api.q.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
-            }
-            else
-            {
-                myAppid = JsonSettingHelper.AppSettings["LetterAppId"];
-                mySecret = JsonSettingHelper.AppSettings["LetterSecret"];
-                url = string.Format("https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code", myAppid, mySecret, request.Content.LoginCode);
-            }
-
-            var openIdInfo = HttpHelper.HttpGet<GetOpenIdDTO>(url);
+            var openIdInfo = WeChatHelper.GetOpenId(request.Head.Platform, request.Content.LoginCode);
             if(openIdInfo==null|| openIdInfo.OpenId.IsNullOrEmpty())
             {
                 LogHelper.Fatal("GetOpenIdInfo", "获取OpenId异常",null, new Dictionary<string, string>()
@@ -906,6 +888,17 @@ namespace Future.Service.Implement
         {
             return letterDal.PickUp(pickUpId);
         }
+
+        public ResponseContext<MsgSecCheckResponse> MsgSecCheck(RequestContext<MsgSecCheckRequest> request)
+        {
+            return new ResponseContext<MsgSecCheckResponse>()
+            {
+                Content = new MsgSecCheckResponse()
+                {
+                    IsOK = WeChatHelper.MsgIsOk(request.Head.Platform, request.Content.TextContent)
+                }
+            };
+        }
         #endregion
 
         #region private Method
@@ -1040,7 +1033,8 @@ namespace Future.Service.Implement
                 letterDal.UpdateLastLoginTime(user);
             });
         }
-        
+
+
         #endregion
     }
 }

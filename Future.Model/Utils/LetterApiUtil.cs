@@ -1115,4 +1115,22 @@ namespace Future.Model.Utils
         public string ChangeValue { get; set; }
     }
     #endregion
+
+    #region MsgSecCheck
+    public class MsgSecCheckRequest
+    {
+        /// <summary>
+        /// 待检测文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+    }
+
+    public class MsgSecCheckResponse
+    {
+        /// <summary>
+        /// 是否校验通过
+        /// </summary>
+        public bool IsOK { get; set; }
+    }
+    #endregion
 }

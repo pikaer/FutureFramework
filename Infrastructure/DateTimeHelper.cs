@@ -172,12 +172,7 @@ namespace Infrastructure
             {
                 rtn = "昨天";
             }
-            else if (datetime <= yesterday && datetime > lastWeek)
-            {
-                //周几
-                rtn = datetime.ToString("ddd");
-            }
-            else if (datetime <= lastWeek && datetime > lastYear) 
+            else if (datetime <= yesterday && datetime > lastYear) 
             {
                 if (yyyyMMddHHmm)
                 {
