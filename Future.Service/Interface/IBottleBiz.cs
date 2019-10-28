@@ -155,5 +155,10 @@ namespace Future.Service.Interface
         ResponseContext<CoinDetailResponse> CoinDetail(RequestContext<CoinDetailRequest> request);
 
         PickUpEntity GetPickUpEntity(Guid pickUpId);
+
+        /// <summary>
+        /// 文本内容安全检测
+        /// </summary>
+        ResponseContext<MsgSecCheckResponse> MsgSecCheck(RequestContext<MsgSecCheckRequest> request);
     }
 }
