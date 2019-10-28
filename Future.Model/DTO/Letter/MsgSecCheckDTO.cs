@@ -1,14 +1,18 @@
-﻿namespace Future.Model.DTO.Letter
+﻿using Newtonsoft.Json.Linq;
+using System;
+
+namespace Future.Model.DTO.Letter
 {
     /// <summary>
     /// 文本内容安全检测
     /// </summary>
+    [Serializable]
     public class MsgSecCheckRequestDTO
     {
         /// <summary>
         /// 要检测的文本内容，长度不超过 500KB
         /// </summary>
-        public string Content { get; set; }
+        public string content { get; set; }
     }
 
     public class MsgSecCheckResponseDTO

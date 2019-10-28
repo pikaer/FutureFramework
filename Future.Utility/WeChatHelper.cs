@@ -1,5 +1,6 @@
 ﻿using Future.Model.DTO.Letter;
 using Future.Model.Enum.Letter;
+using Future.Model.Utils;
 using Infrastructure;
 
 namespace Future.Utility
@@ -24,14 +25,33 @@ namespace Future.Utility
                     url = string.Format("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={0}", token.Access_token);
                     break;
             }
+           
             var request = new MsgSecCheckRequestDTO()
             {
-                Content = msg
+                content = msg
             };
-            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO,MsgSecCheckResponseDTO>(url, request,20);
+            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, MsgSecCheckResponseDTO>(url, request, 20);
             return response != null && response.Errcode == 0;
         }
 
+        private static void Test()
+        {
+            var req = new RequestContext<BasicUserInfoRequest>()
+            {
+                Head=new RequestHead()
+                {
+                    Platform=ChannelEnum.WX_MiniApp,
+                    UId=20089
+                },
+                Content=new BasicUserInfoRequest()
+                {
+                    UId = 20089,
+                    Type = 0
+                }
+            };
+            var url = "https://www.pikaer.com/todayapi/api/Letter/BasicUserInfo";
+            var response = HttpHelper.HttpPost<RequestContext<BasicUserInfoRequest>, ResponseContext<BasicUserInfoResponse>>(url, req, 20);
+        }
         /// <summary>
         /// 获取小程序全局唯一后台接口调用凭据
         /// </summary>
