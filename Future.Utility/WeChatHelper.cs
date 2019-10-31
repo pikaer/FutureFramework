@@ -1,6 +1,5 @@
 ﻿using Future.Model.DTO.Letter;
 using Future.Model.Enum.Letter;
-using Future.Model.Utils;
 using Infrastructure;
 
 namespace Future.Utility
@@ -30,28 +29,24 @@ namespace Future.Utility
             {
                 content = msg
             };
-            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, MsgSecCheckResponseDTO>(url, request, 20);
+            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, SecCheckResponseDTO>(url, request, 20);
             return response != null && response.Errcode == 0;
         }
 
-        private static void Test()
+        public static bool ImgIsOk(string filePath)
         {
-            var req = new RequestContext<BasicUserInfoRequest>()
+            var token = GetAccessToken(ChannelEnum.WX_MiniApp);
+            if (token == null || token.Access_token.IsNullOrEmpty())
             {
-                Head=new RequestHead()
-                {
-                    Platform=ChannelEnum.WX_MiniApp,
-                    UId=20089
-                },
-                Content=new BasicUserInfoRequest()
-                {
-                    UId = 20089,
-                    Type = 0
-                }
-            };
-            var url = "https://www.pikaer.com/todayapi/api/Letter/BasicUserInfo";
-            var response = HttpHelper.HttpPost<RequestContext<BasicUserInfoRequest>, ResponseContext<BasicUserInfoResponse>>(url, req, 20);
+                return true;
+            }
+
+            string url = string.Format("https://api.weixin.qq.com/wxa/img_sec_check?access_token={0}", token.Access_token); ;
+            
+            var response = HttpHelper.HttpPostFile<SecCheckResponseDTO>(url, filePath);
+            return response != null && response.Errcode == 0;
         }
+
         /// <summary>
         /// 获取小程序全局唯一后台接口调用凭据
         /// </summary>

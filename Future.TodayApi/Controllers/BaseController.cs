@@ -53,6 +53,10 @@ namespace Future.TodayApi.Controllers
         /// </summary>
         protected void WriteServiceLog(string module, string method, RequestHead reqHead, ErrCodeEnum code, string msg, object request, object response)
         {
+            if (reqHead == null || request == null)
+            {
+                return;
+            }
             LogHelper.WriteServiceLog(new ServiceLogEntity()
             {
                 Module = module,

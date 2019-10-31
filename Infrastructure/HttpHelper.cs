@@ -27,7 +27,7 @@ namespace Infrastructure
         /// <returns></returns>
         public static TOut HttpPost<TIn, TOut>(string url, TIn postData, int timeOut = 30, string contentType = null, Dictionary<string, string> headers = null)
         {
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 string postDataStr = postData.SerializeToString();
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -49,6 +49,45 @@ namespace Infrastructure
                     HttpResponseMessage response = client.PostAsync(url, httpContent).Result;
                     var json = response.Content.ReadAsStringAsync().Result;
                     return json.JsonToObject<TOut>();
+                }
+            }
+        }
+
+        public static TOut HttpPostFile<TOut>(string url, string fullPath)
+        {
+            using (var client = new HttpClient())
+            {
+
+                if (string.IsNullOrEmpty(fullPath) && !File.Exists(fullPath))
+                {
+                    return default;
+                }
+
+                using (var content = new MultipartFormDataContent())
+                {
+                    content.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+                    content.Headers.Add("client", "true");
+                    string fileName = Path.GetFileName(fullPath);
+                    FileStream fStream = File.Open(fullPath, FileMode.Open, FileAccess.Read);
+
+                    content.Add(new StreamContent(fStream, (int)fStream.Length), "file", fileName);
+
+                    try
+                    {
+                        HttpResponseMessage response = client.PostAsync(url, content).Result;
+                        var json = response.Content.ReadAsStringAsync().Result;
+                        return json.JsonToObject<TOut>();
+                    }
+                    catch
+                    {
+                        return default;
+                    }
+                    finally
+                    {
+                        //关闭文件流
+                        fStream.Close();
+                        client.Dispose();
+                    }
                 }
             }
         }
@@ -94,17 +133,18 @@ namespace Infrastructure
         {
             try
             {
-                HttpClient Client = new HttpClient();
-                string content = JsonConvert.SerializeObject(data);
-                var buffer = Encoding.UTF8.GetBytes(content);
-                var byteContent = new ByteArrayContent(buffer);
-                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await Client.PostAsync(url, byteContent).ConfigureAwait(false);
-                string result = await response.Content.ReadAsStringAsync();
+                using (var client = new HttpClient())
+                {
+                    string content = JsonConvert.SerializeObject(data);
+                    var buffer = Encoding.UTF8.GetBytes(content);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    var response = await client.PostAsync(url, byteContent).ConfigureAwait(false);
+                    string result = await response.Content.ReadAsStringAsync();
 
-                var json = response.Content.ReadAsStringAsync().Result;
-                return json.JsonToObject<T>();
-
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    return json.JsonToObject<T>();
+                }
             }
             catch (WebException ex)
             {

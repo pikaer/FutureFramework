@@ -2,6 +2,7 @@
 using Future.Model.Utils;
 using Future.Service.Implement;
 using Future.Service.Interface;
+using Future.Utility;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -358,17 +359,17 @@ namespace Future.TodayApi.Controllers
             {
                 var uploadfile = Request.Form.Files[0];
 
+                if (uploadfile == null)
+                {
+                    response = new ResponseContext<UpLoadImgResponse>(false, ErrCodeEnum.Failure, null, "上传文件失败");
+                    return new JsonResult(response);
+                }
+
                 var filePath = JsonSettingHelper.AppSettings["SetImgPath"];
 
                 if (!Directory.Exists(filePath))
                 {
                     Directory.CreateDirectory(filePath);
-                }
-
-                if (uploadfile == null)
-                {
-                    response = new ResponseContext<UpLoadImgResponse>(false, ErrCodeEnum.Failure, null, "上传文件失败");
-                    return new JsonResult(response);
                 }
 
                 //文件后缀
@@ -405,12 +406,13 @@ namespace Future.TodayApi.Controllers
                     fs.Flush();
                 }
 
+                WeChatHelper.ImgIsOk(saveName.GetImgPath());
+
                 response.Content = new UpLoadImgResponse()
                 {
                     ImgPath = saveName,
                     ImgLength = length,
                     ImgMime = fileExtension
-
                 };
                 return new JsonResult(response);
             }
