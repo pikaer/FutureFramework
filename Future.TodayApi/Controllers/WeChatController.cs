@@ -19,7 +19,6 @@ namespace Future.TodayApi.Controllers
         public string VerifySignature(string signature, string timestamp, string nonce, string echostr)
         {
             bool success = WeChatHelper.CheckSignature(signature, timestamp, nonce);
-            LogHelper.InfoAsync("CheckSignature", string.Format("signature={0}_timestamp={1}_nonce={2}_echostr={3}_result={4}", signature, timestamp, nonce, echostr, success.ToString())); 
             return success? echostr:"校验失败";
         }
     }
