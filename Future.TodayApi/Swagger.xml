@@ -197,7 +197,7 @@
             微信交互控制器
             </summary>
         </member>
-        <member name="M:Future.TodayApi.Controllers.WeChatController.SendTemplateMessage(System.String,System.String,System.String,System.String)">
+        <member name="M:Future.TodayApi.Controllers.WeChatController.VerifySignature(System.String,System.String,System.String,System.String)">
             <summary>
              微信小程序模板校验签名
             </summary>

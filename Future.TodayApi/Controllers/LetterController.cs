@@ -1,7 +1,10 @@
-﻿using Future.Model.Enum.Sys;
+﻿using Future.Model.DTO.Letter;
+using Future.Model.Enum.Letter;
+using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service.Implement;
 using Future.Service.Interface;
+using Future.Utility;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -43,7 +46,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null|| request.Content.UId<=0|| request.Content.PageIndex<=0)
+                if (request.Content == null || request.Content.UId <= 0 || request.Content.PageIndex <= 0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -166,7 +169,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null||request.Content.UId<=0)
+                if (request.Content == null || request.Content.UId <= 0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -264,7 +267,7 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "MyMomentList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
-        
+
         /// <summary>
         /// 我扔出去的没有被评论的动态
         /// </summary>
@@ -487,7 +490,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null|| request.Content.LoginCode.IsNullOrEmpty())
+                if (request.Content == null || request.Content.LoginCode.IsNullOrEmpty())
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -651,7 +654,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null||request.Content.UId<=0)
+                if (request.Content == null || request.Content.UId <= 0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -692,7 +695,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null|| request.Content.UId<=0)
+                if (request.Content == null || request.Content.UId <= 0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -980,7 +983,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null || request.Content.UId <= 0||string.IsNullOrEmpty(request.Content.AvatarUrl))
+                if (request.Content == null || request.Content.UId <= 0 || string.IsNullOrEmpty(request.Content.AvatarUrl))
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -1226,7 +1229,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null||request.Content.UId<=0)
+                if (request.Content == null || request.Content.UId <= 0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
@@ -1267,7 +1270,7 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
                 }
-                if (request.Content == null|| request.Content.UId<=0)
+                if (request.Content == null || request.Content.UId <= 0)
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }

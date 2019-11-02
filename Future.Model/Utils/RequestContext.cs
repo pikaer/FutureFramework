@@ -48,7 +48,7 @@ namespace Future.Model.Utils
         /// <summary>
         /// 渠道
         /// </summary>
-        public ChannelEnum Platform { get; set; }
+        public PlatformEnum Platform { get; set; }
 
         /// <summary>
         /// 事务号

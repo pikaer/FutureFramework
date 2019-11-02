@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Letter;
+﻿using Future.Model.DTO.Letter;
+using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
@@ -158,6 +159,7 @@ namespace Future.Service.Implement
                 UpdateTime=DateTime.Now
             };
             response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
+            SendMesage(pickUp, request);
             return response;
         }
 
@@ -396,6 +398,7 @@ namespace Future.Service.Implement
                     City = "全部",
                     Area= "全部",
                     Signature = "",
+                    Platform = request.Head.Platform,
                     BirthDate = "2000-01-01",
                     EntranceDate = "2000-07-01",
                     LastLoginTime = DateTime.Now,
@@ -1040,6 +1043,45 @@ namespace Future.Service.Implement
             });
         }
 
+        private void SendMesage(PickUpEntity pickUp, RequestContext<DiscussRequest> request)
+        {
+            if (request.Content.FormId.IsNullOrEmpty())
+            {
+                return;
+            }
+            long toUId;
+            if(pickUp.PickUpUId== request.Head.UId)
+            {
+                toUId = pickUp.MomentUId;
+            }
+            else
+            {
+                toUId = pickUp.PickUpUId;
+            }
+
+            var toUserInfo = userBiz.LetterUserByUId(toUId);
+            if (toUserInfo == null||toUserInfo.OpenId.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            var dto = new MessageTemplateDTO()
+            {
+                template_id = "V7KUhjuJk2J1XCTl_flbZn2XtPOwFL6bfPfCIAdC90g",
+                touser = toUserInfo.OpenId,
+                page = "pages/discovery/discovery",
+                form_id= request.Content.FormId,
+                data = new Dictionary<string, string>()
+                    {
+                        { "thing1", "我是" },
+                        { "thing2", "易林军" },
+                        { "thing3", "你是谁" },
+                        { "thing4", "哈哈哈" }
+                    }
+            };
+
+            WeChatHelper.SendTemplateMessage(dto, PlatformEnum.WX_MiniApp);
+        }
 
         #endregion
     }

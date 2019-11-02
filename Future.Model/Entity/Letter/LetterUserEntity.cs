@@ -17,6 +17,11 @@ namespace Future.Model.Entity.Letter
         public string OpenId { get; set; }
 
         /// <summary>
+        /// 用户注册渠道
+        /// </summary>
+        public PlatformEnum Platform { get; set; }
+
+        /// <summary>
         /// 用户类别
         /// </summary>
         public UserTypeEnum UserType { get; set; }

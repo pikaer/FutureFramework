@@ -492,6 +492,11 @@ namespace Future.Model.Utils
         /// </summary>
         public string TextContent { get; set; }
 
+        /// <summary>
+        /// 表单Id
+        /// </summary>
+        public string FormId { get; set; }
+
     }
 
     public class DiscussResponse

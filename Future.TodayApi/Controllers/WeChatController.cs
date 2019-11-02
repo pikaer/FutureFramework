@@ -1,5 +1,4 @@
-﻿using Future.Model.DTO.Letter;
-using Future.Utility;
+﻿using Future.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Future.TodayApi.Controllers
@@ -21,5 +20,6 @@ namespace Future.TodayApi.Controllers
             bool success = WeChatHelper.CheckSignature(signature, timestamp, nonce);
             return success? echostr:"校验失败";
         }
+
     }
 }

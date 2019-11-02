@@ -2,7 +2,7 @@
 
 namespace Future.Model.Enum.Letter
 {
-    public enum  ChannelEnum
+    public enum PlatformEnum
     {
         [Description("微信小程序")]
         WX_MiniApp = 0,
