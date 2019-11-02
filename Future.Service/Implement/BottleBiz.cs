@@ -1,10 +1,8 @@
-﻿using Future.Model.DTO.Letter;
-using Future.Model.Entity.Letter;
+﻿using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
-using Future.Service.Implement;
 using Future.Service.Interface;
 using Future.Utility;
 using Infrastructure;
@@ -228,9 +226,17 @@ namespace Future.Service.Implement
                 return new ResponseContext<PickUpResponse>(false, ErrCodeEnum.CoinEmpty, null, "金币余额不足，快去发布动态赚金币吧");
             }
             int pickUpCount = 20;
-            if (!string.IsNullOrEmpty(JsonSettingHelper.AppSettings["PickUpCount"]))
+            switch (user.Gender)
             {
-                pickUpCount= Convert.ToInt16(JsonSettingHelper.AppSettings["PickUpCount"]);
+                case GenderEnum.Woman:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["ManBottlePickUpCount"]);
+                    break;
+                case GenderEnum.Man:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["WomanBottlePickUpCount"]);
+                    break;
+                default:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["DefaultBottlePickUpCount"]);
+                    break;
             }
             var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType);
             if (moment == null)
@@ -285,9 +291,6 @@ namespace Future.Service.Implement
             {
                 Content = new PublishMomentResponse()
             };
-
-            //bool msgOk = WeChatHelper.MsgIsOk(request.Head.Platform, request.Content.TextContent);
-       
 
             var moment = new MomentEntity()
             {

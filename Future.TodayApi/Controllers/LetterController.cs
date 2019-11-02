@@ -358,17 +358,17 @@ namespace Future.TodayApi.Controllers
             {
                 var uploadfile = Request.Form.Files[0];
 
+                if (uploadfile == null)
+                {
+                    response = new ResponseContext<UpLoadImgResponse>(false, ErrCodeEnum.Failure, null, "上传文件失败");
+                    return new JsonResult(response);
+                }
+
                 var filePath = JsonSettingHelper.AppSettings["SetImgPath"];
 
                 if (!Directory.Exists(filePath))
                 {
                     Directory.CreateDirectory(filePath);
-                }
-
-                if (uploadfile == null)
-                {
-                    response = new ResponseContext<UpLoadImgResponse>(false, ErrCodeEnum.Failure, null, "上传文件失败");
-                    return new JsonResult(response);
                 }
 
                 //文件后缀
@@ -410,7 +410,6 @@ namespace Future.TodayApi.Controllers
                     ImgPath = saveName,
                     ImgLength = length,
                     ImgMime = fileExtension
-
                 };
                 return new JsonResult(response);
             }

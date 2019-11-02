@@ -1,12 +1,49 @@
 ﻿using Future.Model.DTO.Letter;
 using Future.Model.Enum.Letter;
-using Future.Model.Utils;
 using Infrastructure;
+using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Future.Utility
 {
     public static class WeChatHelper
     {
+        /// <summary>
+        /// 验证微信签名
+        /// </summary>
+        public static bool CheckSignature(string signature, string timestamp, string nonce)
+        {
+            try
+            {
+                var token = JsonSettingHelper.AppSettings["BingoToken"];
+
+                string[] arrTmp = { token, timestamp, nonce };
+
+                Array.Sort(arrTmp);
+
+                string tmpStr = string.Join("", arrTmp);
+
+                var sha1 = new SHA1CryptoServiceProvider();//创建SHA1对象
+                var data = sha1.ComputeHash(Encoding.UTF8.GetBytes(tmpStr));//Hash运算
+                
+                var sb = new StringBuilder();
+                foreach (var t in data)
+                {
+                    sb.Append(t.ToString("X2"));
+                }
+
+                sha1.Dispose();
+
+                return sb.ToString().ToLower().Equals(signature);
+            }
+            catch(Exception ex)
+            {
+                LogHelper.ErrorAsync("CheckSignature", ex);
+                return false;
+            }
+        }
+
         public static bool MsgIsOk(ChannelEnum platform,string msg)
         {
             var token = GetAccessToken(platform);
@@ -30,28 +67,10 @@ namespace Future.Utility
             {
                 content = msg
             };
-            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, MsgSecCheckResponseDTO>(url, request, 20);
+            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, SecCheckResponseDTO>(url, request, 20);
             return response != null && response.Errcode == 0;
         }
 
-        private static void Test()
-        {
-            var req = new RequestContext<BasicUserInfoRequest>()
-            {
-                Head=new RequestHead()
-                {
-                    Platform=ChannelEnum.WX_MiniApp,
-                    UId=20089
-                },
-                Content=new BasicUserInfoRequest()
-                {
-                    UId = 20089,
-                    Type = 0
-                }
-            };
-            var url = "https://www.pikaer.com/todayapi/api/Letter/BasicUserInfo";
-            var response = HttpHelper.HttpPost<RequestContext<BasicUserInfoRequest>, ResponseContext<BasicUserInfoResponse>>(url, req, 20);
-        }
         /// <summary>
         /// 获取小程序全局唯一后台接口调用凭据
         /// </summary>

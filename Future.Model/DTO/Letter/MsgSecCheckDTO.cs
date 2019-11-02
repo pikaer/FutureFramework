@@ -15,7 +15,7 @@ namespace Future.Model.DTO.Letter
         public string content { get; set; }
     }
 
-    public class MsgSecCheckResponseDTO
+    public class SecCheckResponseDTO
     {
         /// <summary>
         /// 错误码 0:内容正常	87014:内容含有违法违规内容	
