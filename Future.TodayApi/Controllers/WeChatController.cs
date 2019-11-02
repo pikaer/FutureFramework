@@ -16,19 +16,11 @@ namespace Future.TodayApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult CheckSignature(string signature, string timestamp, string nonce, string echostr)
+        public string SendTemplateMessage(string signature, string timestamp, string nonce, string echostr)
         {
-            var response = new CheckSignatureResponse();
-            if (WeChatHelper.CheckSignature(signature,timestamp,nonce))
-            {
-                response.echostr = echostr;
-            }
-            else
-            {
-                response.echostr = "校验失败";
-            }
-            LogHelper.InfoAsync("CheckSignature", string.Format("{0}_{1}_{2}_{3}", signature, timestamp, nonce, echostr)); 
-            return new JsonResult(response);
+            bool success = WeChatHelper.CheckSignature(signature, timestamp, nonce);
+            LogHelper.InfoAsync("CheckSignature", string.Format("signature={0}_timestamp={1}_nonce={2}_echostr={3}_result={4}", signature, timestamp, nonce, echostr, success.ToString())); 
+            return success? echostr:"校验失败";
         }
     }
 }
