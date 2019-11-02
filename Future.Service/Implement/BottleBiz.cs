@@ -1050,17 +1050,8 @@ namespace Future.Service.Implement
             {
                 return;
             }
-            long toUId;
-            if(pickUp.PickUpUId== request.Head.UId)
-            {
-                toUId = pickUp.MomentUId;
-            }
-            else
-            {
-                toUId = pickUp.PickUpUId;
-            }
 
-            var toUserInfo = userBiz.LetterUserByUId(toUId);
+            var toUserInfo = userBiz.LetterUserByUId(request.Head.UId);
             if (toUserInfo == null||toUserInfo.OpenId.IsNullOrEmpty())
             {
                 return;
