@@ -1,11 +1,49 @@
 ﻿using Future.Model.DTO.Letter;
 using Future.Model.Enum.Letter;
 using Infrastructure;
+using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Future.Utility
 {
     public static class WeChatHelper
     {
+        /// <summary>
+        /// 验证微信签名
+        /// </summary>
+        public static bool CheckSignature(string signature, string timestamp, string nonce)
+        {
+            try
+            {
+                var token = JsonSettingHelper.AppSettings["BingoToken"];
+
+                string[] arrTmp = { token, timestamp, nonce };
+
+                Array.Sort(arrTmp);
+
+                string tmpStr = string.Join("", arrTmp);
+
+                var sha1 = new SHA1CryptoServiceProvider();//创建SHA1对象
+                var data = sha1.ComputeHash(Encoding.UTF8.GetBytes(tmpStr));//Hash运算
+                
+                var sb = new StringBuilder();
+                foreach (var t in data)
+                {
+                    sb.Append(t.ToString("X2"));
+                }
+
+                sha1.Dispose();
+
+                return sb.ToString().ToLower().Equals(signature);
+            }
+            catch(Exception ex)
+            {
+                LogHelper.ErrorAsync("CheckSignature", ex);
+                return false;
+            }
+        }
+
         public static bool MsgIsOk(ChannelEnum platform,string msg)
         {
             var token = GetAccessToken(platform);
@@ -30,20 +68,6 @@ namespace Future.Utility
                 content = msg
             };
             var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, SecCheckResponseDTO>(url, request, 20);
-            return response != null && response.Errcode == 0;
-        }
-
-        public static bool ImgIsOk(string filePath)
-        {
-            var token = GetAccessToken(ChannelEnum.WX_MiniApp);
-            if (token == null || token.Access_token.IsNullOrEmpty())
-            {
-                return true;
-            }
-
-            string url = string.Format("https://api.weixin.qq.com/wxa/img_sec_check?access_token={0}", token.Access_token); ;
-            
-            var response = HttpHelper.HttpPostFile<SecCheckResponseDTO>(url, filePath);
             return response != null && response.Errcode == 0;
         }
 

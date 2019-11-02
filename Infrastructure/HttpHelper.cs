@@ -53,45 +53,6 @@ namespace Infrastructure
             }
         }
 
-        public static TOut HttpPostFile<TOut>(string url, string fullPath)
-        {
-            using (var client = new HttpClient())
-            {
-
-                if (string.IsNullOrEmpty(fullPath) && !File.Exists(fullPath))
-                {
-                    return default;
-                }
-
-                using (var content = new MultipartFormDataContent())
-                {
-                    content.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
-                    content.Headers.Add("client", "true");
-                    string fileName = Path.GetFileName(fullPath);
-                    FileStream fStream = File.Open(fullPath, FileMode.Open, FileAccess.Read);
-
-                    content.Add(new StreamContent(fStream, (int)fStream.Length), "file", fileName);
-
-                    try
-                    {
-                        HttpResponseMessage response = client.PostAsync(url, content).Result;
-                        var json = response.Content.ReadAsStringAsync().Result;
-                        return json.JsonToObject<TOut>();
-                    }
-                    catch
-                    {
-                        return default;
-                    }
-                    finally
-                    {
-                        //关闭文件流
-                        fStream.Close();
-                        client.Dispose();
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// 发起POST异步请求
         /// </summary>

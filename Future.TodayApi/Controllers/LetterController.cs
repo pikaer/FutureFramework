@@ -2,7 +2,6 @@
 using Future.Model.Utils;
 using Future.Service.Implement;
 using Future.Service.Interface;
-using Future.Utility;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -405,8 +404,6 @@ namespace Future.TodayApi.Controllers
                     uploadfile.CopyTo(fs);
                     fs.Flush();
                 }
-
-                WeChatHelper.ImgIsOk(saveName.GetImgPath());
 
                 response.Content = new UpLoadImgResponse()
                 {

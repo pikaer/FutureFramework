@@ -22,4 +22,9 @@
         /// </summary>
         public string Errmsg { get; set; }
     }
+
+    public class CheckSignatureResponse
+    {
+        public string echostr { get; set; }
+    }
 }
