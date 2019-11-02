@@ -1045,6 +1045,7 @@ namespace Future.Service.Implement
 
         private void SendMesage(PickUpEntity pickUp, RequestContext<DiscussRequest> request)
         {
+            LogHelper.InfoAsync("SendMesage", ObjectHelper.SerializeToString(request));
             if (request.Content.FormId.IsNullOrEmpty())
             {
                 return;
@@ -1080,7 +1081,9 @@ namespace Future.Service.Implement
                     }
             };
 
-            WeChatHelper.SendTemplateMessage(dto, PlatformEnum.WX_MiniApp);
+            var response=WeChatHelper.SendTemplateMessage(dto, PlatformEnum.WX_MiniApp);
+
+            LogHelper.InfoAsync("SendMesage", string.Format("Request:{0},Response:{1}", ObjectHelper.SerializeToString(dto), ObjectHelper.SerializeToString(response)));
         }
 
         #endregion
