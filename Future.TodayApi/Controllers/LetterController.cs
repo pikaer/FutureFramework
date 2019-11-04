@@ -21,6 +21,7 @@ namespace Future.TodayApi.Controllers
     {
         private readonly string MODULE = "LetterController";
         private readonly IBottleBiz api = SingletonProvider<BottleBiz>.Instance;
+        private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
         /// <summary>
         /// 瓶子互动列表
@@ -1367,6 +1368,54 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "MsgSecCheck", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 收集pushToken
+        /// </summary>
+        [HttpPost]
+        public JsonResult CollectPushToken()
+        {
+            RequestContext<CollectPushTokenRequest> request = null;
+            ResponseContext<CollectPushTokenResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<CollectPushTokenRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                userBiz.InsertPushToken(request.Content.UId, request.Content.PushToken, request.Content.FromPage);
+                response = new ResponseContext<CollectPushTokenResponse>()
+                {
+                    Content = new CollectPushTokenResponse()
+                    {
+                        Success = true
+                    }
+                };
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "CollectPushToken", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "CollectPushToken", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
     }

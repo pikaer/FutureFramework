@@ -212,5 +212,50 @@ namespace Future.Service.Implement
                 letterDal.UpdateOnChatHub(userHub);
             });
         }
+
+        public void InsertPushToken(long uId, string token,string fromPage)
+        {
+            if (token.IsNullOrEmpty() || uId <= 0)
+            {
+                return;
+            }
+            Task.Factory.StartNew(() =>
+            {
+                var pushToken = new PushTokenEntity()
+                {
+                    PushTokenId=Guid.NewGuid(),
+                    UId=uId,
+                    PushToken=token,
+                    FromPage= fromPage,
+                    CreateTime=DateTime.Now,
+                    UpdateTime=DateTime.Now
+                };
+                letterDal.InsertPushToken(pushToken);
+            });
+        }
+
+        public List<PushTokenEntity> PushTokenListByUId(long uId)
+        {
+            var tokenList= letterDal.PushTokenListByUId(uId);
+            if (tokenList.IsNullOrEmpty())
+            {
+                return null;
+            }
+            foreach(var token in tokenList)
+            {
+                //删除过期失效的Token
+                if(DateTime.Now.Subtract(token.CreateTime).TotalSeconds > ConstUtil.SevenDaySeconds)
+                {
+                    DeletePushToken(token.PushTokenId);
+                    tokenList.Remove(token);
+                }
+            }
+            return tokenList;
+        }
+
+        public bool DeletePushToken(Guid pushTokenId)
+        {
+            return letterDal.DeletePushToken(pushTokenId);
+        }
     }
 }

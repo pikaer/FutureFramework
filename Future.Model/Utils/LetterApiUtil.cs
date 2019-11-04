@@ -405,6 +405,8 @@ namespace Future.Model.Utils
         /// 图片内容
         /// </summary>
         public string ImgContent { get; set; }
+
+        public string FormId { get; set; }
     }
 
     public class PublishMomentResponse
@@ -1136,6 +1138,31 @@ namespace Future.Model.Utils
         /// 是否校验通过
         /// </summary>
         public bool IsOK { get; set; }
+    }
+    #endregion
+
+    #region CollectPushToken
+    public class CollectPushTokenRequest
+    {
+        public long UId { get; set; }
+
+        /// <summary>
+        /// token
+        /// </summary>
+        public string PushToken { get; set; }
+
+        /// <summary>
+        /// 来源
+        /// </summary>
+        public string FromPage { get; set; }
+    }
+
+    public class CollectPushTokenResponse
+    {
+        /// <summary>
+        /// 是否收藏成功
+        /// </summary>
+        public bool Success { get; set; }
     }
     #endregion
 }

@@ -1,6 +1,7 @@
 ﻿using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
+using System;
 using System.Collections.Generic;
 
 namespace Future.Service.Interface
@@ -65,5 +66,11 @@ namespace Future.Service.Interface
         void InsertOnChatHubAsync(OnChatHubEntity userHub);
 
         void UpdateOnChatHubAsync(OnChatHubEntity userHub);
+
+        void InsertPushToken(long uId, string token,string fromPage);
+
+        List<PushTokenEntity> PushTokenListByUId(long uId);
+
+        bool DeletePushToken(Guid pushTokenId);
     }
 }

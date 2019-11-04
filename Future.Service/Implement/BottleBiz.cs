@@ -159,7 +159,9 @@ namespace Future.Service.Implement
                 UpdateTime=DateTime.Now
             };
             response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
-            SendMesage(pickUp, request);
+
+            //收集PushToken
+            userBiz.InsertPushToken(request.Content.UId, request.Content.FormId, "Discuss");
             return response;
         }
 
@@ -309,6 +311,9 @@ namespace Future.Service.Implement
             {
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, "发布动态，奖励金币");
             }
+
+            //收集PushToken
+            userBiz.InsertPushToken(request.Content.UId, request.Content.FormId, "PublishMoment");
             return response;
         }
 

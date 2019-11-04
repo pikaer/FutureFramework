@@ -32,6 +32,8 @@ namespace Future.Repository
 
         private readonly string SELECT_OnChatHubEntity = "SELECT OnChatHubId,UId,PartnerUId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnChatHub ";
 
+        private readonly string SELECT_PushTokenEntity = "SELECT PushTokenId,UId,PushToken,FromPage,CreateTime,UpdateTime FROM dbo.common_PushToken ";
+
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
         public LetterUserEntity LetterUser(long uId, string openId = "")
@@ -408,6 +410,15 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
+            }
+        }
+
+        public List<PushTokenEntity> PushTokenListByUId(long uId)
+        {
+            var sql = string.Format("{0} Where UId={1}", SELECT_PushTokenEntity, uId);
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<PushTokenEntity>(sql, new { UId = uId }).AsList();
             }
         }
 
@@ -1076,6 +1087,29 @@ namespace Future.Repository
             }
         }
 
+        public bool InsertPushToken(PushTokenEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.common_PushToken
+                                   (PushTokenId
+                                   ,UId
+                                   ,PushToken
+                                   ,FromPage
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@PushTokenId
+                                   ,@UId
+                                   ,@PushToken
+                                   ,@FromPage
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, entity) > 0;
+            }
+        }
+
+
         public bool InsertOnChatHub(OnChatHubEntity userHub)
         {
             using (var Db = GetDbConnection())
@@ -1225,6 +1259,15 @@ namespace Future.Repository
             {
                 var sql = @"Delete dbo.letter_Moment Where MomentId=@MomentId";
                 return Db.Execute(sql, new { MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool DeletePushToken(Guid pushTokenId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.common_PushToken Where PushTokenId=@PushTokenId";
+                return Db.Execute(sql, new { PushTokenId = pushTokenId }) > 0;
             }
         }
 
