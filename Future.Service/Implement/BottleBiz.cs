@@ -1,4 +1,5 @@
 ﻿using Future.Model.DTO.Letter;
+using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
@@ -191,7 +192,8 @@ namespace Future.Service.Implement
                         PickUpId = item.PickUpId,
                         MomentId= item.MomentId,
                         UId = item.UId,
-                        Gender=item.Gender,
+                        OnLineDesc = OnlineDesc(item.UId),
+                        Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
@@ -275,7 +277,8 @@ namespace Future.Service.Implement
                     PickUpId = pickUp.PickUpId,
                     MomentId= pickUp.MomentId,
                     UId = moment.UId,
-                    HeadImgPath= letterUser.HeadPhotoPath.GetImgPath(),
+                    OnLineDesc= OnlineDesc(pickUp.MomentUId),
+                    HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
                     NickName= letterUser.NickName,
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
                     Gender= letterUser.Gender,
@@ -621,10 +624,10 @@ namespace Future.Service.Implement
             {
                 UId= userInfo.UId,
                 Gender= userInfo.Gender,
-                NickName = userInfo.NickName.Trim(),
+                NickName = userInfo.NickName.IsNullOrEmpty()?"":userInfo.NickName.Trim(),
                 IsRegister = userInfo.IsRegister,
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
-                Signature= userInfo.Signature.IsNullOrEmpty()? "与恶龙缠斗过久,自身亦成为恶龙；凝视深渊过久,深渊将回以凝视。" : userInfo.Signature.Trim(),
+                Signature= userInfo.Signature.IsNullOrEmpty()? "你未看此花时，此花与汝同归于寂；你来看此花时，则此花颜色一时明白起来。" : userInfo.Signature.Trim(),
                 BasicUserInfo= TextCut(BasicUserInfo(userInfo),15),
                 PlaceInfo=PlaceInfo(userInfo)
             };
@@ -1082,6 +1085,34 @@ namespace Future.Service.Implement
             LogHelper.InfoAsync("SendMesage", string.Format("Request:{0},Response:{1}", ObjectHelper.SerializeToString(dto), ObjectHelper.SerializeToString(response)));
         }
 
+        /// <summary>
+        /// 获取在线状态描述
+        /// </summary>
+        /// <param name="uId"></param>
+        /// <returns></returns>
+        public string OnlineDesc(long uId)
+        {
+            OnLineUserHubEntity online = userBiz.OnLineUser(uId);
+            if (online == null)
+            {
+                return "";
+            }
+            if (online.IsOnLine)
+            {
+                return "当前在线";
+            }
+
+            if (online.LastOnLineTime.HasValue)
+            {
+                var second = DateTime.Now.Subtract(online.LastOnLineTime.Value).TotalSeconds;
+                if (second < 7200)
+                {
+                    return "5分钟前在线";
+                }
+            }
+
+            return "";
+        }
         #endregion
     }
 }

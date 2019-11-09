@@ -344,6 +344,11 @@ namespace Future.Model.Utils
         public int Age { get; set; }
 
         /// <summary>
+        /// 在线状态描述
+        /// </summary>
+        public string OnLineDesc { get; set; }
+
+        /// <summary>
         /// 创建时间
         /// </summary>
         public string CreateTime { get; set; }
