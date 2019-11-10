@@ -121,7 +121,7 @@ namespace Future.Service.Implement
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         TextContent = item.DiscussContent,
-                        RecentChatTime = item.UpdateTime.Value.GetDateDesc(true)
+                        RecentChatTime = item.CreateTime.GetDateDesc(true)
                     };
 
                     response.Content.DiscussDetailList.Add(dto);
@@ -1105,9 +1105,37 @@ namespace Future.Service.Implement
             if (online.LastOnLineTime.HasValue)
             {
                 var second = DateTime.Now.Subtract(online.LastOnLineTime.Value).TotalSeconds;
-                if (second < 7200)
+                if (0 < second && second < 300)
+                {
+                    return "当前在线";
+                }
+                else if (300 < second && second < 600)
                 {
                     return "5分钟前在线";
+                }
+                else if (600 < second && second < 1200)
+                {
+                    return "10分钟前在线";
+                }
+                else if (1200 < second && second < 1800)
+                {
+                    return "20分钟前在线";
+                }
+                else if (1800 < second && second < 2400)
+                {
+                    return "30分钟前在线";
+                }
+                else if (2400 < second && second < 3000)
+                {
+                    return "40分钟前在线";
+                }
+                else if (3000 < second && second < 3600)
+                {
+                    return "50分钟前在线";
+                }
+                else
+                {
+                    return "";
                 }
             }
 
