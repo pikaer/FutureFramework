@@ -196,7 +196,7 @@ namespace Future.Service.Implement
                         Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                        NickName = item.NickName,
+                        NickName = CommonHelper.CutNickName(item.NickName)
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
                         CreateTime = item.CreateTime.GetDateDesc(true)
@@ -279,7 +279,7 @@ namespace Future.Service.Implement
                     UId = moment.UId,
                     OnLineDesc= OnlineDesc(pickUp.MomentUId),
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
-                    NickName= letterUser.NickName,
+                    NickName= CommonHelper.CutNickName(letterUser.NickName),
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
                     Gender= letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),

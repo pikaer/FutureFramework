@@ -33,5 +33,15 @@ namespace Future.Utility
             }
             return rtn;
         }
+
+        public static string CutNickName(string nickName)
+        {
+            if (string.IsNullOrEmpty(nickName)|| nickName.Length <= 7)
+            {
+                return nickName;
+            }
+            string result = nickName.Substring(0, 5);
+            return result + "...";
+        }
     }
 }
