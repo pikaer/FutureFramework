@@ -949,15 +949,24 @@ namespace Future.Service.Implement
             {
                 Content = new OnlineNotifyResponse()
             };
-            var onlineNotify = new OnlineNotifyEntity()
+            var onlineNotify= letterDal.OnlineNotify(request.Content.UId, request.Content.PartnerUId);
+            if (onlineNotify == null)
             {
-                OnlineNotifyId=Guid.NewGuid(),
-                UId = request.Content.UId,
-                PartnerUId = request.Content.PartnerUId,
-                CreateTime = DateTime.Now,
-                UpdateTime = DateTime.Now
-            };
-            response.Content.Success = letterDal.InsertOnlineNotify(onlineNotify);
+                onlineNotify = new OnlineNotifyEntity()
+                {
+                    OnlineNotifyId = Guid.NewGuid(),
+                    UId = request.Content.UId,
+                    PartnerUId = request.Content.PartnerUId,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+                response.Content.Success = letterDal.InsertOnlineNotify(onlineNotify);
+            }
+            else
+            {
+                response.Content.Success = true;
+            } 
+            
             return response;
         }
 
