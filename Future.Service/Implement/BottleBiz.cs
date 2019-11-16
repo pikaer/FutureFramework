@@ -161,8 +161,8 @@ namespace Future.Service.Implement
             };
             response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
 
-            //收集PushToken
-            userBiz.InsertPushToken(request.Content.UId, request.Content.FormId, "Discuss");
+            //发送通知消息
+            userBiz.SendMomentDiscussNotify(pickUp.MomentId,request.Content.TextContent, request.Head.Platform);
             return response;
         }
 
@@ -196,7 +196,7 @@ namespace Future.Service.Implement
                         Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                        NickName = CommonHelper.CutNickName(item.NickName)
+                        NickName = CommonHelper.CutNickName(item.NickName),
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
                         CreateTime = item.CreateTime.GetDateDesc(true)
@@ -305,6 +305,7 @@ namespace Future.Service.Implement
                 UId = request.Content.UId,
                 TextContent = request.Content.TextContent,
                 ImgContent = request.Content.ImgContent,
+                SubscribeMessageOpen=request.Content.SubscribeMessageOpen,
                 CreateTime=DateTime.Now,
                 UpdateTime=DateTime.Now
             };
@@ -315,8 +316,6 @@ namespace Future.Service.Implement
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, "发布动态，奖励金币");
             }
 
-            //收集PushToken
-            userBiz.InsertPushToken(request.Content.UId, request.Content.FormId, "PublishMoment");
             return response;
         }
 
@@ -916,6 +915,52 @@ namespace Future.Service.Implement
                 }
             };
         }
+
+        public ResponseContext<ForwardMomentResponse> ForwardMoment(RequestContext<ForwardMomentRequest> request)
+        {
+            var response = new ResponseContext<ForwardMomentResponse>
+            {
+                Content = new ForwardMomentResponse()
+            };
+            var moment = letterDal.GetMoment(request.Content.MomentId);
+            if (moment == null)
+            {
+                return new ResponseContext<ForwardMomentResponse>(false, ErrCodeEnum.DataIsnotExist, null, "转发失败");
+            }
+            var newMoment = new MomentEntity()
+            {
+                MomentId = Guid.NewGuid(),
+                UId=request.Content.UId,
+                TextContent=moment.TextContent,
+                ImgContent=moment.ImgContent,
+                IsDelete=false,
+                IsReport=false,
+                ReplyCount=0,
+                CreateTime=DateTime.Now,
+                UpdateTime=DateTime.Now
+            };
+            response.Content.Success = letterDal.InsertMoment(newMoment);
+            return response;
+        }
+
+        public ResponseContext<OnlineNotifyResponse> OnlineNotify(RequestContext<OnlineNotifyRequest> request)
+        {
+            var response = new ResponseContext<OnlineNotifyResponse>
+            {
+                Content = new OnlineNotifyResponse()
+            };
+            var onlineNotify = new OnlineNotifyEntity()
+            {
+                OnlineNotifyId=Guid.NewGuid(),
+                UId = request.Content.UId,
+                PartnerUId = request.Content.PartnerUId,
+                CreateTime = DateTime.Now,
+                UpdateTime = DateTime.Now
+            };
+            response.Content.Success = letterDal.InsertOnlineNotify(onlineNotify);
+            return response;
+        }
+
         #endregion
 
         #region private Method
@@ -1051,40 +1096,6 @@ namespace Future.Service.Implement
             });
         }
 
-        private void SendMesage(PickUpEntity pickUp, RequestContext<DiscussRequest> request)
-        {
-            LogHelper.InfoAsync("SendMesage", ObjectHelper.SerializeToString(request));
-            if (request.Content.FormId.IsNullOrEmpty())
-            {
-                return;
-            }
-
-            var toUserInfo = userBiz.LetterUserByUId(request.Head.UId);
-            if (toUserInfo == null||toUserInfo.OpenId.IsNullOrEmpty())
-            {
-                return;
-            }
-
-            var dto = new MessageTemplateDTO()
-            {
-                template_id = "V7KUhjuJk2J1XCTl_flbZn2XtPOwFL6bfPfCIAdC90g",
-                touser = toUserInfo.OpenId,
-                page = "pages/discovery/discovery",
-                form_id= request.Content.FormId,
-                data = new Dictionary<string, string>()
-                    {
-                        { "thing1", "我是" },
-                        { "thing2", "易林军" },
-                        { "thing3", "你是谁" },
-                        { "thing4", "哈哈哈" }
-                    }
-            };
-
-            var response=WeChatHelper.SendTemplateMessage(dto, PlatformEnum.WX_MiniApp);
-
-            LogHelper.InfoAsync("SendMesage", string.Format("Request:{0},Response:{1}", ObjectHelper.SerializeToString(dto), ObjectHelper.SerializeToString(response)));
-        }
-
         /// <summary>
         /// 获取在线状态描述
         /// </summary>
@@ -1141,6 +1152,8 @@ namespace Future.Service.Implement
 
             return "";
         }
+
+     
         #endregion
     }
 }

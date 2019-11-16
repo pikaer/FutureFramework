@@ -411,6 +411,8 @@ namespace Future.Model.Utils
         /// </summary>
         public string ImgContent { get; set; }
 
+        public bool SubscribeMessageOpen { get; set; }
+
         public string FormId { get; set; }
     }
 
@@ -1163,6 +1165,49 @@ namespace Future.Model.Utils
     }
 
     public class CollectPushTokenResponse
+    {
+        /// <summary>
+        /// 是否收藏成功
+        /// </summary>
+        public bool Success { get; set; }
+    }
+    #endregion
+
+    #region ForwardMoment
+    public class ForwardMomentRequest
+    {
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+    }
+
+    public class ForwardMomentResponse
+    {
+        /// <summary>
+        /// 是否收藏成功
+        /// </summary>
+        public bool Success { get; set; }
+    }
+    #endregion
+
+    #region OnlineNotify
+    public class OnlineNotifyRequest
+    {
+        /// <summary>
+        /// 订阅者UId
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 对方UId
+        /// </summary>
+        public long PartnerUId { get; set; }
+    }
+
+    public class OnlineNotifyResponse
     {
         /// <summary>
         /// 是否收藏成功

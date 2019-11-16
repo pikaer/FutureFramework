@@ -160,5 +160,15 @@ namespace Future.Service.Interface
         /// 文本内容安全检测
         /// </summary>
         ResponseContext<MsgSecCheckResponse> MsgSecCheck(RequestContext<MsgSecCheckRequest> request);
+
+        /// <summary>
+        /// 一键转发动态
+        /// </summary>
+        ResponseContext<ForwardMomentResponse> ForwardMoment(RequestContext<ForwardMomentRequest> request);
+
+        /// <summary>
+        /// 上线时通知我
+        /// </summary>
+        ResponseContext<OnlineNotifyResponse> OnlineNotify(RequestContext<OnlineNotifyRequest> request);
     }
 }

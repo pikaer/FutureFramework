@@ -41,5 +41,7 @@ namespace Future.Model.Entity.Letter
         /// 被捡起次数
         /// </summary>
         public int ReplyCount { get; set; }
+
+        public bool SubscribeMessageOpen { get; set; }
     }
 }

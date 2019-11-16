@@ -67,10 +67,9 @@ namespace Future.Service.Interface
 
         void UpdateOnChatHubAsync(OnChatHubEntity userHub);
 
-        void InsertPushToken(long uId, string token,string fromPage);
-
-        List<PushTokenEntity> PushTokenListByUId(long uId);
-
-        bool DeletePushToken(Guid pushTokenId);
+        /// <summary>
+        /// 给用户发送订阅消息
+        /// </summary>
+        void SendMomentDiscussNotify(Guid momentId, string discussContent, PlatformEnum platform);
     }
 }

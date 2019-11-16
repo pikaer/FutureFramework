@@ -10,12 +10,38 @@ namespace Future.Utility
     public static class WeChatHelper
     {
         /// <summary>
+        /// 发送动态评论订阅消息
+        /// </summary>
+        /// <param name="toUserOpenId">接收者（用户）的 openid</param>
+        /// <param name="title">动态标题</param>
+        /// <param name="content">评论内容</param>
+        /// <param name="disccssTime">评论时间</param>
+        /// <returns></returns>
+        public static bool SendMomentDiscussNotify(string toUserOpenId, string title,string content, PlatformEnum platform)
+        {
+            var message = new WeChatMessageContext<DiscussNotifyData>()
+            {
+                touser = toUserOpenId,
+                template_id = "GytyYcEW0BqLnACK9hFZMMXbvOZc2oq5DQjdJ65sRFI",
+                page = "pages/discovery/discovery",
+                data =new DiscussNotifyData()
+                {
+                    thing1= new Value(title),
+                    thing2= new Value(content),
+                    time3 = new Value(DateTime.Now.ToString("f"))
+                }
+            };
+            var response= SendTemplateMessage(message, platform);
+            return response != null && response.Errcode == 0;
+        }
+
+        /// <summary>
         /// 发送模板消息
         /// </summary>
         /// <param name="message">消息体</param>
         /// <param name="platform">渠道</param>
         /// <returns></returns>
-        public static WeChatResponseDTO SendTemplateMessage(MessageTemplateDTO message, PlatformEnum platform)
+        public static WeChatResponseDTO SendTemplateMessage(object message, PlatformEnum platform)
         {
             if (message == null)
             {
@@ -29,13 +55,13 @@ namespace Future.Utility
             string url;
             if (platform== PlatformEnum.QQ_MiniApp)
             {
-                url = string.Format("https://api.q.qq.com/cgi-bin/message/wxopen/template/send?access_token={0}", token.Access_token);
+                url = string.Format("https://api.q.qq.com/cgi-bin/message/subscribe/send?access_token={0}", token.Access_token);
             }
             else
             {
-                url = string.Format("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token={0}", token.Access_token);
+                url = string.Format("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={0}", token.Access_token);
             }
-            return HttpHelper.HttpPost<MessageTemplateDTO, WeChatResponseDTO>(url, message, 20);
+            return HttpHelper.HttpPost<object, WeChatResponseDTO>(url, message, 20);
         }
 
         /// <summary>

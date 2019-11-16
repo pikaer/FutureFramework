@@ -1399,7 +1399,6 @@ namespace Future.TodayApi.Controllers
                 {
                     return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
                 }
-                userBiz.InsertPushToken(request.Content.UId, request.Content.PushToken, request.Content.FromPage);
                 response = new ResponseContext<CollectPushTokenResponse>()
                 {
                     Content = new CollectPushTokenResponse()
@@ -1416,6 +1415,88 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "CollectPushToken", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 一键转发动态
+        /// </summary>
+        [HttpPost]
+        public JsonResult ForwardMoment()
+        {
+            RequestContext<ForwardMomentRequest> request = null;
+            ResponseContext<ForwardMomentResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<ForwardMomentRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.ForwardMoment(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ForwardMoment", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "ForwardMoment", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 一键转发动态
+        /// </summary>
+        [HttpPost]
+        public JsonResult OnlineNotify()
+        {
+            RequestContext<OnlineNotifyRequest> request = null;
+            ResponseContext<OnlineNotifyResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<OnlineNotifyRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null||request.Content.UId<=0||request.Content.PartnerUId<=0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.OnlineNotify(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "OnlineNotify", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "OnlineNotify", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
     }

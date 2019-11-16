@@ -1,24 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Future.Model.DTO.Letter
 {
-    /// <summary>
-    /// 文本内容安全检测
-    /// </summary>
-    [Serializable]
-    public class MsgSecCheckRequestDTO
-    {
-        /// <summary>
-        /// 要检测的文本内容，长度不超过 500KB
-        /// </summary>
-        public string content { get; set; }
-    }
-
-    /// <summary>
-    /// 模板消息
-    /// </summary>
-    public class MessageTemplateDTO
+    public class WeChatMessageContext<T>
     {
         /// <summary>
         /// 接收者（用户）的 openid
@@ -35,20 +19,40 @@ namespace Future.Model.DTO.Letter
         /// </summary>
         public string page { get; set; }
 
-        /// <summary>
-        /// 表单提交场景下，为 submit 事件带上的 formId；支付场景下，为本次支付的 prepay_id
-        /// </summary>
-        public string form_id { get; set; }
+        public T data { get; set; }
+    }
 
-        /// <summary>
-        /// 模板需要放大的关键词，不填则默认无放大
-        /// </summary>
-        public string emphasis_keyword { get; set; }
+    public class Value
+    {
+        public Value(string text)
+        {
+            value = text;
+        }
+        public string value { get; set; }
+    }
 
+    /// <summary>
+    /// 文本内容安全检测
+    /// </summary>
+    [Serializable]
+    public class MsgSecCheckRequestDTO
+    {
         /// <summary>
-        /// 模板内容，不填则下发空模板。具体格式请参考示例。
+        /// 要检测的文本内容，长度不超过 500KB
         /// </summary>
-        public Dictionary<string, string> data { get; set; }
+        public string content { get; set; }
+    }
+
+    /// <summary>
+    /// 模板消息
+    /// </summary>
+    public class DiscussNotifyData
+    {
+        public Value thing1 { get; set; }
+
+        public Value thing2 { get; set; }
+
+        public Value time3 { get; set; }
     }
 
 

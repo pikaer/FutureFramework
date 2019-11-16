@@ -16,7 +16,7 @@ namespace Future.Repository
 
         private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Platform,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
-        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,CreateTime,UpdateTime FROM dbo.letter_Moment ";
+        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
         private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
@@ -32,7 +32,7 @@ namespace Future.Repository
 
         private readonly string SELECT_OnChatHubEntity = "SELECT OnChatHubId,UId,PartnerUId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnChatHub ";
 
-        private readonly string SELECT_PushTokenEntity = "SELECT PushTokenId,UId,PushToken,FromPage,CreateTime,UpdateTime FROM dbo.common_PushToken ";
+        private readonly string SELECT_OnlineNotifyEntity = "SELECT OnlineNotifyId,UId,PartnerUId,CreateTime,UpdateTime FROM dbo.hub_OnlineNotify ";
 
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
@@ -77,6 +77,15 @@ namespace Future.Repository
             {
                 var sql = string.Format("{0} Where UId={1}", SELECT_OnChatHubEntity, uId);
                 return Db.QueryFirstOrDefault<OnChatHubEntity>(sql);
+            }
+        }
+
+        public OnlineNotifyEntity OnlineNotify(long uId,long partnerUId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} Where UId={1} and PartnerUId={2} ", SELECT_OnlineNotifyEntity, uId, partnerUId);
+                return Db.QueryFirstOrDefault<OnlineNotifyEntity>(sql);
             }
         }
 
@@ -410,15 +419,6 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
-            }
-        }
-
-        public List<PushTokenEntity> PushTokenListByUId(long uId)
-        {
-            var sql = string.Format("{0} Where UId={1}", SELECT_PushTokenEntity, uId);
-            using (var Db = GetDbConnection())
-            {
-                return Db.Query<PushTokenEntity>(sql, new { UId = uId }).AsList();
             }
         }
 
@@ -932,7 +932,8 @@ namespace Future.Repository
                                   ,ImgContent
                                   ,IsDelete
                                   ,IsReport
-                                  ,ReplyCount                                 
+                                  ,ReplyCount       
+                                  ,SubscribeMessageOpen       
                                   ,CreateTime
                                   ,UpdateTime)
                             VALUES
@@ -943,6 +944,7 @@ namespace Future.Repository
                                   ,@IsDelete
                                   ,@IsReport
                                   ,@ReplyCount
+                                  ,@SubscribeMessageOpen
                                   ,@CreateTime
                                   ,@UpdateTime)";
                 return Db.Execute(sql, momentEntity) > 0;
@@ -1063,6 +1065,27 @@ namespace Future.Repository
             }
         }
 
+        public bool InsertOnlineNotify(OnlineNotifyEntity onlineNotify)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.hub_OnlineNotify
+                                   (OnlineNotifyId
+                                   ,UId
+                                   ,PartnerUId
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@OnlineNotifyId
+                                   ,@UId
+                                   ,@PartnerUId
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, onlineNotify) > 0;
+            }
+        }
+
+
         public bool InsertChatListHub(ChatListHubEntity chatListHub)
         {
             using (var Db = GetDbConnection())
@@ -1086,30 +1109,6 @@ namespace Future.Repository
                 return Db.Execute(sql, chatListHub) > 0;
             }
         }
-
-        public bool InsertPushToken(PushTokenEntity entity)
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = @"INSERT INTO dbo.common_PushToken
-                                   (PushTokenId
-                                   ,UId
-                                   ,PushToken
-                                   ,FromPage
-                                   ,CreateTime
-                                   ,UpdateTime)
-                             VALUES
-                                   (@PushTokenId
-                                   ,@UId
-                                   ,@PushToken
-                                   ,@FromPage
-                                   ,@CreateTime
-                                   ,@UpdateTime)";
-                return Db.Execute(sql, entity) > 0;
-            }
-        }
-
-
         public bool InsertOnChatHub(OnChatHubEntity userHub)
         {
             using (var Db = GetDbConnection())

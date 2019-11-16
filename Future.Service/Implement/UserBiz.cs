@@ -213,49 +213,33 @@ namespace Future.Service.Implement
             });
         }
 
-        public void InsertPushToken(long uId, string token,string fromPage)
+        public void SendMomentDiscussNotify(Guid momentId, string discussContent, PlatformEnum platform)
         {
-            if (token.IsNullOrEmpty() || uId <= 0)
-            {
-                return;
-            }
             Task.Factory.StartNew(() =>
             {
-                var pushToken = new PushTokenEntity()
+                var moment = letterDal.GetMoment(momentId);
+                if (moment == null||!moment.SubscribeMessageOpen)
                 {
-                    PushTokenId=Guid.NewGuid(),
-                    UId=uId,
-                    PushToken=token,
-                    FromPage= fromPage,
-                    CreateTime=DateTime.Now,
-                    UpdateTime=DateTime.Now
-                };
-                letterDal.InsertPushToken(pushToken);
+                    return;
+                }
+                var userInfo = LetterUserByUId(moment.UId);
+                if (userInfo == null)
+                {
+                    return;
+                }
+                var onlineInfo = OnLineUser(moment.UId);
+                if(onlineInfo==null|| !onlineInfo.IsOnLine)
+                {
+                    string title = moment.TextContent;
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        //2016年8月2日 20:23
+                        title = string.Format("{0}发布的图片动态", moment.CreateTime.ToString("f"));
+                    }
+                    WeChatHelper.SendMomentDiscussNotify(userInfo.OpenId, title, discussContent, platform);
+                }
             });
         }
 
-        public List<PushTokenEntity> PushTokenListByUId(long uId)
-        {
-            var tokenList= letterDal.PushTokenListByUId(uId);
-            if (tokenList.IsNullOrEmpty())
-            {
-                return null;
-            }
-            foreach(var token in tokenList)
-            {
-                //删除过期失效的Token
-                if(DateTime.Now.Subtract(token.CreateTime).TotalSeconds > ConstUtil.SevenDaySeconds)
-                {
-                    DeletePushToken(token.PushTokenId);
-                    tokenList.Remove(token);
-                }
-            }
-            return tokenList;
-        }
-
-        public bool DeletePushToken(Guid pushTokenId)
-        {
-            return letterDal.DeletePushToken(pushTokenId);
-        }
     }
 }
