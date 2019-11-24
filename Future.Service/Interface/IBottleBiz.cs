@@ -170,5 +170,20 @@ namespace Future.Service.Interface
         /// 上线时通知我
         /// </summary>
         ResponseContext<OnlineNotifyResponse> OnlineNotify(RequestContext<OnlineNotifyRequest> request);
+
+        /// <summary>
+        /// 关注的用户发布的所有动态列表
+        /// </summary>
+        ResponseContext<AttentionListResponse> AttentionList(RequestContext<AttentionListRequest> request);
+
+        /// <summary>
+        /// 取消关注某人
+        /// </summary>
+        ResponseContext<CancelAttentionResponse> CancelAttention(RequestContext<CancelAttentionRequest> request);
+
+        /// <summary>
+        /// 添加关注
+        /// </summary>
+        ResponseContext<AddAttentionResponse> AddAttention(RequestContext<AddAttentionRequest> request);
     }
 }

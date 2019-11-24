@@ -55,6 +55,21 @@
             捡起的漂流瓶列表
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.AttentionList">
+            <summary>
+            关注的用户发布的所有动态列表
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.CancelAttention">
+            <summary>
+            取消关注
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.AddAttention">
+            <summary>
+            添加关注
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.MyMomentList">
             <summary>
             我扔出去的没有被评论的动态
@@ -191,11 +206,6 @@
             文本内容安全检测
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:Future.TodayApi.Controllers.LetterController.CollectPushToken">
-            <summary>
-            收集pushToken
-            </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.ForwardMoment">
             <summary>

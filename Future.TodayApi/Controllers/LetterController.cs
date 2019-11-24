@@ -229,6 +229,129 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 关注的用户发布的所有动态列表
+        /// </summary>
+        [HttpPost]
+        public JsonResult AttentionList()
+        {
+            RequestContext<AttentionListRequest> request = null;
+            ResponseContext<AttentionListResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<AttentionListRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.AttentionList(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AttentionList", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "AttentionList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 取消关注
+        /// </summary>
+        [HttpPost]
+        public JsonResult CancelAttention()
+        {
+            RequestContext<CancelAttentionRequest> request = null;
+            ResponseContext<CancelAttentionResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<CancelAttentionRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.CancelAttention(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "CancelAttention", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "CancelAttention", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 添加关注
+        /// </summary>
+        [HttpPost]
+        public JsonResult AddAttention()
+        {
+            RequestContext<AddAttentionRequest> request = null;
+            ResponseContext<AddAttentionResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<AddAttentionRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.AddAttention(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AddAttention", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "AddAttention", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 我扔出去的没有被评论的动态
         /// </summary>
         [HttpPost]
@@ -1368,53 +1491,6 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "MsgSecCheck", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
-            }
-        }
-
-        /// <summary>
-        /// 收集pushToken
-        /// </summary>
-        [HttpPost]
-        public JsonResult CollectPushToken()
-        {
-            RequestContext<CollectPushTokenRequest> request = null;
-            ResponseContext<CollectPushTokenResponse> response = null;
-            try
-            {
-                string json = GetInputString();
-                if (string.IsNullOrEmpty(json))
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
-                }
-                request = json.JsonToObject<RequestContext<CollectPushTokenRequest>>();
-                if (request == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
-                }
-                if (request.Head == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
-                }
-                if (request.Content == null)
-                {
-                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
-                }
-                response = new ResponseContext<CollectPushTokenResponse>()
-                {
-                    Content = new CollectPushTokenResponse()
-                    {
-                        Success = true
-                    }
-                };
-                return new JsonResult(response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorJsonResult(ErrCodeEnum.InnerError, "CollectPushToken", ex);
-            }
-            finally
-            {
-                WriteServiceLog(MODULE, "CollectPushToken", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
 

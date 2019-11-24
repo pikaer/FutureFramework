@@ -281,11 +281,6 @@ namespace Future.Model.Utils
         /// 页码（分页传递数据）
         /// </summary>
         public int PageIndex { get; set; }
-        
-        /// <summary>
-        /// 动态类别
-        /// </summary>
-        public MomentTypeEnum MomentType { get; set; }
     }
 
     public class PickUpListResponse
@@ -353,6 +348,30 @@ namespace Future.Model.Utils
         /// </summary>
         public string CreateTime { get; set; }
     }
+    #endregion
+
+    #region AttentionList
+    public class AttentionListRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 页码（分页传递数据）
+        /// </summary>
+        public int PageIndex { get; set; }
+    }
+
+    public class AttentionListResponse
+    {
+        /// <summary>
+        /// 互动列表
+        /// </summary>
+        public List<PickUpType> AttentionList { get; set; }
+    }
+
     #endregion
 
     #region UpLoadImg
@@ -897,6 +916,52 @@ namespace Future.Model.Utils
     }
 
     public class DeleteMomentResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region CancelAttention
+    public class CancelAttentionRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 被关注好友的UId
+        /// </summary>
+        public long PartnerUId { get; set; }
+    }
+
+    public class CancelAttentionResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
+    }
+    #endregion
+
+    #region AddAttention
+    public class AddAttentionRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 被关注好友的UId
+        /// </summary>
+        public long PartnerUId { get; set; }
+    }
+
+    public class AddAttentionResponse
     {
         /// <summary>
         /// 处理结果

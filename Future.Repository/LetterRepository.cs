@@ -34,6 +34,8 @@ namespace Future.Repository
 
         private readonly string SELECT_OnlineNotifyEntity = "SELECT OnlineNotifyId,UId,PartnerUId,CreateTime,UpdateTime FROM dbo.hub_OnlineNotify ";
 
+        private readonly string SELECT_AttentionEntity = "SELECT AttentionId,UId,PartnerUId,CreateTime,UpdateTime FROM dbo.letter_Attention ";
+
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
         public LetterUserEntity LetterUser(long uId, string openId = "")
@@ -89,7 +91,16 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize,MomentTypeEnum momentType)
+        public AttentionEntity Attention(long uId, long partnerUId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = string.Format("{0} Where UId={1} and PartnerUId={2} ", SELECT_AttentionEntity, uId, partnerUId);
+                return Db.QueryFirstOrDefault<AttentionEntity>(sql);
+            }
+        }
+
+        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize)
         {
             var sql = @"SELECT pick.PickUpId,
                                pick.MomentId,
@@ -104,19 +115,35 @@ namespace Future.Repository
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
-                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 ";
-            if(momentType== MomentTypeEnum.TextMoment)
-            {
-                sql += " and (moment.ImgContent is null or moment.ImgContent='' )";
-            }
-            if(momentType== MomentTypeEnum.ImgMoment)
-            {
-                sql += " and moment.ImgContent is not null and moment.ImgContent!='' ";
-            }
+                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 
+                        Order by pick.CreateTime desc 
+                        OFFSET @OFFSETCount ROWS
+                        FETCH NEXT @FETCHCount ROWS ONLY";
 
-            sql += @" Order by pick.CreateTime desc 
-                           OFFSET @OFFSETCount ROWS
-                           FETCH NEXT @FETCHCount ROWS ONLY";
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<PickUpDTO>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+            }
+        }
+
+        public List<PickUpDTO> AttentionListByPageIndex(long uId, int pageIndex, int pageSize)
+        {
+            var sql = @"SELECT moment.MomentId,
+                               useinfo.UId,
+                               useinfo.Gender,
+                               useinfo.BirthDate,
+                               useinfo.NickName,
+                               useinfo.HeadPhotoPath,
+                               moment.TextContent,
+                               moment.ImgContent,
+                               moment.CreateTime
+                        FROM dbo.letter_Attention attention 
+                        Inner Join letter_Moment moment on moment.UId= attention.PartnerUId
+                        Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
+                        Where attention.UId=@UId and moment.IsDelete=0 
+                        Order by moment.CreateTime desc 
+                        OFFSET @OFFSETCount ROWS
+                        FETCH NEXT @FETCHCount ROWS ONLY";
 
             using (var Db = GetDbConnection())
             {
@@ -1085,6 +1112,26 @@ namespace Future.Repository
             }
         }
 
+        public bool InsertAttention(AttentionEntity entity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.letter_Attention
+                                   (AttentionId
+                                   ,UId
+                                   ,PartnerUId
+                                   ,CreateTime
+                                   ,UpdateTime)
+                             VALUES
+                                   (@AttentionId
+                                   ,@UId
+                                   ,@PartnerUId
+                                   ,@CreateTime
+                                   ,@UpdateTime)";
+                return Db.Execute(sql, entity) > 0;
+            }
+        }
+
 
         public bool InsertChatListHub(ChatListHubEntity chatListHub)
         {
@@ -1276,6 +1323,15 @@ namespace Future.Repository
             {
                 var sql = @"Delete dbo.letter_Collect Where CollectId=@CollectId";
                 return Db.Execute(sql, new { CollectId = collectId }) > 0;
+            }
+        }
+
+        public bool DeleteAttention(long uId,long partnerUId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.letter_Attention Where UId=@UId and PartnerUId=@PartnerUId";
+                return Db.Execute(sql, new { UId = uId, PartnerUId= partnerUId}) > 0;
             }
         }
 

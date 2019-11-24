@@ -182,7 +182,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize, request.Content.MomentType);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
                 foreach (var item in pickUpList)
@@ -201,15 +201,51 @@ namespace Future.Service.Implement
                         ImgContent = item.ImgContent.GetImgPath(),
                         CreateTime = item.CreateTime.GetDateDesc(true)
                     };
-
-                    if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
-                    {
-                        dto.TextContent = TextCut(dto.TextContent, 14);
-                    }
                     response.Content.PickUpList.Add(dto);
                 }
             }
             
+            return response;
+        }
+
+        public ResponseContext<AttentionListResponse> AttentionList(RequestContext<AttentionListRequest> request)
+        {
+            var response = new ResponseContext<AttentionListResponse>()
+            {
+                Content = new AttentionListResponse()
+                {
+                    AttentionList = new List<PickUpType>()
+                }
+            };
+
+            int pageSize = 20;
+            string pickUpPageSize = JsonSettingHelper.AppSettings["MomentPageSize"];
+            if (!pickUpPageSize.IsNullOrEmpty())
+            {
+                pageSize = Convert.ToInt32(pickUpPageSize);
+            }
+            var pickUpList = letterDal.AttentionListByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
+            if (pickUpList.NotEmpty())
+            {
+                foreach (var item in pickUpList)
+                {
+                    var dto = new PickUpType()
+                    {
+                        MomentId = item.MomentId,
+                        UId = item.UId,
+                        OnLineDesc = OnlineDesc(item.UId),
+                        Gender = item.Gender,
+                        Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                        NickName = CommonHelper.CutNickName(item.NickName),
+                        TextContent = item.TextContent,
+                        ImgContent = item.ImgContent.GetImgPath(),
+                        CreateTime = item.CreateTime.GetDateDesc(true)
+                    };
+                    response.Content.AttentionList.Add(dto);
+                }
+            }
+
             return response;
         }
 
@@ -970,6 +1006,45 @@ namespace Future.Service.Implement
             return response;
         }
 
+        public ResponseContext<CancelAttentionResponse> CancelAttention(RequestContext<CancelAttentionRequest> request)
+        {
+            return new ResponseContext<CancelAttentionResponse>()
+            {
+                Content = new CancelAttentionResponse()
+                {
+                    IsExecuteSuccess = letterDal.DeleteAttention(request.Content.UId, request.Content.PartnerUId)
+                }
+            };
+        }
+
+        public ResponseContext<AddAttentionResponse> AddAttention(RequestContext<AddAttentionRequest> request)
+        {
+            var response = new ResponseContext<AddAttentionResponse>
+            {
+                Content = new AddAttentionResponse() { IsExecuteSuccess=true }
+            };
+            AttentionEntity entity = letterDal.Attention(request.Content.UId, request.Content.PartnerUId);
+            if (entity != null)
+            {
+                return response;
+            }
+            else
+            {
+                entity = new AttentionEntity()
+                {
+                    AttentionId = Guid.NewGuid(),
+                    UId = request.Content.UId,
+                    PartnerUId = request.Content.PartnerUId,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+
+                response.Content.IsExecuteSuccess = letterDal.InsertAttention(entity);
+            }
+            return response;
+        }
+
+
         #endregion
 
         #region private Method
@@ -1162,7 +1237,6 @@ namespace Future.Service.Implement
             return "";
         }
 
-     
         #endregion
     }
 }
