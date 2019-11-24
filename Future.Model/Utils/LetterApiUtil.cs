@@ -959,6 +959,11 @@ namespace Future.Model.Utils
         /// 被关注好友的UId
         /// </summary>
         public long PartnerUId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
     }
 
     public class AddAttentionResponse

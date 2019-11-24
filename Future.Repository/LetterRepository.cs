@@ -140,7 +140,7 @@ namespace Future.Repository
                         FROM dbo.letter_Attention attention 
                         Inner Join letter_Moment moment on moment.UId= attention.PartnerUId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
-                        Where attention.UId=@UId and moment.IsDelete=0 
+                        Where attention.UId=@UId and moment.IsDelete=0 and moment.CreateTime>=attention.CreateTime
                         Order by moment.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
                         FETCH NEXT @FETCHCount ROWS ONLY";

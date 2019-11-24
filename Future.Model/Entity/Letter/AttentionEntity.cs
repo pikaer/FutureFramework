@@ -21,5 +21,10 @@ namespace Future.Model.Entity.Letter
         /// 被关注好友的UId
         /// </summary>
         public long PartnerUId { get; set; }
+
+        /// <summary>
+        /// 开始订阅时间
+        /// </summary>
+        public DateTime StartDateTime { get; set; }
     }
 }
