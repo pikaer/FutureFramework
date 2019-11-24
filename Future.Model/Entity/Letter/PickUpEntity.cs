@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Future.Model.Enum.Letter;
+using System;
 
 namespace Future.Model.Entity.Letter
 {
@@ -26,6 +27,8 @@ namespace Future.Model.Entity.Letter
         /// 参与评论的用户
         /// </summary>
         public long PickUpUId { get; set; }
+
+        public PickUpFromPageEnum FromPage { get; set; }
 
         /// <summary>
         /// 漂流瓶列表中是否删除

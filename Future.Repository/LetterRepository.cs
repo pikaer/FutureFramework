@@ -18,7 +18,7 @@ namespace Future.Repository
 
         private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
-        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
+        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,FromPage,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
         private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
 
@@ -115,7 +115,7 @@ namespace Future.Repository
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
-                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 
+                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 and pick.FromPage=0 
                         Order by pick.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
                         FETCH NEXT @FETCHCount ROWS ONLY";
@@ -520,6 +520,15 @@ namespace Future.Repository
             }
         }
 
+        public PickUpEntity PickUpByMomentId(Guid momentId,long uId)
+        {
+            var sql = string.Format("{0} Where MomentId='{1}' and PickUpUId={2}", SELECT_PickUpEntity, momentId.ToString(), uId);
+            using (var Db = GetDbConnection())
+            {
+                return Db.QueryFirstOrDefault<PickUpEntity>(sql);
+            }
+        }
+
         public MomentEntity GetMoment(Guid momentId)
         {
             var sql = SELECT_MomentEntity + @" Where MomentId=@MomentId";
@@ -578,10 +587,13 @@ namespace Future.Repository
                           FROM dbo.letter_Moment moment
                           Left join dbo.letter_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
+                          Left join dbo.letter_Attention attention
+                          ON moment.UId=attention.PartnerUId and attention.UId=@UId
                           Inner join dbo.letter_LetterUser us On us.UId=moment.UId
                           Where moment.UId!=@UId  
                             and moment.CreateTime<@CreateTime 
                             and pick.MomentId is Null 
+                            and attention.AttentionId is Null 
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
@@ -986,13 +998,15 @@ namespace Future.Repository
                                   (PickUpId
                                   ,MomentId
                                   ,MomentUId
-                                  ,PickUpUId                              
+                                  ,FromPage      
+                                  ,PickUpUId      
                                   ,CreateTime
                                   ,UpdateTime)
                             VALUES
                                   (@PickUpId
                                   ,@MomentId
                                   ,@MomentUId
+                                  ,@FromPage
                                   ,@PickUpUId
                                   ,@CreateTime
                                   ,@UpdateTime)";

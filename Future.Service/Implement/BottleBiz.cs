@@ -136,10 +136,28 @@ namespace Future.Service.Implement
             {
                 Content = new DiscussResponse()
             };
-            var pickUp = letterDal.PickUp(request.Content.PickUpId);
-            if (pickUp == null)
+            PickUpEntity pickUp;
+            if(request.Content.PickUpId!=null&& request.Content.PickUpId != Guid.Empty)
             {
-                return response;
+                pickUp = letterDal.PickUp(request.Content.PickUpId);
+            }
+            else
+            {
+                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
+                if (pickUp == null)
+                {
+                    pickUp = new PickUpEntity() 
+                    {
+                        PickUpId=Guid.NewGuid(),
+                        MomentId= request.Content.MomentId,
+                        MomentUId= request.Content.PartnerUId,
+                        PickUpUId=request.Content.UId,
+                        FromPage= PickUpFromPageEnum.AttentionPage,
+                        CreateTime=DateTime.Now,
+                        UpdateTime=DateTime.Now
+                    };
+                    letterDal.InsertPickUp(pickUp);
+                }
             }
 
             if(pickUp.MomentUId== request.Head.UId)
@@ -795,6 +813,7 @@ namespace Future.Service.Implement
                     {
                         CollectId=item.CollectId,
                         MomentId=item.MomentId,
+                        UId=item.UId,
                         PickUpId=item.PickUpId,
                         TextContent =item.TextContent.Trim(),
                         ImgContent=item.ImgContent.GetImgPath(),

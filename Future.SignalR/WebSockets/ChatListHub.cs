@@ -99,15 +99,12 @@ namespace Future.SignalR.WebSockets
         /// <summary>
         /// 订阅消息
         /// </summary>
-        public async Task SubScribeMessage(long uId, Guid pickUpId)
+        public async Task SubScribeMessage(long uId, long partnerUId)
         {
             try
             {
-                var pickUp = bottle.GetPickUpEntity(pickUpId);
-
-                if (uId > 0 && pickUp != null)
+                if (uId > 0 && partnerUId>0)
                 {
-                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
                     var userHub = userBiz.ChatListHub(partnerUId);
                     if (userHub != null && userHub.IsOnLine)
                     {

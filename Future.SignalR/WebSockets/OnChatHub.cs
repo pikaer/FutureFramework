@@ -28,12 +28,10 @@ namespace Future.SignalR.WebSockets
             {
                 //用户连接信息同步到数据库目的：不同页面之间共享用户行为信息
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
-                Guid pickUpId = Guid.Parse(Context.GetHttpContext().Request.Query["PickUpId"]);
-                var pickUp = bottle.GetPickUpEntity(pickUpId);
-
-                if (uId > 0 && pickUp != null)
+                long partnerUId = Convert.ToInt64(Context.GetHttpContext().Request.Query["PartnerUId"]);
+                
+                if (uId > 0 && partnerUId>0)
                 {
-                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
                     var userHub = userBiz.OnChatHub(uId);
                     if (userHub == null)
                     {
@@ -105,15 +103,13 @@ namespace Future.SignalR.WebSockets
         /// <summary>
         /// 订阅消息
         /// </summary>
-        public async Task SubScribeMessage(long uId, Guid pickUpId)
+        public async Task SubScribeMessage(long uId, long partnerUId)
         {
             try
             {
-                var pickUp = bottle.GetPickUpEntity(pickUpId);
 
-                if (uId > 0 && pickUp != null)
+                if (partnerUId > 0)
                 {
-                    var partnerUId = pickUp.PickUpUId == uId ? pickUp.MomentUId : pickUp.PickUpUId;
                     var userHub = userBiz.OnChatHub(partnerUId);
                     if (userHub != null && userHub.IsOnLine && userHub.PartnerUId == uId)
                     {

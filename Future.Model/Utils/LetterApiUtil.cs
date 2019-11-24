@@ -96,7 +96,6 @@ namespace Future.Model.Utils
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
-
         /// <summary>
         /// 文本内容
         /// </summary>
@@ -511,19 +510,24 @@ namespace Future.Model.Utils
         public Guid PickUpId { get; set; }
 
         /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
 
         /// <summary>
+        /// 对方Id
+        /// </summary>
+        public long PartnerUId { get; set; }
+        
+        /// <summary>
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
-
-        /// <summary>
-        /// 表单Id
-        /// </summary>
-        public string FormId { get; set; }
 
     }
 
@@ -1049,6 +1053,11 @@ namespace Future.Model.Utils
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
 
         /// <summary>
         /// 互动Id
