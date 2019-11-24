@@ -166,9 +166,24 @@ namespace Future.Model.Utils
     public class DiscussDetailRequest
     {
         /// <summary>
-        /// 用户Id
+        /// 互动Id
         /// </summary>
         public Guid PickUpId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 对方Id
+        /// </summary>
+        public long PartnerUId { get; set; }
 
     }
 
@@ -183,6 +198,11 @@ namespace Future.Model.Utils
         /// 动态发布用户Id
         /// </summary>
         public long MomentUId { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
 
         /// <summary>
         /// 头像路径

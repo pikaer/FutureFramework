@@ -67,10 +67,28 @@ namespace Future.Service.Implement
         {
             var response = new ResponseContext<DiscussDetailResponse>();
 
-            var pickUp= letterDal.PickUp(request.Content.PickUpId);
-            if(pickUp==null)
+            PickUpEntity pickUp;
+            if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
-                return response;
+                pickUp = letterDal.PickUp(request.Content.PickUpId);
+            }
+            else
+            {
+                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
+                if (pickUp == null)
+                {
+                    pickUp = new PickUpEntity()
+                    {
+                        PickUpId = Guid.NewGuid(),
+                        MomentId = request.Content.MomentId,
+                        MomentUId = request.Content.PartnerUId,
+                        PickUpUId = request.Content.UId,
+                        FromPage = PickUpFromPageEnum.AttentionPage,
+                        CreateTime = DateTime.Now,
+                        UpdateTime = DateTime.Now
+                    };
+                    letterDal.InsertPickUp(pickUp);
+                }
             }
             var moment= letterDal.GetMoment(pickUp.MomentId);
             if (moment == null)
@@ -86,7 +104,8 @@ namespace Future.Service.Implement
             response.Content = new DiscussDetailResponse()
             {
                 MomentId = moment.MomentId,
-                MomentUId= moment.UId,
+                PickUpId= pickUp.PickUpId,
+                MomentUId = moment.UId,
                 HeadImgPath= user.HeadPhotoPath.GetImgPath(),
                 NickName= user.NickName.Trim(),
                 TextContent= moment.TextContent.Trim(),
@@ -105,7 +124,7 @@ namespace Future.Service.Implement
                 deleteTime = pickUp.PartnerLastDeleteTime;
             }
 
-            var discussList = letterDal.DiscussList(request.Content.PickUpId, deleteTime);
+            var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
                 foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
