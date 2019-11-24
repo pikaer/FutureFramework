@@ -181,16 +181,16 @@ namespace Future.Service.Implement
 
             if(pickUp.MomentUId== request.Head.UId)
             {
-                letterDal.UpdatePickUpUserDelete(request.Content.PickUpId);
+                letterDal.UpdatePickUpUserDelete(pickUp.PickUpId);
             }
             else
             {
-                letterDal.UpdatePickUpPartnerDelete(request.Content.PickUpId);
+                letterDal.UpdatePickUpPartnerDelete(pickUp.PickUpId);
             }
             var discuss = new DiscussEntity()
             {
                 DiscussId = Guid.NewGuid(),
-                PickUpId = request.Content.PickUpId,
+                PickUpId = pickUp.PickUpId,
                 UId = request.Content.UId,
                 DiscussContent = request.Content.TextContent,
                 CreateTime=DateTime.Now,
