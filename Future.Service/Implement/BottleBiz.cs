@@ -1,5 +1,4 @@
-﻿using Future.Model.DTO.Letter;
-using Future.Model.Entity.Hubs;
+﻿using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
@@ -304,7 +303,7 @@ namespace Future.Service.Implement
             {
                 return new ResponseContext<PickUpResponse>(false, ErrCodeEnum.CoinEmpty, null, "金币余额不足，快去发布动态赚金币吧");
             }
-            int pickUpCount = 20;
+            int pickUpCount;
             switch (user.Gender)
             {
                 case GenderEnum.Woman:
@@ -357,7 +356,7 @@ namespace Future.Service.Implement
                     Gender= letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),
                     ImgContent= moment.ImgContent.GetImgPath(),
-                    CreateTime= moment.CreateTime.GetDateDesc()
+                    CreateTime= moment.CreateTime.GetDateDesc(true)
                 });
                 
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");
