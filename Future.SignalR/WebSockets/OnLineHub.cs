@@ -137,16 +137,46 @@ namespace Future.SignalR.WebSockets
             try
             {
                 long uId = Convert.ToInt64(Context.GetHttpContext().Request.Query["UId"]);
+                int connetType = Convert.ToInt16(Context.GetHttpContext().Request.Query["ConnetType"]);
                 if (uId > 0)
                 {
-                    var onLineUser = userBiz.OnLineUser(uId);
-                    if (onLineUser != null)
+                    if (connetType == 0)
                     {
-                        onLineUser.ConnectionId = Context.ConnectionId;
-                        onLineUser.IsOnLine = false;
-                        onLineUser.UpdateTime = DateTime.Now;
-                        onLineUser.LastOnLineTime = DateTime.Now;
-                        userBiz.UpdateOnLineUserAsync(onLineUser);
+                        var onLineUser = userBiz.OnLineUser(uId);
+                        if (onLineUser != null)
+                        {
+                            onLineUser.ConnectionId = Context.ConnectionId;
+                            onLineUser.IsOnLine = false;
+                            onLineUser.UpdateTime = DateTime.Now;
+                            onLineUser.LastOnLineTime = DateTime.Now;
+                            userBiz.UpdateOnLineUserAsync(onLineUser);
+                        }
+                    }
+
+                    if (connetType == 1)
+                    {
+                        var chatListHub = userBiz.ChatListHub(uId);
+                        if (chatListHub != null)
+                        {
+                            chatListHub.ConnectionId = Context.ConnectionId;
+                            chatListHub.IsOnLine = false;
+                            chatListHub.UpdateTime = DateTime.Now;
+                            chatListHub.LastOnLineTime = DateTime.Now;
+                            userBiz.UpdateChatListHubAsync(chatListHub);
+                        }
+                    }
+
+                    if (connetType == 2)
+                    {
+                        var userHub = userBiz.OnChatHub(uId);
+                        if (userHub != null)
+                        {
+                            userHub.ConnectionId = Context.ConnectionId;
+                            userHub.IsOnLine = false;
+                            userHub.UpdateTime = DateTime.Now;
+                            userHub.LastOnLineTime = DateTime.Now;
+                            userBiz.UpdateOnChatHubAsync(userHub);
+                        }
                     }
                 }
             }
