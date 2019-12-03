@@ -191,7 +191,7 @@ namespace Future.SignalR.WebSockets
         /// <summary>
         /// 订阅消息
         /// </summary>
-        public async Task SubScribeMessage(long uId, long partnerUId,int connetType)
+        public async Task SubScribeMessage(long uId, long partnerUId)
         {
             try
             {
