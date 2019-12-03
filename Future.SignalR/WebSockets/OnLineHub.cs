@@ -16,8 +16,6 @@ namespace Future.SignalR.WebSockets
     {
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
-        private readonly IBottleBiz bottle = SingletonProvider<BottleBiz>.Instance;
-
         /// <summary>
         /// 成功连接
         /// </summary>
@@ -193,14 +191,29 @@ namespace Future.SignalR.WebSockets
         /// <summary>
         /// 订阅消息
         /// </summary>
-        public async Task SubScribeMessage(long uId, long partnerUId)
+        public async Task SubScribeMessage(long uId, long partnerUId,int connetType)
         {
             try
             {
                 if (partnerUId>0)
                 {
-                    var userHub = userBiz.OnLineUser(partnerUId);
-                    if (userHub != null && userHub.IsOnLine)
+
+                    var onLineUser = userBiz.OnLineUser(partnerUId);
+                    if (onLineUser != null && onLineUser.IsOnLine)
+                    {
+                        //当对方正在互动列表页面停留,通知对方刷新页面
+                        await Clients.Client(onLineUser.ConnectionId).SendAsync("receive");
+                    }
+
+                    var chatListHub = userBiz.ChatListHub(partnerUId);
+                    if (chatListHub != null && chatListHub.IsOnLine)
+                    {
+                        //当对方正在互动列表页面停留,通知对方刷新页面
+                        await Clients.Client(chatListHub.ConnectionId).SendAsync("receive");
+                    }
+
+                    var userHub = userBiz.OnChatHub(uId);
+                    if (userHub != null&& userHub.IsOnLine)
                     {
                         //当对方正在互动列表页面停留,通知对方刷新页面
                         await Clients.Client(userHub.ConnectionId).SendAsync("receive");
