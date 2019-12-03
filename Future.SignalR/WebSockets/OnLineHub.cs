@@ -191,13 +191,12 @@ namespace Future.SignalR.WebSockets
         /// <summary>
         /// 订阅消息
         /// </summary>
-        public async Task SubScribeMessage(long uId, long partnerUId)
+        public async Task SubScribeMessage(long partnerUId)
         {
             try
             {
                 if (partnerUId>0)
                 {
-
                     var onLineUser = userBiz.OnLineUser(partnerUId);
                     if (onLineUser != null && onLineUser.IsOnLine)
                     {
@@ -212,7 +211,7 @@ namespace Future.SignalR.WebSockets
                         await Clients.Client(chatListHub.ConnectionId).SendAsync("receive");
                     }
 
-                    var userHub = userBiz.OnChatHub(uId);
+                    var userHub = userBiz.OnChatHub(partnerUId);
                     if (userHub != null&& userHub.IsOnLine)
                     {
                         //当对方正在互动列表页面停留,通知对方刷新页面
