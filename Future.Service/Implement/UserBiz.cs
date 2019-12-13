@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Hubs;
+﻿using Future.CommonBiz;
+using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Repository;
@@ -236,7 +237,7 @@ namespace Future.Service.Implement
                         //2016年8月2日 20:23
                         title = string.Format("{0}发布的图片动态", moment.CreateTime.ToString("f"));
                     }
-                    WeChatHelper.SendMomentDiscussNotify(userInfo.OpenId, title, discussContent, platform);
+                    MiniAppFactory.Factory(userInfo.Platform).SendMomentDiscussNotify(userInfo.OpenId, title, discussContent);
                 }
             });
         }

@@ -1,4 +1,5 @@
-﻿using Future.Model.Entity.Hubs;
+﻿using Future.CommonBiz;
+using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
@@ -452,7 +453,7 @@ namespace Future.Service.Implement
         {
             var response = new ResponseContext<BasicUserInfoResponse>();
 
-            var openIdInfo = WeChatHelper.GetOpenId(request.Head.Platform, request.Content.LoginCode);
+            var openIdInfo = MiniAppFactory.Factory(request.Head.Platform).GetOpenId(request.Content.LoginCode);
             if(openIdInfo==null|| openIdInfo.OpenId.IsNullOrEmpty())
             {
                 LogHelper.Fatal("GetOpenIdInfo", "获取OpenId异常",null, new Dictionary<string, string>()
@@ -984,7 +985,7 @@ namespace Future.Service.Implement
             {
                 Content = new MsgSecCheckResponse()
                 {
-                    IsOK = WeChatHelper.MsgIsOk(request.Head.Platform, request.Content.TextContent)
+                    IsOK = MiniAppFactory.Factory(request.Head.Platform).MsgIsOk(request.Content.TextContent)
                 }
             };
         }

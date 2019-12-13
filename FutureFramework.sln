@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiCenter", "ApiCenter", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.CommonApi", "Future.CommonApi\Future.CommonApi.csproj", "{2A7F420C-1D0F-4DE7-9797-57A7B4A6F8D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.SignalR", "Future.SignalR\Future.SignalR.csproj", "{F1BB35D0-E15D-40AA-8D20-FB5467E70D74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Future.SignalR", "Future.SignalR\Future.SignalR.csproj", "{F1BB35D0-E15D-40AA-8D20-FB5467E70D74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.CommonBiz", "Future.CommonBiz\Future.CommonBiz.csproj", "{DCDE5A91-BF78-489D-9F20-CEA9B2DB9079}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{F1BB35D0-E15D-40AA-8D20-FB5467E70D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1BB35D0-E15D-40AA-8D20-FB5467E70D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1BB35D0-E15D-40AA-8D20-FB5467E70D74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCDE5A91-BF78-489D-9F20-CEA9B2DB9079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCDE5A91-BF78-489D-9F20-CEA9B2DB9079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCDE5A91-BF78-489D-9F20-CEA9B2DB9079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCDE5A91-BF78-489D-9F20-CEA9B2DB9079}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{CE4658F3-CF18-4224-926A-E1DC2BBBDA97} = {FFAD4C92-BD30-4806-8BD0-5836E141C5F8}
 		{2A7F420C-1D0F-4DE7-9797-57A7B4A6F8D6} = {FFAD4C92-BD30-4806-8BD0-5836E141C5F8}
 		{F1BB35D0-E15D-40AA-8D20-FB5467E70D74} = {FFAD4C92-BD30-4806-8BD0-5836E141C5F8}
+		{DCDE5A91-BF78-489D-9F20-CEA9B2DB9079} = {38C319B2-F5D3-43FE-8988-1F2BFA626035}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E53F994-61C6-4C2E-A4B9-6ADD274D4AB9}
