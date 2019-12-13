@@ -228,6 +228,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Future.TodayApi.Controllers.WeChatController.CheckSignature(System.String,System.String,System.String)">
+            <summary>
+            验证微信签名
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Startup">
             <summary>
             启动页面
