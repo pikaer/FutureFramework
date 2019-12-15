@@ -26,7 +26,7 @@ namespace Future.Repository
 
         private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.letter_CoinDetail ";
 
-        private readonly string SELECT_OnLineUserEntity = "SELECT OnLineId,UId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnLineUserHub ";
+        private readonly string SELECT_OnLineUserEntity = "SELECT OnLineId,UId,ConnectionId,IsOnLine,Latitude,Longitude,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnLineUserHub ";
 
         private readonly string SELECT_ChatListHubEntity = "SELECT ChatListHubId,UId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_ChatListHub ";
 
@@ -783,6 +783,19 @@ namespace Future.Repository
             }
         }
 
+        public bool UpdateUserLocation(OnLineUserHubEntity onLineUser)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.hub_OnLineUserHub
+                               SET Latitude = @Latitude
+                                  ,Longitude = @Longitude
+                                  ,UpdateTime = @UpdateTime
+                               WHERE OnLineId=@OnLineId";
+                return Db.Execute(sql, onLineUser) > 0;
+            }
+        }
+
         public bool UpdateChatListHub(ChatListHubEntity chatListHub)
         {
             using (var Db = GetDbConnection())
@@ -1207,6 +1220,8 @@ namespace Future.Repository
                                    ,IsOnLine
                                    ,LastOnLineTime
                                    ,CreateTime
+                                   ,Latitude
+                                   ,Longitude
                                    ,UpdateTime)
                              VALUES
                                    (@OnLineId
@@ -1215,6 +1230,8 @@ namespace Future.Repository
                                    ,@IsOnLine
                                    ,@LastOnLineTime
                                    ,@CreateTime
+                                   ,@Latitude
+                                   ,@Longitude
                                    ,@UpdateTime)";
                 return Db.Execute(sql, onLineUser) > 0;
             }

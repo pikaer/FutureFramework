@@ -185,5 +185,10 @@ namespace Future.Service.Interface
         /// 添加关注
         /// </summary>
         ResponseContext<AddAttentionResponse> AddAttention(RequestContext<AddAttentionRequest> request);
+
+        /// <summary>
+        /// 更新用户位置信息
+        /// </summary>
+        ResponseContext<UpdateUserLocationResponse> UpdateUserLocation(RequestContext<UpdateUserLocationRequest> request);
     }
 }

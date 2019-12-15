@@ -1314,4 +1314,32 @@ namespace Future.Model.Utils
         public bool Success { get; set; }
     }
     #endregion
+
+    #region OnlineNotify
+    public class UpdateUserLocationRequest
+    {
+        /// <summary>
+        /// 订阅者UId
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 纬度，范围为 -90~90，负数表示南纬
+        /// </summary>
+        public double Latitude { get; set; }
+
+        /// <summary>
+        /// 经度，范围为 -180~180，负数表示西经
+        /// </summary>
+        public double Longitude { get; set; }
+    }
+
+    public class UpdateUserLocationResponse
+    {
+        /// <summary>
+        /// 是否收藏成功
+        /// </summary>
+        public bool Success { get; set; }
+    }
+    #endregion
 }

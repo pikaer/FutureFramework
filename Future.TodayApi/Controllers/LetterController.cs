@@ -1,10 +1,7 @@
-﻿using Future.Model.DTO.Letter;
-using Future.Model.Enum.Letter;
-using Future.Model.Enum.Sys;
+﻿using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service.Implement;
 using Future.Service.Interface;
-using Future.Utility;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,7 +18,6 @@ namespace Future.TodayApi.Controllers
     {
         private readonly string MODULE = "LetterController";
         private readonly IBottleBiz api = SingletonProvider<BottleBiz>.Instance;
-        private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
         /// <summary>
         /// 瓶子互动列表
@@ -1573,6 +1569,47 @@ namespace Future.TodayApi.Controllers
             finally
             {
                 WriteServiceLog(MODULE, "OnlineNotify", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 更新用户位置信息
+        /// </summary>
+        [HttpPost]
+        public JsonResult UpdateUserLocation()
+        {
+            RequestContext<UpdateUserLocationRequest> request = null;
+            ResponseContext<UpdateUserLocationResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<UpdateUserLocationRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.UpdateUserLocation(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateUserLocation", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "UpdateUserLocation", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
     }

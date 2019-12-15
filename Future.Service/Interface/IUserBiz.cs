@@ -61,6 +61,9 @@ namespace Future.Service.Interface
 
         void UpdateChatListHubAsync(ChatListHubEntity chatListHub);
 
+        /// <summary>
+        /// 获取聊天列表停留信息
+        /// </summary>
         OnChatHubEntity OnChatHub(long uId);
 
         void InsertOnChatHubAsync(OnChatHubEntity userHub);

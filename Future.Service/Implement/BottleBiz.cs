@@ -1082,6 +1082,39 @@ namespace Future.Service.Implement
             return response;
         }
 
+        public ResponseContext<UpdateUserLocationResponse> UpdateUserLocation(RequestContext<UpdateUserLocationRequest> request)
+        {
+            var response = new ResponseContext<UpdateUserLocationResponse>
+            {
+                Content = new UpdateUserLocationResponse() { Success = true }
+            };
+            OnLineUserHubEntity onLineUser = userBiz.OnLineUser(request.Content.UId);
+            if (onLineUser == null)
+            {
+                onLineUser = new OnLineUserHubEntity() 
+                {
+                    OnLineId=Guid.NewGuid(),
+                    UId= request.Content.UId,
+                    IsOnLine=true,
+                    Latitude= request.Content.Latitude,
+                    Longitude= request.Content.Longitude,
+                    LastOnLineTime=DateTime.Now,
+                    CreateTime=DateTime.Now,
+                    UpdateTime=DateTime.Now
+                };
+
+                response.Content.Success = letterDal.InsertOnLineUser(onLineUser);
+            }
+            else
+            {
+                onLineUser.Latitude = request.Content.Latitude;
+                onLineUser.Longitude = request.Content.Longitude;
+                onLineUser.UpdateTime = DateTime.Now;
+
+                response.Content.Success = letterDal.UpdateUserLocation(onLineUser);
+            }
+            return response;
+        }
 
         #endregion
 
