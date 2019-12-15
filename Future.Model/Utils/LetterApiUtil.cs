@@ -363,6 +363,11 @@ namespace Future.Model.Utils
         public string OnLineDesc { get; set; }
 
         /// <summary>
+        /// 距离描述
+        /// </summary>
+        public string DistanceDesc { get; set; }
+
+        /// <summary>
         /// 创建时间
         /// </summary>
         public string CreateTime { get; set; }

@@ -224,12 +224,13 @@ namespace Future.Service.Implement
             {
                 foreach (var item in pickUpList)
                 {
+                    var online = userBiz.OnLineUser(item.UId);
                     var dto = new PickUpType()
                     {
                         PickUpId = item.PickUpId,
                         MomentId= item.MomentId,
                         UId = item.UId,
-                        OnLineDesc = OnlineDesc(item.UId),
+                        OnLineDesc = OnlineDesc(online),
                         Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
@@ -264,22 +265,28 @@ namespace Future.Service.Implement
             var pickUpList = letterDal.AttentionListByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
-                foreach (var item in pickUpList)
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                if (userOnline != null)
                 {
-                    var dto = new PickUpType()
+                    foreach (var item in pickUpList)
                     {
-                        MomentId = item.MomentId,
-                        UId = item.UId,
-                        OnLineDesc = OnlineDesc(item.UId),
-                        Gender = item.Gender,
-                        Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
-                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                        NickName = CommonHelper.CutNickName(item.NickName),
-                        TextContent = item.TextContent,
-                        ImgContent = item.ImgContent.GetImgPath(),
-                        CreateTime = item.CreateTime.GetDateDesc(true)
-                    };
-                    response.Content.AttentionList.Add(dto);
+                        var online = userBiz.OnLineUser(item.UId);
+                        var dto = new PickUpType()
+                        {
+                            MomentId = item.MomentId,
+                            UId = item.UId,
+                            OnLineDesc = OnlineDesc(online),
+                            Gender = item.Gender,
+                            Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                            HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                            NickName = CommonHelper.CutNickName(item.NickName),
+                            TextContent = item.TextContent,
+                            ImgContent = item.ImgContent.GetImgPath(),
+                            CreateTime = item.CreateTime.GetDateDesc(true),
+                            DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online!=null?online.Latitude:0, online != null ? online.Longitude:0)
+                        };
+                        response.Content.AttentionList.Add(dto);
+                    }
                 }
             }
 
@@ -345,12 +352,13 @@ namespace Future.Service.Implement
                 {
                     moment.TextContent = TextCut(moment.TextContent, 18);
                 }
+                var userOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
                 response.Content.PickUpList.Add(new PickUpType()
                 {
                     PickUpId = pickUp.PickUpId,
                     MomentId= pickUp.MomentId,
                     UId = moment.UId,
-                    OnLineDesc= OnlineDesc(pickUp.MomentUId),
+                    OnLineDesc= OnlineDesc(userOnline),
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
                     NickName= CommonHelper.CutNickName(letterUser.NickName),
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
@@ -1256,9 +1264,8 @@ namespace Future.Service.Implement
         /// </summary>
         /// <param name="uId"></param>
         /// <returns></returns>
-        public string OnlineDesc(long uId)
+        public string OnlineDesc(OnLineUserHubEntity online)
         {
-            OnLineUserHubEntity online = userBiz.OnLineUser(uId);
             if (online == null)
             {
                 return "";
