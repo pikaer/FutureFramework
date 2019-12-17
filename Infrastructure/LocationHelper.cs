@@ -23,9 +23,9 @@ namespace Infrastructure
             }
             if (distance < 1000)
             {
-                return string.Format("{0}米", distance);
+                return string.Format("{0}米", (int)distance);
             }
-            return string.Format("{0}km",(distance / 1000).ToString("0.0"));
+            return string.Format("{0}km",(distance / 1000).ToString("0.00"));
         }
 
         /// <summary>
@@ -39,6 +39,10 @@ namespace Infrastructure
         /// <returns>两点的距离，单位 米</returns>
         public static double GetDistance(double lat1, double lng1, double lat2, double lng2)
         {
+            if((lat1==0&& lng1==0)|| (lat2 == 0 && lng2 == 0))
+            {
+                return -1;
+            }
             double radLat1 = Rad(lat1);
             double radLng1 = Rad(lng1);
             double radLat2 = Rad(lat2);
