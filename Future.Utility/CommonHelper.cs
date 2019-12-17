@@ -34,13 +34,13 @@ namespace Future.Utility
             return rtn;
         }
 
-        public static string CutNickName(string nickName)
+        public static string CutNickName(string nickName,int length)
         {
-            if (string.IsNullOrEmpty(nickName)|| nickName.Length <= 7)
+            if (string.IsNullOrEmpty(nickName)|| nickName.Length <= length)
             {
                 return nickName;
             }
-            string result = nickName.Substring(0, 5);
+            string result = nickName.Substring(0, length-2);
             return result + "...";
         }
     }

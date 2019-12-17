@@ -222,6 +222,7 @@ namespace Future.Service.Implement
             var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in pickUpList)
                 {
                     var online = userBiz.OnLineUser(item.UId);
@@ -234,9 +235,10 @@ namespace Future.Service.Implement
                         Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                        NickName = CommonHelper.CutNickName(item.NickName),
+                        NickName = CommonHelper.CutNickName(item.NickName,12),
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                         CreateTime = item.CreateTime.GetDateDesc(true)
                     };
                     response.Content.PickUpList.Add(dto);
@@ -279,7 +281,7 @@ namespace Future.Service.Implement
                             Gender = item.Gender,
                             Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                             HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                            NickName = CommonHelper.CutNickName(item.NickName),
+                            NickName = CommonHelper.CutNickName(item.NickName,12),
                             TextContent = item.TextContent,
                             ImgContent = item.ImgContent.GetImgPath(),
                             CreateTime = item.CreateTime.GetDateDesc(true),
@@ -352,20 +354,22 @@ namespace Future.Service.Implement
                 {
                     moment.TextContent = TextCut(moment.TextContent, 18);
                 }
-                var userOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
+                var partnerOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 response.Content.PickUpList.Add(new PickUpType()
                 {
                     PickUpId = pickUp.PickUpId,
                     MomentId= pickUp.MomentId,
                     UId = moment.UId,
-                    OnLineDesc= OnlineDesc(userOnline),
+                    OnLineDesc= OnlineDesc(partnerOnline),
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
-                    NickName= CommonHelper.CutNickName(letterUser.NickName),
+                    NickName= CommonHelper.CutNickName(letterUser.NickName,12),
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
                     Gender= letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),
                     ImgContent= moment.ImgContent.GetImgPath(),
-                    CreateTime= moment.CreateTime.GetDateDesc(true)
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
+                    CreateTime = moment.CreateTime.GetDateDesc(true)
                 });
                 
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");

@@ -13,7 +13,11 @@ namespace Infrastructure
         public static string GetDistanceDesc(double lat1, double lng1, double lat2, double lng2)
         {
             double distance = GetDistance(lat1, lng1, lat2, lng2);
-            if (distance <= 0)
+            if (distance < 0)
+            {
+                return "";
+            }
+            if (distance == 0)
             {
                 return "0米";
             }
@@ -21,7 +25,7 @@ namespace Infrastructure
             {
                 return string.Format("{0}米", distance);
             }
-            return string.Format("{0}公里",(distance / 1000).ToString("0.00"));
+            return string.Format("{0}km",(distance / 1000).ToString("0.0"));
         }
 
         /// <summary>
