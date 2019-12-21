@@ -71,10 +71,13 @@ namespace Future.Service.Interface
         void UpdateOnChatHubAsync(OnChatHubEntity userHub);
 
         /// <summary>
-        /// 给用户发送订阅消息
+        /// 通知动态发布者，有人评论了他
         /// </summary>
         void SendMomentDiscussNotify(Guid momentId, string discussContent);
 
+        /// <summary>
+        /// 通知评论者，发布动态的人回复了他
+        /// </summary>
         void SendDiscussReplyNotify(Guid pickUpId, long uid, string discussContent);
     }
 }
