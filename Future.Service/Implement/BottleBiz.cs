@@ -489,7 +489,7 @@ namespace Future.Service.Implement
                     Province = "全部",
                     City = "全部",
                     Area= "全部",
-                    Signature = "",
+                    Signature = "却道天凉好个秋~",
                     Platform = request.Head.Platform,
                     BirthDate = "2000-01-01",
                     EntranceDate = "2000-07-01",
@@ -711,7 +711,7 @@ namespace Future.Service.Implement
                 NickName = userInfo.NickName.IsNullOrEmpty()?"":userInfo.NickName.Trim(),
                 IsRegister = userInfo.IsRegister,
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
-                Signature= userInfo.Signature.IsNullOrEmpty()? "你未看此花时，此花与汝同归于寂；你来看此花时，则此花颜色一时明白起来。" : userInfo.Signature.Trim(),
+                Signature= userInfo.Signature.IsNullOrEmpty()? "却道天凉好个秋~" : userInfo.Signature.Trim(),
                 BasicUserInfo= TextCut(BasicUserInfo(userInfo),15),
                 PlaceInfo=PlaceInfo(userInfo)
             };
@@ -769,7 +769,7 @@ namespace Future.Service.Implement
                 Province = userInfo.Province.IsNullOrEmpty() ? "" : userInfo.Province,
                 City = userInfo.City.IsNullOrEmpty() ? "" : userInfo.City,
                 NickName = userInfo.NickName.Trim(),
-                Signature = userInfo.Signature.IsNullOrEmpty() ? "" : userInfo.Signature.Trim(),
+                Signature = userInfo.Signature.IsNullOrEmpty() ? "却道天凉好个秋~" : userInfo.Signature.Trim(),
             };
             return response;
         }
