@@ -13,6 +13,11 @@ namespace Future.Model.Entity.Letter
         public Guid AttentionId { get; set; }
 
         /// <summary>
+        /// 通过那个动态Id关注的此好友
+        /// </summary>
+        public Guid AttentionMomentId { get; set; }
+
+        /// <summary>
         /// 用户Id
         /// </summary>
         public long UId { get; set; }

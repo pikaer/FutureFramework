@@ -34,7 +34,7 @@ namespace Future.Repository
 
         private readonly string SELECT_OnlineNotifyEntity = "SELECT OnlineNotifyId,UId,PartnerUId,CreateTime,UpdateTime FROM dbo.hub_OnlineNotify ";
 
-        private readonly string SELECT_AttentionEntity = "SELECT AttentionId,UId,PartnerUId,CreateTime,UpdateTime FROM dbo.letter_Attention ";
+        private readonly string SELECT_AttentionEntity = "SELECT AttentionId,UId,PartnerUId,AttentionMomentId,CreateTime,UpdateTime FROM dbo.letter_Attention ";
 
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
@@ -1147,12 +1147,14 @@ namespace Future.Repository
                                    (AttentionId
                                    ,UId
                                    ,PartnerUId
+                                   ,AttentionMomentId
                                    ,CreateTime
                                    ,UpdateTime)
                              VALUES
                                    (@AttentionId
                                    ,@UId
                                    ,@PartnerUId
+                                   ,@AttentionMomentId
                                    ,@CreateTime
                                    ,@UpdateTime)";
                 return Db.Execute(sql, entity) > 0;

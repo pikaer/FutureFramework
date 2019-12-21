@@ -1093,6 +1093,7 @@ namespace Future.Service.Implement
                     AttentionId = Guid.NewGuid(),
                     UId = request.Content.UId,
                     PartnerUId = request.Content.PartnerUId,
+                    AttentionMomentId = request.Content.MomentId,
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
