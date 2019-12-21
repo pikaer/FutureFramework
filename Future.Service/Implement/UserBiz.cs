@@ -219,7 +219,7 @@ namespace Future.Service.Implement
             Task.Factory.StartNew(() =>
             {
                 var moment = letterDal.GetMoment(momentId);
-                if (moment == null||!moment.SubscribeMessageOpen)
+                if (moment == null)
                 {
                     return;
                 }
