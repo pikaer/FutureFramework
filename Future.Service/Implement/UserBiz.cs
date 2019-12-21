@@ -214,7 +214,7 @@ namespace Future.Service.Implement
             });
         }
 
-        public void SendMomentDiscussNotify(Guid momentId, string discussContent, PlatformEnum platform)
+        public void SendMomentDiscussNotify(Guid momentId,string discussContent)
         {
             Task.Factory.StartNew(() =>
             {
@@ -242,5 +242,32 @@ namespace Future.Service.Implement
             });
         }
 
+        public void SendDiscussReplyNotify(Guid momentId, long partnerUid, string discussContent)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var userInfo = LetterUserByUId(partnerUid);
+                if (userInfo == null)
+                {
+                    return;
+                }
+                var onlineInfo = OnLineUser(userInfo.UId);
+                if (onlineInfo == null || !onlineInfo.IsOnLine)
+                {
+                    var moment= letterDal.GetMoment(momentId);
+                    if (moment == null)
+                    {
+                        return;
+                    }
+                    string title = moment.TextContent;
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        //2016年8月2日 20:23
+                        title = string.Format("{0}发布的图片动态", moment.CreateTime.ToString("f"));
+                    }
+                    MiniAppFactory.Factory(userInfo.Platform).SendDiscussReplyNotify(userInfo.OpenId, title, discussContent);
+                }
+            });
+        }
     }
 }

@@ -51,6 +51,33 @@ namespace Future.CommonBiz.Impls
             return response != null && response.Errcode == 0;
         }
 
+        public bool SendDiscussReplyNotify(string toUserOpenId, string title, string content)
+        {
+            var message = new WeChatMessageContext<DiscussReplyNotifyData>()
+            {
+                touser = toUserOpenId,
+                template_id = "59880ab542241403ede33bb4c64f0166",
+                page = "pages/discovery/discovery",
+                data = new DiscussReplyNotifyData()
+                {
+                    thing1 = new Value(title),
+                    thing2 = new Value(content),
+                    date3 = new Value(DateTime.Now.ToString("f"))
+                }
+            };
+
+            var token = GetAccessToken();
+            if (token == null || token.Errcode != 0)
+            {
+                return false;
+            }
+
+            string url = string.Format("https://api.q.qq.com/api/json/subscribe/SendSubscriptionMessage?access_token={0}", token.Access_token);
+
+            var response = HttpHelper.HttpPost<object, WeChatResponseDTO>(url, message, 20);
+            return response != null && response.Errcode == 0;
+        }
+
         /// <summary>
         /// 获取小程序全局唯一后台接口调用凭据
         /// </summary>
@@ -70,5 +97,7 @@ namespace Future.CommonBiz.Impls
 
             return HttpHelper.HttpGet<GetOpenIdDTO>(url);
         }
+
+        
     }
 }

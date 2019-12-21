@@ -73,6 +73,8 @@ namespace Future.Service.Interface
         /// <summary>
         /// 给用户发送订阅消息
         /// </summary>
-        void SendMomentDiscussNotify(Guid momentId, string discussContent, PlatformEnum platform);
+        void SendMomentDiscussNotify(Guid momentId, string discussContent);
+
+        void SendDiscussReplyNotify(Guid pickUpId, long uid, string discussContent);
     }
 }

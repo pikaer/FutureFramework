@@ -198,8 +198,16 @@ namespace Future.Service.Implement
             };
             response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
 
-            //发送通知消息
-            userBiz.SendMomentDiscussNotify(pickUp.MomentId,request.Content.TextContent, request.Head.Platform);
+            if (pickUp.MomentUId != request.Head.UId)
+            {
+                //通知动态发布者，有人评论了他
+                userBiz.SendMomentDiscussNotify(pickUp.MomentId, request.Content.TextContent);
+            }
+            else
+            {
+                //通知评论者，发布动态的人回复了他
+                userBiz.SendDiscussReplyNotify(pickUp.MomentId,pickUp.PickUpUId, request.Content.TextContent);
+            }
             return response;
         }
 

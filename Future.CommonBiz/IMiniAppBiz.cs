@@ -13,6 +13,11 @@ namespace Future.CommonBiz
         bool SendMomentDiscussNotify(string toUserOpenId, string title, string content);
 
         /// <summary>
+        /// 评论被回复后，若对方不在线则发送通知
+        /// </summary>
+        bool SendDiscussReplyNotify(string toUserOpenId, string title, string content);
+
+        /// <summary>
         /// 检测文本内容是否合法
         /// </summary>
         bool MsgIsOk(string msg);

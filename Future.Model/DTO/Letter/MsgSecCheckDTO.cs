@@ -45,6 +45,19 @@ namespace Future.Model.DTO.Letter
         public string content { get; set; }
     }
 
+    public class WeChatResponseDTO
+    {
+        /// <summary>
+        /// 错误码 0:内容正常	87014:内容含有违法违规内容	
+        /// </summary>
+        public int Errcode { get; set; }
+
+        /// <summary>
+        /// 错误信息
+        /// </summary>
+        public string ErrMsg { get; set; }
+    }
+
     /// <summary>
     /// 模板消息
     /// </summary>
@@ -58,17 +71,16 @@ namespace Future.Model.DTO.Letter
     }
 
 
-    public class WeChatResponseDTO
+    /// <summary>
+    /// 模板消息
+    /// </summary>
+    public class DiscussReplyNotifyData
     {
-        /// <summary>
-        /// 错误码 0:内容正常	87014:内容含有违法违规内容	
-        /// </summary>
-        public int Errcode { get; set; }
+        public Value thing1 { get; set; }
 
-        /// <summary>
-        /// 错误信息
-        /// </summary>
-        public string ErrMsg { get; set; }
+        public Value thing2 { get; set; }
+
+        public Value date3 { get; set; }
     }
 
 }
