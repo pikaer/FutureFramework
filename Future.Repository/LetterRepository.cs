@@ -128,22 +128,39 @@ namespace Future.Repository
 
         public List<PickUpDTO> AttentionListByPageIndex(long uId, int pageIndex, int pageSize)
         {
-            var sql = @"SELECT moment.MomentId,
-                               useinfo.UId,
-                               useinfo.Gender,
-                               useinfo.BirthDate,
-                               useinfo.NickName,
-                               useinfo.HeadPhotoPath,
-                               moment.TextContent,
-                               moment.ImgContent,
-                               moment.CreateTime
-                        FROM dbo.letter_Attention attention 
-                        Inner Join letter_Moment moment on moment.UId= attention.PartnerUId
-                        Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
-                        Where attention.UId=@UId and moment.IsDelete=0 and moment.CreateTime>=attention.CreateTime
-                        Order by moment.CreateTime desc 
+            var sql = @"SELECT * FROM (
+                                      SELECT moment.MomentId,
+                                             useinfo.UId,
+                                             useinfo.Gender,
+                                             useinfo.BirthDate,
+                                             useinfo.NickName,
+                                             useinfo.HeadPhotoPath,
+                                             moment.TextContent,
+                                             moment.ImgContent,
+                                             moment.CreateTime
+                                      FROM dbo.letter_Attention attention 
+                                      Inner Join letter_Moment moment on moment.UId= attention.PartnerUId
+                                      Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
+                                      Where attention.UId=@UId and moment.IsDelete=0 and moment.CreateTime>=attention.CreateTime
+                                      
+                                      Union
+                                      
+                                      SELECT moment.MomentId,
+                                             useinfo.UId,
+                                             useinfo.Gender,
+                                             useinfo.BirthDate,
+                                             useinfo.NickName,
+                                             useinfo.HeadPhotoPath,
+                                             moment.TextContent,
+                                             moment.ImgContent,
+                                             moment.CreateTime
+                                      FROM dbo.letter_Attention attention 
+                                      Inner Join letter_Moment moment on moment.MomentId= attention.AttentionMomentId
+                                      Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
+                                      Where attention.UId=@UId and moment.IsDelete=0 ) temp
+                        Order by temp.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
-                        FETCH NEXT @FETCHCount ROWS ONLY";
+                        FETCH NEXT @FETCHCount ROWS ONLY ";
 
             using (var Db = GetDbConnection())
             {
