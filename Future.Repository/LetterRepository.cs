@@ -204,45 +204,6 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpEntity> PickUpListByPickUpUIdWithoutReply(long uId)
-        {
-            var sql = @"SELECT pick.PickUpId
-                              ,pick.MomentId
-                              ,pick.MomentUId
-                              ,pick.PickUpUId
-                              ,pick.IsUserDelete
-                              ,pick.IsPartnerDelete
-                              ,pick.CreateTime
-                              ,pick.UpdateTime
-                          FROM dbo.letter_PickUp pick
-                          Left join letter_Discuss dis on pick.PickUpId=dis.PickUpId
-                          Where PickUpUId=@UId and dis.PickUpId is Null";
-            using (var Db = GetDbConnection())
-            {
-                return Db.Query<PickUpEntity>(sql, new { UId = uId }).AsList();
-            }
-        }
-
-        public List<CollectDTO> CollectListByUId(long uId, int pageIndex, int pageSize)
-        {
-            using (var Db = GetDbConnection())
-            {
-                var sql = @"SELECT collect.CollectId
-                              ,moment.UId
-                              ,moment.MomentId
-                              ,moment.TextContent
-                        	  ,moment.ImgContent
-                              ,collect.PickUpId
-                              ,collect.CreateTime
-                        FROM dbo.letter_Collect collect
-                        Inner Join dbo.letter_Moment moment 
-                        On collect.MomentId=moment.MomentId
-                        Where collect.UId=@UId
-                        Order by collect.CreateTime desc OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
-                return Db.Query<CollectDTO>(sql, new { UId = uId, Skip = (pageIndex - 1) * pageSize, Take = pageSize }).AsList();
-            }
-        }
-
         public List<PickUpEntity> PickUpListByPickUpUId(long uId)
         {
             var sql = @"SELECT pick.PickUpId
@@ -587,7 +548,27 @@ namespace Future.Repository
                 return Db.Query<CoinDetailEntity>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
             }
         }
-        
+
+        public List<CollectDTO> CollectListByUId(long uId, int pageIndex, int pageSize)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT collect.CollectId
+                              ,moment.UId
+                              ,moment.MomentId
+                              ,moment.TextContent
+                        	  ,moment.ImgContent
+                              ,collect.PickUpId
+                              ,collect.CreateTime
+                        FROM dbo.letter_Collect collect
+                        Inner Join dbo.letter_Moment moment 
+                        On collect.MomentId=moment.MomentId
+                        Where collect.UId=@UId
+                        Order by collect.CreateTime desc 
+                        OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
+                return Db.Query<CollectDTO>(sql, new { UId = uId, Skip = (pageIndex - 1) * pageSize, Take = pageSize }).AsList();
+            }
+        }
         public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType)
         {
             using (var Db = GetDbConnection())
@@ -706,6 +687,18 @@ namespace Future.Repository
                                    UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 return Db.Execute(sql, new {UpdateTime = DateTime.Now, PickUpId = pickUpId}) > 0;
+            }
+        }
+
+        public bool UpdateAllPickDeleteByUId(long uid)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsPickUpDelete =1,
+                                   UpdateTime = @UpdateTime
+                               Where PickUpUId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uid }) > 0;
             }
         }
 

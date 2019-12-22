@@ -605,18 +605,13 @@ namespace Future.Service.Implement
 
         public ResponseContext<ClearAllBottleResponse> ClearAllBottle(RequestContext<ClearAllBottleRequest> request)
         {
-            var response = new ResponseContext<ClearAllBottleResponse>()
+            return new ResponseContext<ClearAllBottleResponse>()
             {
                 Content = new ClearAllBottleResponse()
+                {
+                    IsExecuteSuccess = letterDal.UpdateAllPickDeleteByUId(request.Content.UId)
+                }
             };
-            var pickUpList = letterDal.PickUpListByPickUpUIdWithoutReply(request.Content.UId);
-            foreach(var item in pickUpList)
-            {
-                letterDal.UpdatePickDelete(item.PickUpId);
-            }
-            
-            response.Content.IsExecuteSuccess = true;
-            return response;
         }
 
         public ResponseContext<ClearUnReadCountResponse> ClearUnReadCount(RequestContext<ClearUnReadCountRequest> request)
