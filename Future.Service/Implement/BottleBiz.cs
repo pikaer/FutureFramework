@@ -68,18 +68,16 @@ namespace Future.Service.Implement
         {
             var response = new ResponseContext<DiscussDetailResponse>();
 
-            var moment = letterDal.GetMoment(request.Content.MomentId);
-            if (moment == null)
-            {
-                return response;
-            }
+            MomentEntity moment;
             PickUpEntity pickUp;
             if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
                 pickUp = letterDal.PickUp(request.Content.PickUpId);
+                moment = letterDal.GetMoment(pickUp.MomentId);
             }
             else
             {
+                moment = letterDal.GetMoment(request.Content.MomentId);
                 pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
                 if (pickUp == null)
                 {
@@ -96,7 +94,10 @@ namespace Future.Service.Implement
                     letterDal.InsertPickUp(pickUp);
                 }
             }
-            
+            if (moment == null)
+            {
+                return response;
+            }
             var user= userBiz.LetterUserByUId(moment.UId);
             if (user == null)
             {
