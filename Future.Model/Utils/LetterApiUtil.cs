@@ -179,12 +179,6 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
-
-        /// <summary>
-        /// 对方Id
-        /// </summary>
-        public long PartnerUId { get; set; }
-
     }
 
     public class DiscussDetailResponse
@@ -544,10 +538,6 @@ namespace Future.Model.Utils
         /// </summary>
         public long UId { get; set; }
 
-        /// <summary>
-        /// 对方Id
-        /// </summary>
-        public long PartnerUId { get; set; }
         
         /// <summary>
         /// 文本内容

@@ -67,6 +67,11 @@ namespace Future.Service.Implement
         {
             var response = new ResponseContext<DiscussDetailResponse>();
 
+            var moment = letterDal.GetMoment(request.Content.MomentId);
+            if (moment == null)
+            {
+                return response;
+            }
             PickUpEntity pickUp;
             if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
@@ -80,8 +85,8 @@ namespace Future.Service.Implement
                     pickUp = new PickUpEntity()
                     {
                         PickUpId = Guid.NewGuid(),
-                        MomentId = request.Content.MomentId,
-                        MomentUId = request.Content.PartnerUId,
+                        MomentId = moment.MomentId,
+                        MomentUId = moment.UId,
                         PickUpUId = request.Content.UId,
                         FromPage = PickUpFromPageEnum.AttentionPage,
                         CreateTime = DateTime.Now,
@@ -90,11 +95,7 @@ namespace Future.Service.Implement
                     letterDal.InsertPickUp(pickUp);
                 }
             }
-            var moment= letterDal.GetMoment(pickUp.MomentId);
-            if (moment == null)
-            {
-                return response;
-            }
+            
             var user= userBiz.LetterUserByUId(moment.UId);
             if (user == null)
             {
@@ -155,6 +156,7 @@ namespace Future.Service.Implement
             {
                 Content = new DiscussResponse()
             };
+            var moment = letterDal.GetMoment(request.Content.MomentId);
             PickUpEntity pickUp;
             if(request.Content.PickUpId!=null&& request.Content.PickUpId != Guid.Empty)
             {
@@ -168,8 +170,8 @@ namespace Future.Service.Implement
                     pickUp = new PickUpEntity() 
                     {
                         PickUpId=Guid.NewGuid(),
-                        MomentId= request.Content.MomentId,
-                        MomentUId= request.Content.PartnerUId,
+                        MomentId= moment.MomentId,
+                        MomentUId= moment.UId,
                         PickUpUId=request.Content.UId,
                         FromPage= PickUpFromPageEnum.AttentionPage,
                         CreateTime=DateTime.Now,
