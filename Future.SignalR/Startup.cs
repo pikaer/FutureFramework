@@ -35,8 +35,6 @@ namespace Future.SignalR
                     await context.Response.WriteAsync("Hello World!");
                 });
                 endpoints.MapHub<OnLineHub>("/onLineHub");
-                endpoints.MapHub<OnChatHub>("/onChatHub");
-                endpoints.MapHub<ChatListHub>("/chatListHub");
             });
             app.Run(async (context) =>
             {
