@@ -41,6 +41,8 @@ namespace Future.Model.Utils
 
         public long UId { get; set; }
 
+        public Guid MomentId { get; set; }
+
         /// <summary>
         /// 头像路径
         /// </summary>

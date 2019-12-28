@@ -49,6 +49,7 @@ namespace Future.Service.Implement
                     {
                         PickUpId = item.PickUpId,
                         UId= item.UId,
+                        MomentId = item.MomentId,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
                         TextContent = TextCut(item.TextContent,15),

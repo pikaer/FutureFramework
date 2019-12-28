@@ -433,6 +433,7 @@ namespace Future.Repository
             {
                 var sql = @"SELECT *
 				            From    (SELECT pick.PickUpId,
+                                         pick.MomentId,
 				          				 dis1Temp.CreateTime,
                                          dis1Temp.DiscussContent as 'TextContent',
 				          			     us.UId,
@@ -451,6 +452,7 @@ namespace Future.Repository
 				          		  Union
                           
 				          		  SELECT pick.PickUpId,
+                                         pick.MomentId,
 				          				 dis2Temp.CreateTime,
                                            dis2Temp.DiscussContent,
 				          				 us.UId,
