@@ -13,10 +13,12 @@ namespace Future.CommonBiz.Impls
             {
                 return true;
             }
-            string url = string.Format("https://api.q.qq.com/wxa/msg_sec_check?access_token={0}", token.Access_token);
+            string url = string.Format("https://api.q.qq.com/api/json/security/MsgSecCheck?access_token={0}", token.Access_token);
 
             var request = new MsgSecCheckRequestDTO()
             {
+                access_token= token.Access_token,
+                appid= JsonSettingHelper.AppSettings["BingoAppId"],
                 content = msg
             };
             var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, WeChatResponseDTO>(url, request, 20);
