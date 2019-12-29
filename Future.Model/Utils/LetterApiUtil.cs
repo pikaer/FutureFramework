@@ -170,12 +170,12 @@ namespace Future.Model.Utils
         /// <summary>
         /// 互动Id
         /// </summary>
-        public Guid PickUpId { get; set; }
+        public Guid? PickUpId { get; set; }
 
         /// <summary>
         /// 动态Id
         /// </summary>
-        public Guid MomentId { get; set; }
+        public Guid? MomentId { get; set; }
 
         /// <summary>
         /// 用户Id

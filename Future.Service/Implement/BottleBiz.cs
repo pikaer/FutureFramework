@@ -72,13 +72,13 @@ namespace Future.Service.Implement
             PickUpEntity pickUp;
             if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
-                pickUp = letterDal.PickUp(request.Content.PickUpId);
+                pickUp = letterDal.PickUp(request.Content.PickUpId.Value);
                 moment = letterDal.GetMoment(pickUp.MomentId);
             }
             else
             {
-                moment = letterDal.GetMoment(request.Content.MomentId);
-                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
+                moment = letterDal.GetMoment(request.Content.MomentId.Value);
+                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId.Value, request.Content.UId);
                 if (pickUp == null)
                 {
                     pickUp = new PickUpEntity()
