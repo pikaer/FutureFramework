@@ -414,6 +414,7 @@ namespace Future.Service.Implement
             };
 
             response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
+            response.Content.MomentId = moment.MomentId;
             if (response.Content.IsExecuteSuccess)
             {
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, "发布动态，奖励金币");

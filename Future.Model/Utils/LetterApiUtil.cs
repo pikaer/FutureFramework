@@ -482,6 +482,11 @@ namespace Future.Model.Utils
         /// 是否执行成功
         /// </summary>
         public bool IsExecuteSuccess { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
     }
     #endregion
 
