@@ -103,7 +103,8 @@ namespace Future.Service.Implement
             {
                 return response;
             }
-
+            var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+            var momentUserOnline = letterDal.GetOnLineUser(moment.UId);
             response.Content = new DiscussDetailResponse()
             {
                 MomentId = moment.MomentId,
@@ -115,7 +116,8 @@ namespace Future.Service.Implement
                 TextContent = moment.TextContent.Trim(),
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
                 CreateTime= moment.CreateTime.GetDateDesc(true),
-                DiscussDetailList=new List<DiscussDetailType>()
+                DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
+                DiscussDetailList =new List<DiscussDetailType>()
             };
 
             DateTime? deleteTime;
@@ -131,7 +133,6 @@ namespace Future.Service.Implement
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
                 {
                     var pickUpUser = userBiz.LetterUserByUId(item.UId);

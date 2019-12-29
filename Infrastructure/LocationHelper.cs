@@ -15,7 +15,7 @@ namespace Infrastructure
             double distance = GetDistance(lat1, lng1, lat2, lng2);
             if (distance < 0)
             {
-                return "";
+                return "远方";
             }
             if (distance == 0)
             {

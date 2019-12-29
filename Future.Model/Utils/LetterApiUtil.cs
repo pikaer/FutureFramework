@@ -231,6 +231,11 @@ namespace Future.Model.Utils
         public string CreateTime { get; set; }
 
         /// <summary>
+        /// 距离描述
+        /// </summary>
+        public string DistanceDesc { get; set; }
+
+        /// <summary>
         /// 互动列表
         /// </summary>
         public List<DiscussDetailType> DiscussDetailList { get; set; }
