@@ -111,7 +111,8 @@ namespace Future.Service.Implement
                 MomentUId = moment.UId,
                 HeadImgPath= user.HeadPhotoPath.GetImgPath(),
                 NickName= user.NickName.Trim(),
-                TextContent= moment.TextContent.Trim(),
+                Gender = user.Gender,
+                TextContent = moment.TextContent.Trim(),
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
                 CreateTime= moment.CreateTime.GetDateDesc(true),
                 DiscussDetailList=new List<DiscussDetailType>()
@@ -130,6 +131,7 @@ namespace Future.Service.Implement
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
                 {
                     var pickUpUser = userBiz.LetterUserByUId(item.UId);
@@ -137,12 +139,15 @@ namespace Future.Service.Implement
                     {
                         continue;
                     }
+                    var online = letterDal.GetOnLineUser(item.UId);
                     var dto = new DiscussDetailType()
                     {
                         PickUpUId=item.UId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
+                        Gender = pickUpUser.Gender,
                         TextContent = item.DiscussContent,
+                        DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                         RecentChatTime = item.CreateTime.GetDateDesc(true)
                     };
 
@@ -1285,6 +1290,19 @@ namespace Future.Service.Implement
             if (online.IsOnLine)
             {
                 return "当前在线";
+            }
+            else
+            {
+                var onChat = userBiz.OnChatHub(online.UId);
+                if (onChat!=null&&onChat.IsOnLine)
+                {
+                    return "当前在线";
+                }
+                var onChatList= userBiz.ChatListHub(online.UId);
+                if (onChatList!=null&&onChatList.IsOnLine)
+                {
+                    return "当前在线";
+                }
             }
 
             if (online.LastOnLineTime.HasValue)

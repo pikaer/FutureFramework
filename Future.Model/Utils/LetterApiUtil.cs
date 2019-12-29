@@ -196,6 +196,11 @@ namespace Future.Model.Utils
         public long MomentUId { get; set; }
 
         /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
         /// 互动Id
         /// </summary>
         public Guid PickUpId { get; set; }
@@ -233,6 +238,7 @@ namespace Future.Model.Utils
 
     public class DiscussDetailType
     {
+
         /// <summary>
         /// 参与评论的用户
         /// </summary>
@@ -249,9 +255,19 @@ namespace Future.Model.Utils
         public string NickName { get; set; }
 
         /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }
+
+        /// <summary>
+        /// 距离描述
+        /// </summary>
+        public string DistanceDesc { get; set; }
 
         /// <summary>
         /// 最近一次交谈时间
