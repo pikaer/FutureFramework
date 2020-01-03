@@ -109,6 +109,7 @@ namespace Future.Repository
                                useinfo.BirthDate,
                                useinfo.NickName,
                                useinfo.HeadPhotoPath,
+                               moment.MomentUId,
                                moment.TextContent,
                                moment.ImgContent,
                                moment.CreateTime

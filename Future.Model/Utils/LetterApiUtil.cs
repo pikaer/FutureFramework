@@ -330,6 +330,11 @@ namespace Future.Model.Utils
     public class PickUpType
     {
         /// <summary>
+        /// 自己发布的动态在右边
+        /// </summary>
+        public bool IsMyMoment { get; set; }
+
+        /// <summary>
         /// 互动Id
         /// </summary>
         public Guid PickUpId { get; set; }

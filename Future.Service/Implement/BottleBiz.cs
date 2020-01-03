@@ -246,6 +246,7 @@ namespace Future.Service.Implement
                     var online = userBiz.OnLineUser(item.UId);
                     var dto = new PickUpType()
                     {
+                        IsMyMoment=request.Content.UId== item.MomentUId,
                         PickUpId = item.PickUpId,
                         MomentId= item.MomentId,
                         UId = item.UId,
@@ -376,6 +377,7 @@ namespace Future.Service.Implement
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 response.Content.PickUpList.Add(new PickUpType()
                 {
+                    IsMyMoment=false,
                     PickUpId = pickUp.PickUpId,
                     MomentId= pickUp.MomentId,
                     UId = moment.UId,
@@ -418,6 +420,21 @@ namespace Future.Service.Implement
             if (response.Content.IsExecuteSuccess)
             {
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PublishReward, "发布动态，奖励金币");
+
+                var pickUp = new PickUpEntity()
+                {
+                    PickUpId = Guid.NewGuid(),
+                    MomentId = moment.MomentId,
+                    MomentUId = moment.UId,
+                    PickUpUId = moment.UId,
+                    FromPage = PickUpFromPageEnum.Default,
+                    IsPickUpDelete = false,
+                    IsUserDelete = false,
+                    IsPartnerDelete = false,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+                letterDal.InsertPickUp(pickUp);
             }
 
             return response;

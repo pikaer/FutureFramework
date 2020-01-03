@@ -20,6 +20,8 @@ namespace Future.Model.DTO.Letter
 
         public string ImgContent { get; set; }
 
+        public long MomentUId { get; set; }
+
         /// <summary>
         /// 参与评论的用户
         /// </summary>
