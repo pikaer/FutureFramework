@@ -49,6 +49,18 @@ namespace Future.Model.DTO.Letter
         public string content { get; set; }
     }
 
+    /// <summary>
+    /// 文本内容安全检测
+    /// </summary>
+    [Serializable]
+    public class WeChatMsgSecCheckRequestDTO
+    {
+        /// <summary>
+        /// 要检测的文本内容，长度不超过 500KB
+        /// </summary>
+        public string content { get; set; }
+    }
+
     public class WeChatResponseDTO
     {
         /// <summary>

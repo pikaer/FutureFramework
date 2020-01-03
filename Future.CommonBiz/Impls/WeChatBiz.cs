@@ -15,11 +15,11 @@ namespace Future.CommonBiz.Impls
             }
             string url = string.Format("https://api.weixin.qq.com/wxa/msg_sec_check?access_token={0}", token.Access_token);
 
-            var request = new MsgSecCheckRequestDTO()
+            var request = new WeChatMsgSecCheckRequestDTO()
             {
                 content = msg
             };
-            var response = HttpHelper.HttpPost<MsgSecCheckRequestDTO, WeChatResponseDTO>(url, request, 20);
+            var response = HttpHelper.HttpPost<WeChatMsgSecCheckRequestDTO, WeChatResponseDTO>(url, request, 20);
             return response != null && response.Errcode == 0;
         }
 
