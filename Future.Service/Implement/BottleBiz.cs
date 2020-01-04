@@ -144,6 +144,7 @@ namespace Future.Service.Implement
                     var dto = new DiscussDetailType()
                     {
                         PickUpUId=item.UId,
+                        IsMyReply= item.UId==request.Content.UId,
                         HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
                         NickName = pickUpUser.NickName,
                         Gender = pickUpUser.Gender,
