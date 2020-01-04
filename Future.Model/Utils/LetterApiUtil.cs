@@ -243,6 +243,10 @@ namespace Future.Model.Utils
 
     public class DiscussDetailType
     {
+        /// <summary>
+        /// 是否是自己的评论
+        /// </summary>
+        public bool IsMyReply { get; set; }
 
         /// <summary>
         /// 参与评论的用户
