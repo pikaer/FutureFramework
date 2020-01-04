@@ -109,6 +109,7 @@ namespace Future.Service.Implement
             {
                 MomentId = moment.MomentId,
                 PickUpId= pickUp.PickUpId,
+                IsMyMoment= moment.UId==request.Content.UId,
                 MomentUId = moment.UId,
                 HeadImgPath= user.HeadPhotoPath.GetImgPath(),
                 NickName= user.NickName.Trim(),

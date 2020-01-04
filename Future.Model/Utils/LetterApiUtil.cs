@@ -196,6 +196,11 @@ namespace Future.Model.Utils
         public long MomentUId { get; set; }
 
         /// <summary>
+        /// 自己发布的动态在右边
+        /// </summary>
+        public bool IsMyMoment { get; set; }
+
+        /// <summary>
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
         /// </summary>
         public GenderEnum Gender { get; set; }
