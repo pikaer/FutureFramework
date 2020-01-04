@@ -133,7 +133,7 @@ namespace Future.Service.Implement
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
-                foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
+                foreach (var item in discussList.OrderBy(a=>a.CreateTime))
                 {
                     var pickUpUser = userBiz.LetterUserByUId(item.UId);
                     if (pickUpUser == null)
