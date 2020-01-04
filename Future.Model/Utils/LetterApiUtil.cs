@@ -279,6 +279,11 @@ namespace Future.Model.Utils
         public string TextContent { get; set; }
 
         /// <summary>
+        /// 图片内容
+        /// </summary>
+        public string ImgContent { get; set; }
+
+        /// <summary>
         /// 距离描述
         /// </summary>
         public string DistanceDesc { get; set; }
