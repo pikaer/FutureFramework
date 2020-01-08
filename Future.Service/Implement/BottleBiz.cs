@@ -121,19 +121,6 @@ namespace Future.Service.Implement
                 DiscussDetailList =new List<DiscussDetailType>()
             };
 
-            response.Content.DiscussDetailList.Add(new DiscussDetailType()
-            {
-                IsMyReply= response.Content.IsMyMoment,
-                PickUpUId = response.Content.MomentUId,
-                HeadImgPath = response.Content.HeadImgPath,
-                NickName = response.Content.NickName,
-                Gender = response.Content.Gender,
-                TextContent = response.Content.TextContent,
-                ImgContent = response.Content.ImgContent,
-                DistanceDesc = response.Content.DistanceDesc,
-                RecentChatTime = response.Content.CreateTime
-            });
-
             DateTime? deleteTime;
             if (moment.UId == request.Head.UId)
             {
@@ -147,7 +134,7 @@ namespace Future.Service.Implement
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
-                foreach (var item in discussList.OrderBy(a=>a.CreateTime))
+                foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
                 {
                     var pickUpUser = userBiz.LetterUserByUId(item.UId);
                     if (pickUpUser == null)
