@@ -121,7 +121,8 @@ namespace Future.Service.Implement
                 Gender = user.Gender,
                 TextContent = moment.TextContent.Trim(),
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
-                CreateTime= moment.CreateTime.GetDateDesc(true),
+                OnLineDesc= momentUserOnline.LastOnLineTime.GetOnlineDesc(momentUserOnline.IsOnLine),
+                CreateTime = moment.CreateTime.GetDateDesc(true),
                 DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
                 DiscussDetailList =new List<DiscussDetailType>()
             };
