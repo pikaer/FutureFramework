@@ -64,6 +64,16 @@ namespace Future.Model.Utils
         public string RecentChatTime { get; set; }
 
         /// <summary>
+        /// 在线状态描述
+        /// </summary>
+        public string OnLineDesc { get; set; }
+
+        /// <summary>
+        /// 距离描述
+        /// </summary>
+        public string DistanceDesc { get; set; }
+
+        /// <summary>
         /// 未读数量
         /// </summary>
         public string UnReadCount { get; set; }
@@ -239,6 +249,11 @@ namespace Future.Model.Utils
         /// 距离描述
         /// </summary>
         public string DistanceDesc { get; set; }
+
+        /// <summary>
+        /// 在线状态描述
+        /// </summary>
+        public string OnLineDesc { get; set; }
 
         /// <summary>
         /// 互动列表

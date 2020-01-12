@@ -433,10 +433,14 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql = @"SELECT *
-				            From    (SELECT pick.PickUpId,
+				            From  (SELECT pick.PickUpId,
                                          pick.MomentId,
 				          				 dis1Temp.CreateTime,
                                          dis1Temp.DiscussContent as 'TextContent',
+                                         online.Latitude,
+                                         online.Longitude,
+                                         online.IsOnLine,
+                                         online.LastOnLineTime,
 				          			     us.UId,
 				          				 us.NickName,
 				          			     us.HeadPhotoPath
@@ -448,14 +452,19 @@ namespace Future.Repository
 				          		              From letter_Discuss dis1) dis1Temp
 				          				on dis1Temp.PickUpId=pick.PickUpId and dis1Temp.rownum=1
 				          		  Inner join letter_LetterUser us on us.UId=pick.MomentUId
-                                    Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0
+                                  Inner join dbo.hub_OnLineUserHub online on online.UId=pick.MomentUId
+                                  Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0
                           
 				          		  Union
                           
 				          		  SELECT pick.PickUpId,
                                          pick.MomentId,
 				          				 dis2Temp.CreateTime,
-                                           dis2Temp.DiscussContent,
+                                         dis2Temp.DiscussContent,
+                                         online.Latitude,
+                                         online.Longitude,
+                                         online.IsOnLine,
+                                         online.LastOnLineTime,
 				          				 us.UId,
 				          			     us.NickName,
 				          			     us.HeadPhotoPath
@@ -467,7 +476,8 @@ namespace Future.Repository
 				          		              From letter_Discuss dis2) dis2Temp
 				          				on dis2Temp.PickUpId=pick.PickUpId and dis2Temp.rownum=1
 				          		  Inner join letter_LetterUser us on us.UId=pick.PickUpUId
-                                    Where pick.MomentUId=@UId and pick.IsUserDelete=0) temp
+                                  Inner join dbo.hub_OnLineUserHub online on online.UId=pick.PickUpUId
+                                  Where pick.MomentUId=@UId and pick.IsUserDelete=0) temp
 				           Order by temp.CreateTime desc 
                            OFFSET @OFFSETCount ROWS 
                            FETCH NEXT @FETCHCount ROWS ONLY";

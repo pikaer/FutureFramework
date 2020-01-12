@@ -1,4 +1,5 @@
 ﻿using Future.CommonBiz;
+using Future.Model.DTO.Letter;
 using Future.Model.Entity.Hubs;
 using Future.Model.Entity.Letter;
 using Future.Model.Enum.Letter;
@@ -40,16 +41,20 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
+
             var pickUpList = letterDal.PickUpDTOs(request.Content.UId, request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
-                foreach(var item in pickUpList)
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                foreach (var item in pickUpList)
                 {
                     var dto = new DiscussType()
                     {
                         PickUpId = item.PickUpId,
                         UId= item.UId,
                         MomentId = item.MomentId,
+                        OnLineDesc= item.LastOnLineTime.GetOnlineDesc(item.IsOnLine),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(item.Latitude, item.Longitude, userOnline != null ? userOnline.Latitude : 0, userOnline != null ? userOnline.Longitude : 0),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
                         TextContent = TextCut(item.TextContent,15),
@@ -121,6 +126,7 @@ namespace Future.Service.Implement
                 DiscussDetailList =new List<DiscussDetailType>()
             };
 
+
             DateTime? deleteTime;
             if (moment.UId == request.Head.UId)
             {
@@ -134,30 +140,58 @@ namespace Future.Service.Implement
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
+                var keyValues = new Dictionary<long, PickUpDTO>();
+                foreach(var item in discussList.GroupBy(a => a.UId))
+                {
+                    keyValues.Add(item.Key, buildPickUpDTO(item.Key));
+                }
                 foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
                 {
-                    var pickUpUser = userBiz.LetterUserByUId(item.UId);
-                    if (pickUpUser == null)
+                    var pickDto = keyValues.FirstOrDefault(a => a.Key == item.UId);
+                    if (pickDto.Value==null)
                     {
                         continue;
                     }
-                    var online = letterDal.GetOnLineUser(item.UId);
                     var dto = new DiscussDetailType()
                     {
                         PickUpUId=item.UId,
                         IsMyReply= item.UId==request.Content.UId,
-                        HeadImgPath = pickUpUser.HeadPhotoPath.GetImgPath(),
-                        NickName = pickUpUser.NickName,
-                        Gender = pickUpUser.Gender,
+                        HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
+                        NickName = pickDto.Value.NickName,
+                        Gender = pickDto.Value.Gender,
                         TextContent = item.DiscussContent,
-                        DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
+                        DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude,pickDto.Value.Latitude,pickDto.Value.Longitude),
                         RecentChatTime = item.CreateTime.GetDateDesc(true)
                     };
 
                     response.Content.DiscussDetailList.Add(dto);
                 }
+
+                var discuss = keyValues.FirstOrDefault(a => a.Key != request.Content.UId);
+                if (discuss.Value != null)
+                {
+                    response.Content.OnLineDesc = discuss.Value.LastOnLineTime.GetOnlineDesc(discuss.Value.IsOnLine);
+                }
             }
             return response;
+        }
+
+        private PickUpDTO buildPickUpDTO(long uid)
+        {
+            var user = userBiz.LetterUserByUId(uid);
+            var online = letterDal.GetOnLineUser(uid);
+            return new PickUpDTO()
+            {
+                NickName= user.NickName,
+                UId=uid,
+                HeadPhotoPath=user.HeadPhotoPath,
+                Gender=user.Gender,
+                BirthDate=user.BirthDate,
+                IsOnLine=online.IsOnLine,
+                LastOnLineTime=online.LastOnLineTime,
+                Latitude=online.Latitude,
+                Longitude=online.Longitude,
+            };
         }
 
         public ResponseContext<DiscussResponse> Discuss(RequestContext<DiscussRequest> request)
@@ -245,14 +279,21 @@ namespace Future.Service.Implement
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in pickUpList)
                 {
+                    DateTime? datetime = null;
+                    bool isonline = false;
                     var online = userBiz.OnLineUser(item.UId);
+                    if (online != null)
+                    {
+                        datetime = online.LastOnLineTime;
+                        isonline = online.IsOnLine;
+                    }
                     var dto = new PickUpType()
                     {
                         IsMyMoment=request.Content.UId== item.MomentUId,
                         PickUpId = item.PickUpId,
                         MomentId= item.MomentId,
                         UId = item.UId,
-                        OnLineDesc = OnlineDesc(online),
+                        OnLineDesc = datetime.GetOnlineDesc(isonline),
                         Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
@@ -293,12 +334,19 @@ namespace Future.Service.Implement
                 {
                     foreach (var item in pickUpList)
                     {
+                        DateTime? datetime = null;
+                        bool isonline = false;
                         var online = userBiz.OnLineUser(item.UId);
+                        if (online != null)
+                        {
+                            datetime = online.LastOnLineTime;
+                            isonline = online.IsOnLine;
+                        }
                         var dto = new PickUpType()
                         {
                             MomentId = item.MomentId,
                             UId = item.UId,
-                            OnLineDesc = OnlineDesc(online),
+                            OnLineDesc = datetime.GetOnlineDesc(isonline),
                             Gender = item.Gender,
                             Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                             HeadImgPath = item.HeadPhotoPath.GetImgPath(),
@@ -376,6 +424,13 @@ namespace Future.Service.Implement
                     moment.TextContent = TextCut(moment.TextContent, 18);
                 }
                 var partnerOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
+                DateTime? datetime = null;
+                bool isonline = false;
+                if (partnerOnline != null)
+                {
+                    datetime = partnerOnline.LastOnLineTime;
+                    isonline = partnerOnline.IsOnLine;
+                }
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
                 response.Content.PickUpList.Add(new PickUpType()
                 {
@@ -383,7 +438,7 @@ namespace Future.Service.Implement
                     PickUpId = pickUp.PickUpId,
                     MomentId= pickUp.MomentId,
                     UId = moment.UId,
-                    OnLineDesc= OnlineDesc(partnerOnline),
+                    OnLineDesc = datetime.GetOnlineDesc(isonline),
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
                     NickName= CommonHelper.CutNickName(letterUser.NickName,12),
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
@@ -1297,74 +1352,6 @@ namespace Future.Service.Implement
             });
         }
 
-        /// <summary>
-        /// 获取在线状态描述
-        /// </summary>
-        /// <param name="uId"></param>
-        /// <returns></returns>
-        public string OnlineDesc(OnLineUserHubEntity online)
-        {
-            if (online == null)
-            {
-                return "";
-            }
-            if (online.IsOnLine)
-            {
-                return "当前在线";
-            }
-            else
-            {
-                var onChat = userBiz.OnChatHub(online.UId);
-                if (onChat!=null&&onChat.IsOnLine)
-                {
-                    return "当前在线";
-                }
-                var onChatList= userBiz.ChatListHub(online.UId);
-                if (onChatList!=null&&onChatList.IsOnLine)
-                {
-                    return "当前在线";
-                }
-            }
-
-            if (online.LastOnLineTime.HasValue)
-            {
-                var second = DateTime.Now.Subtract(online.LastOnLineTime.Value).TotalSeconds;
-                if (0 < second && second < 300)
-                {
-                    return "当前在线";
-                }
-                else if (300 < second && second < 600)
-                {
-                    return "5分钟前在线";
-                }
-                else if (600 < second && second < 1200)
-                {
-                    return "10分钟前在线";
-                }
-                else if (1200 < second && second < 1800)
-                {
-                    return "20分钟前在线";
-                }
-                else if (1800 < second && second < 2400)
-                {
-                    return "30分钟前在线";
-                }
-                else if (2400 < second && second < 3000)
-                {
-                    return "40分钟前在线";
-                }
-                else if (3000 < second && second < 3600)
-                {
-                    return "50分钟前在线";
-                }
-                else
-                {
-                    return "";
-                }
-            }
-
-            return "";
-        }
 
         #endregion
     }

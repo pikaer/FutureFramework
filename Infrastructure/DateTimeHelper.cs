@@ -204,6 +204,49 @@ namespace Infrastructure
         }
 
         /// <summary>
+        /// 获取在线状态描述
+        /// </summary>
+        public static string GetOnlineDesc(this DateTime? datetime, bool isonline, string defaultValue="")
+        {
+            if (isonline)
+            {
+                return "当前在线";
+            }
+            if (datetime == null || !datetime.HasValue)
+            {
+                return defaultValue;
+            }
+            var second = DateTime.Now.Subtract(datetime.Value).TotalSeconds;
+            if (0 < second && second < 600)
+            {
+                return "当前在线";
+            }
+            else if (600 < second && second < 1200)
+            {
+                return "10分钟前在线";
+            }
+            else if (1200 < second && second < 1800)
+            {
+                return "20分钟前在线";
+            }
+            else if (1800 < second && second < 2400)
+            {
+                return "30分钟前在线";
+            }
+            else if (2400 < second && second < 3000)
+            {
+                return "40分钟前在线";
+            }
+            else if (3000 < second && second < 3600)
+            {
+                return "50分钟前在线";
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+        /// <summary>
         /// 根据出生日期计算年龄
         /// </summary>
         public static int GetAgeByBirthdate(this DateTime birthdate)

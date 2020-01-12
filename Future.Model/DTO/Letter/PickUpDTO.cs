@@ -40,6 +40,26 @@ namespace Future.Model.DTO.Letter
         public GenderEnum Gender { get; set; }
 
         /// <summary>
+        /// 是否在线状态
+        /// </summary>
+        public bool IsOnLine { get; set; }
+
+        /// <summary>
+        /// 纬度，范围为 -90~90，负数表示南纬
+        /// </summary>
+        public double Latitude { get; set; }
+
+        /// <summary>
+        /// 经度，范围为 -180~180，负数表示西经
+        /// </summary>
+        public double Longitude { get; set; }
+
+        /// <summary>
+        /// 最近在线时间（离线时的时间）
+        /// </summary>
+        public DateTime? LastOnLineTime { get; set; }
+
+        /// <summary>
         /// 生日（2018-08-20）
         /// </summary>
         public string BirthDate { get; set; }
