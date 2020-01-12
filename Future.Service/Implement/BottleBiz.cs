@@ -57,7 +57,7 @@ namespace Future.Service.Implement
                         DistanceDesc = LocationHelper.GetDistanceDesc(item.Latitude, item.Longitude, userOnline != null ? userOnline.Latitude : 0, userOnline != null ? userOnline.Longitude : 0),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         NickName = item.NickName,
-                        TextContent = TextCut(item.TextContent,15),
+                        TextContent = item.TextContent.TextCut(15),
                         UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
                         RecentChatTime = item.CreateTime.GetDateDesc()
                     };
@@ -117,14 +117,21 @@ namespace Future.Service.Implement
                 IsMyMoment= moment.UId==request.Content.UId,
                 MomentUId = moment.UId,
                 HeadImgPath= user.HeadPhotoPath.GetImgPath(),
-                NickName= user.NickName.Trim(),
+                NickName= user.NickName.Trim().TextCut(15),
                 Gender = user.Gender,
                 TextContent = moment.TextContent.Trim(),
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
-                OnLineDesc= momentUserOnline.LastOnLineTime.GetOnlineDesc(momentUserOnline.IsOnLine),
                 CreateTime = moment.CreateTime.GetDateDesc(true),
-                DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
-                DiscussDetailList =new List<DiscussDetailType>()
+                DiscussDetailList =new List<DiscussDetailType>(),
+                PartnerDetail=new PartnerDetailType()
+                {
+                    PartnerUId= moment.UId,
+                    Gender = user.Gender,
+                    HeadImgPath = user.HeadPhotoPath.GetImgPath(),
+                    NickName = user.NickName.Trim().TextCut(10),
+                    OnLineDesc = momentUserOnline.LastOnLineTime.GetOnlineDesc(momentUserOnline.IsOnLine),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
+                }
             };
 
 
@@ -158,7 +165,7 @@ namespace Future.Service.Implement
                         PickUpUId=item.UId,
                         IsMyReply= item.UId==request.Content.UId,
                         HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
-                        NickName = pickDto.Value.NickName,
+                        NickName = pickDto.Value.NickName.TextCut(15),
                         Gender = pickDto.Value.Gender,
                         TextContent = item.DiscussContent,
                         DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude,pickDto.Value.Latitude,pickDto.Value.Longitude),
@@ -171,7 +178,15 @@ namespace Future.Service.Implement
                 var discuss = keyValues.FirstOrDefault(a => a.Key != request.Content.UId);
                 if (discuss.Value != null)
                 {
-                    response.Content.OnLineDesc = discuss.Value.LastOnLineTime.GetOnlineDesc(discuss.Value.IsOnLine);
+                    response.Content.PartnerDetail = new PartnerDetailType()
+                    {
+                        PartnerUId= discuss.Key,
+                        Gender= discuss.Value.Gender,
+                        HeadImgPath = discuss.Value.HeadPhotoPath.GetImgPath(),
+                        NickName= discuss.Value.NickName.TextCut(10),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, discuss.Value.Latitude, discuss.Value.Longitude),
+                        OnLineDesc = discuss.Value.LastOnLineTime.GetOnlineDesc(discuss.Value.IsOnLine)
+                    };
                 }
             }
             return response;
@@ -422,7 +437,7 @@ namespace Future.Service.Implement
                 }
                 if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
                 {
-                    moment.TextContent = TextCut(moment.TextContent, 18);
+                    moment.TextContent = moment.TextContent.TextCut(18);
                 }
                 var partnerOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
                 DateTime? datetime = null;
@@ -622,7 +637,7 @@ namespace Future.Service.Implement
                 Gender = userInfo.Gender,
                 NickName = userInfo.NickName,
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
-                BasicUserInfo = TextCut(BasicUserInfo(userInfo), 15),
+                BasicUserInfo = BasicUserInfo(userInfo).TextCut(15),
                 PlaceInfo = PlaceInfo(userInfo),
                 Signature = userInfo.Signature,
                 IsRegister= userInfo.IsRegister,
@@ -801,7 +816,7 @@ namespace Future.Service.Implement
                 IsRegister = userInfo.IsRegister,
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "却道天凉好个秋~" : userInfo.Signature.Trim(),
-                BasicUserInfo= TextCut(BasicUserInfo(userInfo),15),
+                BasicUserInfo= BasicUserInfo(userInfo).TextCut(15),
                 PlaceInfo=PlaceInfo(userInfo)
             };
             if (request.Content.Type == 1)
@@ -1257,7 +1272,7 @@ namespace Future.Service.Implement
         /// <summary>
         /// 文本截取处理
         /// </summary>
-        private string TextCut(string text,int pos)
+        private string TetCut(string text,int pos)
         {
             if (string.IsNullOrEmpty(text)|| string.IsNullOrWhiteSpace(text))
             {

@@ -246,6 +246,39 @@ namespace Future.Model.Utils
         public string CreateTime { get; set; }
 
         /// <summary>
+        /// 参与评论的另一半信息
+        /// </summary>
+        public PartnerDetailType PartnerDetail { get; set; }
+
+        /// <summary>
+        /// 互动列表
+        /// </summary>
+        public List<DiscussDetailType> DiscussDetailList { get; set; }
+    }
+
+    public class PartnerDetailType
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long PartnerUId { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 头像路径
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
         /// 距离描述
         /// </summary>
         public string DistanceDesc { get; set; }
@@ -254,11 +287,6 @@ namespace Future.Model.Utils
         /// 在线状态描述
         /// </summary>
         public string OnLineDesc { get; set; }
-
-        /// <summary>
-        /// 互动列表
-        /// </summary>
-        public List<DiscussDetailType> DiscussDetailList { get; set; }
     }
 
     public class DiscussDetailType
