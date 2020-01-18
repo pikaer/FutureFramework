@@ -663,9 +663,9 @@ namespace Future.Repository
                                From dbo.letter_Moment moment
                                Inner Join dbo.letter_Attention attention 
                                On moment.UId=attention.PartnerUId 
-                               Inner Join dbo.hub_OnLineUserHub user
-                               On user.UId=attention.UId 
-                               Where (user.LastScanMomentTime is null or  user.LastScanMomentTime<moment.CreateTime ) and user.UId=@UId";
+                               Inner Join dbo.hub_OnLineUserHub userInfo
+                               On userInfo.UId=attention.UId 
+                               Where (userInfo.LastScanMomentTime is null or  userInfo.LastScanMomentTime<moment.CreateTime ) and userInfo.UId=@UId";
                 return Db.QueryFirstOrDefault<int>(sql, new { UId = uId });
             }
         }
