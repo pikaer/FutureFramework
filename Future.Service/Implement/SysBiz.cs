@@ -41,7 +41,7 @@ namespace Future.Service.Implement
 
         public List<FunctionDTO> GetMenus()
         {
-            var rtn = sysDal.GetFunctionDTOByFuncType((int)EnumFuncType.Module); ;
+            var rtn = sysDal.GetFunctionDTOByFuncType((int)EnumFuncType.Module);
             if (rtn == null || !rtn.Any())
             {
                 return rtn;

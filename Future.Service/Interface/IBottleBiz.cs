@@ -190,5 +190,15 @@ namespace Future.Service.Interface
         /// 更新用户位置信息
         /// </summary>
         ResponseContext<UpdateUserLocationResponse> UpdateUserLocation(RequestContext<UpdateUserLocationRequest> request);
+
+        /// <summary>
+        /// 获取用户关注好友新增动态（未查阅）数量
+        /// </summary>
+        ResponseContext<AttentionMomentCountResponse> AttentionMomentCount(RequestContext<AttentionMomentCountRequest> request);
+
+        /// <summary>
+        /// 更新最新浏览关注好友动态时间
+        /// </summary>
+        ResponseContext<UpdateLastScanMomentTimeResponse> UpdateLastScanMomentTime(RequestContext<UpdateLastScanMomentTimeRequest> request);
     }
 }

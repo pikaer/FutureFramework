@@ -41,5 +41,10 @@ namespace Future.Model.Entity.Hubs
         /// 最近在线时间（离线时的时间）
         /// </summary>
         public DateTime? LastOnLineTime { get; set; }
+
+        /// <summary>
+        /// 最近浏览关注好友的动态时间
+        /// </summary>
+        public DateTime? LastScanMomentTime { get; set; }
     }
 }

@@ -1427,4 +1427,40 @@ namespace Future.Model.Utils
         public bool Success { get; set; }
     }
     #endregion
+
+    #region AttentionMomentCount
+    public class AttentionMomentCountRequest
+    {
+        /// <summary>
+        /// 订阅者UId
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class AttentionMomentCountResponse
+    {
+        /// <summary>
+        /// 未读数量
+        /// </summary>
+        public string UnReadCountStr { get; set; }
+    }
+    #endregion
+
+    #region UpdateLastScanMomentTime
+    public class UpdateLastScanMomentTimeRequest
+    {
+        /// <summary>
+        /// 订阅者UId
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class UpdateLastScanMomentTimeResponse
+    {
+        /// <summary>
+        /// 是否成功
+        /// </summary>
+        public bool Success { get; set; }
+    }
+    #endregion
 }

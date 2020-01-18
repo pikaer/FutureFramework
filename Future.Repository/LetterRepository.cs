@@ -26,7 +26,7 @@ namespace Future.Repository
 
         private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.letter_CoinDetail ";
 
-        private readonly string SELECT_OnLineUserEntity = "SELECT OnLineId,UId,ConnectionId,IsOnLine,Latitude,Longitude,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_OnLineUserHub ";
+        private readonly string SELECT_OnLineUserEntity = "SELECT OnLineId,UId,ConnectionId,IsOnLine,Latitude,Longitude,LastOnLineTime,LastScanMomentTime,CreateTime,UpdateTime FROM dbo.hub_OnLineUserHub ";
 
         private readonly string SELECT_ChatListHubEntity = "SELECT ChatListHubId,UId,ConnectionId,IsOnLine,LastOnLineTime,CreateTime,UpdateTime FROM dbo.hub_ChatListHub ";
 
@@ -655,6 +655,21 @@ namespace Future.Repository
             }
         }
 
+        public int UnReadAttentionMomentCount(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"Select Count(0) 
+                               From dbo.letter_Moment moment
+                               Inner Join dbo.letter_Attention attention 
+                               On moment.UId=attention.PartnerUId 
+                               Inner Join dbo.hub_OnLineUserHub user
+                               On user.UId=attention.UId 
+                               Where (user.LastScanMomentTime is null or  user.LastScanMomentTime<moment.CreateTime ) and user.UId=@UId";
+                return Db.QueryFirstOrDefault<int>(sql, new { UId = uId });
+            }
+        }
+
         public bool UpdatePickCount(Guid momentId)
         {
             using (var Db = GetDbConnection())
@@ -664,6 +679,18 @@ namespace Future.Repository
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
                 return Db.Execute(sql, new { UpdateTime =DateTime.Now, MomentId = momentId }) > 0;
+            }
+        }
+
+        public bool UpdateLastScanMomentTime(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.hub_OnLineUserHub
+                               SET LastScanMomentTime =@UpdateTime
+                                  ,UpdateTime = @UpdateTime
+                               WHERE UId=@UId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, UId = uId }) > 0;
             }
         }
 
@@ -1183,7 +1210,6 @@ namespace Future.Repository
                 return Db.Execute(sql, entity) > 0;
             }
         }
-
 
         public bool InsertChatListHub(ChatListHubEntity chatListHub)
         {

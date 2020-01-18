@@ -1233,6 +1233,27 @@ namespace Future.Service.Implement
             return response;
         }
 
+        public ResponseContext<AttentionMomentCountResponse> AttentionMomentCount(RequestContext<AttentionMomentCountRequest> request)
+        {
+            return new ResponseContext<AttentionMomentCountResponse>()
+            {
+               Content = new AttentionMomentCountResponse()
+               {
+                   UnReadCountStr = UnRead(letterDal.UnReadAttentionMomentCount(request.Content.UId))
+               }
+            };
+        }
+
+        public ResponseContext<UpdateLastScanMomentTimeResponse> UpdateLastScanMomentTime(RequestContext<UpdateLastScanMomentTimeRequest> request)
+        {
+            return new ResponseContext<UpdateLastScanMomentTimeResponse>()
+            {
+                Content = new UpdateLastScanMomentTimeResponse()
+                {
+                    Success = letterDal.UpdateLastScanMomentTime(request.Content.UId)
+                }
+            };
+        }
         #endregion
 
         #region private Method
@@ -1269,26 +1290,6 @@ namespace Future.Service.Implement
             }
         }
 
-        /// <summary>
-        /// 文本截取处理
-        /// </summary>
-        private string TetCut(string text,int pos)
-        {
-            if (string.IsNullOrEmpty(text)|| string.IsNullOrWhiteSpace(text))
-            {
-                return text;
-            }
-            else if (text.Length < pos)
-            {
-                return text;
-            }
-            else
-            {
-                string result = text.Substring(0, pos);
-                return result + "...";
-            }
-        }
-        
         private string BasicUserInfo(LetterUserEntity userInfo)
         {
             if (userInfo == null)

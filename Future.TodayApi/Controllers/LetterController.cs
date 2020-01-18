@@ -1612,5 +1612,87 @@ namespace Future.TodayApi.Controllers
                 WriteServiceLog(MODULE, "UpdateUserLocation", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
             }
         }
+
+        /// <summary>
+        /// 获取用户关注好友新增动态（未查阅）数量
+        /// </summary>
+        [HttpPost]
+        public JsonResult AttentionMomentCount()
+        {
+            RequestContext<AttentionMomentCountRequest> request = null;
+            ResponseContext<AttentionMomentCountResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<AttentionMomentCountRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.AttentionMomentCount(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "AttentionMomentCount", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "AttentionMomentCount", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
+        /// 更新最新浏览关注好友动态时间
+        /// </summary>
+        [HttpPost]
+        public JsonResult UpdateLastScanMomentTime()
+        {
+            RequestContext<UpdateLastScanMomentTimeRequest> request = null;
+            ResponseContext<UpdateLastScanMomentTimeResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<UpdateLastScanMomentTimeRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.UpdateLastScanMomentTime(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateLastScanMomentTime", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "UpdateLastScanMomentTime", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
     }
 }
