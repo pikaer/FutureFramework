@@ -54,6 +54,11 @@ namespace Future.Model.Utils
         public string NickName { get; set; }
 
         /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
         /// 文本内容
         /// </summary>
         public string TextContent { get; set; }

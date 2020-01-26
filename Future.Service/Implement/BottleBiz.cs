@@ -54,6 +54,7 @@ namespace Future.Service.Implement
                         UId= item.UId,
                         MomentId = item.MomentId,
                         IsHide=item.IsHide,
+                        Gender=item.Gender,
                         OnLineDesc= item.LastOnLineTime.GetOnlineDesc(item.IsOnLine),
                         DistanceDesc = LocationHelper.GetDistanceDesc(item.Latitude, item.Longitude, userOnline != null ? userOnline.Latitude : 0, userOnline != null ? userOnline.Longitude : 0),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),

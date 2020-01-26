@@ -447,6 +447,7 @@ namespace Future.Repository
                                          online.LastOnLineTime,
 				          			     us.UId,
 				          				 us.NickName,
+                                         us.Gender,
 				          			     us.HeadPhotoPath
                                     FROM dbo.letter_PickUp pick
                                     Inner join (Select row_number() over(partition by dis1.PickUpId order by dis1.CreateTime desc) as rownum,
@@ -474,6 +475,7 @@ namespace Future.Repository
                                          online.LastOnLineTime,
 				          				 us.UId,
 				          			     us.NickName,
+                                         us.Gender,
 				          			     us.HeadPhotoPath
                                     FROM dbo.letter_PickUp pick
                                     Inner join (Select row_number() over(partition by dis2.PickUpId order by dis2.CreateTime desc) as rownum,
