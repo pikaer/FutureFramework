@@ -334,11 +334,11 @@ namespace Future.Service.Implement
 
                     if (item.IsHide)
                     {
-                        dto.NickName = CommonHelper.CutNickName(item.HidingNickName, 12);
+                        dto.NickName = CommonHelper.CutNickName(item.HidingNickName, 8);
                     }
                     else
                     {
-                        dto.NickName = CommonHelper.CutNickName(item.NickName, 12);
+                        dto.NickName = CommonHelper.CutNickName(item.NickName, 8);
                     }
                     response.Content.PickUpList.Add(dto);
                 }
@@ -387,7 +387,7 @@ namespace Future.Service.Implement
                             Gender = item.Gender,
                             Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                             HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                            NickName = CommonHelper.CutNickName(item.NickName,12),
+                            NickName = CommonHelper.CutNickName(item.NickName,8),
                             TextContent = item.TextContent,
                             ImgContent = item.ImgContent.GetImgPath(),
                             CreateTime = item.CreateTime.GetDateDesc(true),
@@ -478,7 +478,7 @@ namespace Future.Service.Implement
                     OnLineDesc = datetime.GetOnlineDesc(isonline),
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
                     IsHide=moment.IsHide,
-                    NickName=moment.IsHide? CommonHelper.CutNickName(moment.HidingNickName, 12): CommonHelper.CutNickName(letterUser.NickName, 12),
+                    NickName=moment.IsHide? CommonHelper.CutNickName(moment.HidingNickName, 8): CommonHelper.CutNickName(letterUser.NickName, 8),
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
                     Gender= letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),

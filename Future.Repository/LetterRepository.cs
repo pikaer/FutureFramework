@@ -435,7 +435,9 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql = @"SELECT *
-				            From  (SELECT pick.PickUpId,
+				            From  (    
+                                   --我捡起了别人发布的动态，对应互动内容
+                                   SELECT pick.PickUpId,
                                          pick.MomentId,
                                          moment.IsHide,
                                          moment.HidingNickName,
@@ -463,10 +465,11 @@ namespace Future.Repository
                           
 				          		  Union
                           
+                                  --我自己发布的动态被被别人评论，对应互动内容
 				          		  SELECT pick.PickUpId,
                                          pick.MomentId,
-                                         moment.IsHide,
-                                         moment.HidingNickName,
+                                         pick.IsHide,
+                                         pick.HidingNickName,
 				          				 dis2Temp.CreateTime,
                                          dis2Temp.DiscussContent,
                                          online.Latitude,

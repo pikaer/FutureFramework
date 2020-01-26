@@ -46,6 +46,16 @@ namespace Future.Model.Entity.Letter
         public bool IsPartnerDelete { get; set; }
 
         /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 匿名时候对应的昵称
+        /// </summary>
+        public string HidingNickName { get; set; }
+
+        /// <summary>
         /// 动态发布者最后删除时间
         /// </summary>
         public DateTime? UserLastDeleteTime { get; set; }
