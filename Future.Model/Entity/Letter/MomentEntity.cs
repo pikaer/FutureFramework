@@ -38,10 +38,23 @@ namespace Future.Model.Entity.Letter
         public bool IsReport { get; set; }
 
         /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 匿名时候对应的昵称
+        /// </summary>
+        public string HidingNickName { get; set; }
+
+        /// <summary>
         /// 被捡起次数
         /// </summary>
         public int ReplyCount { get; set; }
 
+        /// <summary>
+        /// 是否开启消息订阅
+        /// </summary>
         public bool SubscribeMessageOpen { get; set; }
     }
 }

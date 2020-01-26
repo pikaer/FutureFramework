@@ -313,12 +313,21 @@ namespace Future.Service.Implement
                         Gender =item.Gender,
                         Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                        NickName = CommonHelper.CutNickName(item.NickName,12),
+                        IsHide=item.IsHide,
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
                         DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                         CreateTime = item.CreateTime.GetDateDesc(true)
                     };
+
+                    if (item.IsHide)
+                    {
+                        dto.NickName = CommonHelper.CutNickName(item.HidingNickName, 12);
+                    }
+                    else
+                    {
+                        dto.NickName = CommonHelper.CutNickName(item.NickName, 12);
+                    }
                     response.Content.PickUpList.Add(dto);
                 }
             }
@@ -456,7 +465,8 @@ namespace Future.Service.Implement
                     UId = moment.UId,
                     OnLineDesc = datetime.GetOnlineDesc(isonline),
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
-                    NickName= CommonHelper.CutNickName(letterUser.NickName,12),
+                    IsHide=moment.IsHide,
+                    NickName=moment.IsHide? CommonHelper.CutNickName(moment.HidingNickName, 12): CommonHelper.CutNickName(letterUser.NickName, 12),
                     Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
                     Gender= letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),
@@ -484,6 +494,8 @@ namespace Future.Service.Implement
                 TextContent = request.Content.TextContent,
                 ImgContent = request.Content.ImgContent,
                 SubscribeMessageOpen=request.Content.SubscribeMessageOpen,
+                IsHide=request.Content.IsHide,
+                HidingNickName=request.Content.HidingNickName,
                 CreateTime=DateTime.Now,
                 UpdateTime=DateTime.Now
             };
@@ -1125,6 +1137,8 @@ namespace Future.Service.Implement
                 ImgContent=moment.ImgContent,
                 IsDelete=false,
                 IsReport=false,
+                IsHide=false,
+                HidingNickName=null,
                 ReplyCount=0,
                 CreateTime=DateTime.Now,
                 UpdateTime=DateTime.Now

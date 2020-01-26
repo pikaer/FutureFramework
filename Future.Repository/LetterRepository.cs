@@ -16,7 +16,7 @@ namespace Future.Repository
 
         private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Platform,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
-        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
+        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
         private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,FromPage,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
@@ -112,6 +112,8 @@ namespace Future.Repository
                                moment.UId as 'MomentUId',
                                moment.TextContent,
                                moment.ImgContent,
+                               moment.IsHide,
+                               moment.HidingNickName,
                                moment.CreateTime
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
@@ -582,6 +584,7 @@ namespace Future.Repository
                 return Db.Query<CollectDTO>(sql, new { UId = uId, Skip = (pageIndex - 1) * pageSize, Take = pageSize }).AsList();
             }
         }
+
         public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType)
         {
             using (var Db = GetDbConnection())
@@ -594,6 +597,8 @@ namespace Future.Repository
                               ,moment.IsReport
                               ,moment.ReplyCount
                               ,moment.CreateTime
+                              ,moment.IsHide
+                              ,moment.HidingNickName
                               ,moment.UpdateTime
                           FROM dbo.letter_Moment moment
                           Left join dbo.letter_PickUp pick
@@ -1034,7 +1039,9 @@ namespace Future.Repository
                                   ,ImgContent
                                   ,IsDelete
                                   ,IsReport
-                                  ,ReplyCount       
+                                  ,ReplyCount  
+                                  ,IsHide
+                                  ,HidingNickName  
                                   ,SubscribeMessageOpen       
                                   ,CreateTime
                                   ,UpdateTime)
@@ -1046,6 +1053,8 @@ namespace Future.Repository
                                   ,@IsDelete
                                   ,@IsReport
                                   ,@ReplyCount
+                                  ,@IsHide
+                                  ,@HidingNickName
                                   ,@SubscribeMessageOpen
                                   ,@CreateTime
                                   ,@UpdateTime)";
