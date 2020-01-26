@@ -77,6 +77,16 @@ namespace Future.Model.Utils
         /// 未读数量
         /// </summary>
         public string UnReadCount { get; set; }
+
+        /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 短昵称
+        /// </summary>
+        public string ShortNickName { get; set; }
     }
     #endregion
 

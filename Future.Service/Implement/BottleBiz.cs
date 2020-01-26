@@ -53,6 +53,7 @@ namespace Future.Service.Implement
                         PickUpId = item.PickUpId,
                         UId= item.UId,
                         MomentId = item.MomentId,
+                        IsHide=item.IsHide,
                         OnLineDesc= item.LastOnLineTime.GetOnlineDesc(item.IsOnLine),
                         DistanceDesc = LocationHelper.GetDistanceDesc(item.Latitude, item.Longitude, userOnline != null ? userOnline.Latitude : 0, userOnline != null ? userOnline.Longitude : 0),
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
@@ -61,6 +62,16 @@ namespace Future.Service.Implement
                         UnReadCount=UnReadCount(item.PickUpId,request.Content.UId),
                         RecentChatTime = item.CreateTime.GetDateDesc()
                     };
+
+                    if (item.IsHide)
+                    {
+                        dto.NickName = item.HidingNickName;
+                        dto.ShortNickName = item.HidingNickName.Substring(0, 1);
+                    }
+                    else
+                    {
+                        dto.NickName = item.NickName;
+                    }
 
                     response.Content.DiscussList.Add(dto);
                 }
