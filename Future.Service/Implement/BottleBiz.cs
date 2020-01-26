@@ -556,10 +556,19 @@ namespace Future.Service.Implement
             var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
             if (myMomentList.NotEmpty())
             {
+                var user = userBiz.LetterUserByUId(request.Content.UId);
+                if (user == null)
+                {
+                    return response;
+                }
                 response.Content.MomentList = myMomentList.Select(a => new MomentType()
                 {
                     MomentId=a.MomentId,
-                    TextContent=a.TextContent.Trim(),
+                    NickName=a.IsHide? CommonHelper.CutNickName(a.HidingNickName, 8) : CommonHelper.CutNickName(user.NickName, 8),
+                    ShortNickName=a.IsHide?a.HidingNickName.Substring(0,1):"",
+                    IsHide=a.IsHide,
+                    HeadImgPath=user.HeadPhotoPath.GetImgPath(),
+                    TextContent =a.TextContent.Trim(),
                     ImgContent=a.ImgContent.GetImgPath(),
                     PublishTime=a.CreateTime.GetDateDesc()
                 }).ToList();
@@ -966,18 +975,38 @@ namespace Future.Service.Implement
             var collectList = letterDal.CollectListByUId(request.Content.UId, request.Content.PageIndex, pageSize);
             if (collectList.NotEmpty())
             {
-                foreach(var item in collectList)
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                if (userOnline == null)
                 {
-                    response.Content.CollectList.Add(new CollectType()
+                    return response;
+                }
+                foreach (var item in collectList)
+                {
+                    var dto = new CollectType()
                     {
-                        CollectId=item.CollectId,
-                        MomentId=item.MomentId,
-                        UId=item.UId,
-                        PickUpId=item.PickUpId,
-                        TextContent =item.TextContent.Trim(),
-                        ImgContent=item.ImgContent.GetImgPath(),
-                        CreateTime=item.CreateTime.GetDateDesc()
-                    });
+                        CollectId = item.CollectId,
+                        MomentId = item.MomentId,
+                        UId = item.UId,
+                        Gender=item.Gender,
+                        IsHide = item.IsHide,
+                        PickUpId = item.PickUpId,
+                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                        OnLineDesc = item.LastOnLineTime.GetOnlineDesc(item.IsOnLine),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, item != null ? item.Latitude : 0, item != null ? item.Longitude : 0),
+                        TextContent = item.TextContent.Trim(),
+                        ImgContent = item.ImgContent.GetImgPath(),
+                        CreateTime = item.CreateTime.GetDateDesc()
+                    };
+                    if (item.IsHide)
+                    {
+                        dto.NickName= CommonHelper.CutNickName(item.HidingNickName, 8);
+                        dto.ShortNickName = item.HidingNickName.Substring(0, 1);
+                    }
+                    else
+                    {
+                        dto.NickName = CommonHelper.CutNickName(item.NickName,8);
+                    }
+                    response.Content.CollectList.Add(dto);
                 }
             }
             return response;

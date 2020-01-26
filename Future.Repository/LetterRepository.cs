@@ -582,13 +582,23 @@ namespace Future.Repository
                 var sql = @"SELECT collect.CollectId
                               ,moment.UId
                               ,moment.MomentId
+                              ,moment.IsHide
+                              ,moment.HidingNickName
                               ,moment.TextContent
                         	  ,moment.ImgContent
                               ,collect.PickUpId
                               ,collect.CreateTime
+                              ,us.NickName
+                              ,us.HeadPhotoPath
+                              ,us.Gender
+                              ,online.Latitude
+                              ,online.Longitude
+                              ,online.IsOnLine
+                              ,online.LastOnLineTime
                         FROM dbo.letter_Collect collect
-                        Inner Join dbo.letter_Moment moment 
-                        On collect.MomentId=moment.MomentId
+                        Inner Join dbo.letter_Moment moment On collect.MomentId=moment.MomentId
+                        Inner Join dbo.letter_LetterUser us On us.UId=moment.UId
+                        Inner join dbo.hub_OnLineUserHub online on online.UId=moment.UId
                         Where collect.UId=@UId
                         Order by collect.CreateTime desc 
                         OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";

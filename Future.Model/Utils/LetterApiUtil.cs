@@ -134,6 +134,26 @@ namespace Future.Model.Utils
         public string ImgContent { get; set; }
 
         /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 匿名时候对应的昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 短昵称
+        /// </summary>
+        public string ShortNickName { get; set; }
+
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
         /// 最近一次交谈时间
         /// </summary>
         public string PublishTime { get; set; }
@@ -1193,6 +1213,26 @@ namespace Future.Model.Utils
         public long UId { get; set; }
 
         /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
+        /// 短昵称
+        /// </summary>
+        public string ShortNickName { get; set; }
+
+        /// <summary>
         /// 互动Id
         /// </summary>
         public Guid PickUpId { get; set; }
@@ -1211,6 +1251,26 @@ namespace Future.Model.Utils
         /// 收藏时间
         /// </summary>
         public string CreateTime { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 年龄
+        /// </summary>
+        public int Age { get; set; }
+
+        /// <summary>
+        /// 在线状态描述
+        /// </summary>
+        public string OnLineDesc { get; set; }
+
+        /// <summary>
+        /// 距离描述
+        /// </summary>
+        public string DistanceDesc { get; set; }
     }
     #endregion
 
