@@ -132,7 +132,7 @@ namespace Future.Utility
         {
             Task.Factory.StartNew(() =>
             {
-                WriteLog(level, title, content, head, keyValuePairs);
+                WriteLog(level, title, content, head, keyValuePairs, ex);
             });
         }
 

@@ -200,5 +200,10 @@ namespace Future.Service.Interface
         /// 更新最新浏览关注好友动态时间
         /// </summary>
         ResponseContext<UpdateLastScanMomentTimeResponse> UpdateLastScanMomentTime(RequestContext<UpdateLastScanMomentTimeRequest> request);
+
+        /// <summary>
+        /// 更新用户身份状态
+        /// </summary>
+        ResponseContext<UpdateHidingResponse> UpdateHiding(RequestContext<UpdateHidingRequest> request);
     }
 }

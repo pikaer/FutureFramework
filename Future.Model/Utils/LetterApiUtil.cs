@@ -154,6 +154,11 @@ namespace Future.Model.Utils
         public string HeadImgPath { get; set; }
 
         /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知,此时一般是用户未授权
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
         /// 最近一次交谈时间
         /// </summary>
         public string PublishTime { get; set; }
@@ -314,6 +319,16 @@ namespace Future.Model.Utils
         public string NickName { get; set; }
 
         /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 短昵称
+        /// </summary>
+        public string ShortNickName { get; set; }
+
+        /// <summary>
         /// 距离描述
         /// </summary>
         public string DistanceDesc { get; set; }
@@ -345,6 +360,16 @@ namespace Future.Model.Utils
         /// 用户昵称
         /// </summary>
         public string NickName { get; set; }
+
+        /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 短昵称
+        /// </summary>
+        public string ShortNickName { get; set; }
 
         /// <summary>
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
@@ -1551,4 +1576,44 @@ namespace Future.Model.Utils
         public bool Success { get; set; }
     }
     #endregion
+
+    #region UpdateHiding
+    public class UpdateHidingRequest
+    {
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+
+        /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 匿名时候对应的昵称
+        /// </summary>
+        public string HidingNickName { get; set; }
+    }
+
+    public class UpdateHidingResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool Success { get; set; }
+    }
+    #endregion
+
 }

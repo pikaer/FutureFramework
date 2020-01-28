@@ -135,17 +135,19 @@ namespace Future.Service.Implement
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
                 CreateTime = moment.CreateTime.GetDateDesc(true),
                 DiscussDetailList =new List<DiscussDetailType>(),
+                //当首次打开动态的时候，没有任何评论，此时拿动态发布人的信息
                 PartnerDetail=new PartnerDetailType()
                 {
                     PartnerUId= moment.UId,
                     Gender = user.Gender,
+                    IsHide=moment.IsHide,
+                    NickName= moment.IsHide? moment.HidingNickName: user.NickName,
+                    ShortNickName= moment.IsHide ? moment.HidingNickName.Substring(0,1):"",
                     HeadImgPath = user.HeadPhotoPath.GetImgPath(),
-                    NickName = user.NickName.Trim().TextCut(10),
                     OnLineDesc = momentUserOnline.LastOnLineTime.GetOnlineDesc(momentUserOnline.IsOnLine),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
                 }
             };
-
 
             DateTime? deleteTime;
             if (moment.UId == request.Head.UId)
@@ -163,7 +165,7 @@ namespace Future.Service.Implement
                 var keyValues = new Dictionary<long, PickUpDTO>();
                 foreach(var item in discussList.GroupBy(a => a.UId))
                 {
-                    keyValues.Add(item.Key, buildPickUpDTO(item.Key));
+                    keyValues.Add(item.Key, buildPickUpDTO(item.Key, moment,pickUp));
                 }
                 foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
                 {
@@ -177,8 +179,10 @@ namespace Future.Service.Implement
                         PickUpUId=item.UId,
                         IsMyReply= item.UId==request.Content.UId,
                         HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
-                        NickName = pickDto.Value.NickName.TextCut(15),
+                        NickName = pickDto.Value.IsHide? pickDto.Value.HidingNickName.TextCut(15): pickDto.Value.NickName.TextCut(15),
                         Gender = pickDto.Value.Gender,
+                        IsHide= pickDto.Value.IsHide,
+                        ShortNickName= pickDto.Value.IsHide? pickDto.Value.HidingNickName.Substring(0,1):"",
                         TextContent = item.DiscussContent,
                         DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude,pickDto.Value.Latitude,pickDto.Value.Longitude),
                         RecentChatTime = item.CreateTime.GetDateDesc(true)
@@ -194,8 +198,10 @@ namespace Future.Service.Implement
                     {
                         PartnerUId= discuss.Key,
                         Gender= discuss.Value.Gender,
+                        IsHide = discuss.Value.IsHide,
+                        ShortNickName = discuss.Value.IsHide ? discuss.Value.HidingNickName.Substring(0, 1) : "",
                         HeadImgPath = discuss.Value.HeadPhotoPath.GetImgPath(),
-                        NickName= discuss.Value.NickName.TextCut(10),
+                        NickName = discuss.Value.IsHide ? discuss.Value.HidingNickName.TextCut(10) : discuss.Value.NickName.TextCut(10),
                         DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, discuss.Value.Latitude, discuss.Value.Longitude),
                         OnLineDesc = discuss.Value.LastOnLineTime.GetOnlineDesc(discuss.Value.IsOnLine)
                     };
@@ -204,15 +210,17 @@ namespace Future.Service.Implement
             return response;
         }
 
-        private PickUpDTO buildPickUpDTO(long uid)
+        private PickUpDTO buildPickUpDTO(long uid, MomentEntity moment, PickUpEntity pickUp)
         {
             var user = userBiz.LetterUserByUId(uid);
             var online = letterDal.GetOnLineUser(uid);
             return new PickUpDTO()
             {
-                NickName= user.NickName,
-                UId=uid,
-                HeadPhotoPath=user.HeadPhotoPath,
+                NickName = user.NickName,
+                UId = uid,
+                IsHide = moment.UId == uid ? moment.IsHide : pickUp.IsHide,
+                HidingNickName = moment.UId == uid ? moment.HidingNickName : pickUp.HidingNickName,
+                HeadPhotoPath =user.HeadPhotoPath,
                 Gender=user.Gender,
                 BirthDate=user.BirthDate,
                 IsOnLine=online.IsOnLine,
@@ -568,6 +576,7 @@ namespace Future.Service.Implement
                     ShortNickName=a.IsHide?a.HidingNickName.Substring(0,1):"",
                     IsHide=a.IsHide,
                     HeadImgPath=user.HeadPhotoPath.GetImgPath(),
+                    Gender=user.Gender,
                     TextContent =a.TextContent.Trim(),
                     ImgContent=a.ImgContent.GetImgPath(),
                     PublishTime=a.CreateTime.GetDateDesc()
@@ -1306,6 +1315,42 @@ namespace Future.Service.Implement
                 Content = new UpdateLastScanMomentTimeResponse()
                 {
                     Success = letterDal.UpdateLastScanMomentTime(request.Content.UId)
+                }
+            };
+        }
+
+        public ResponseContext<UpdateHidingResponse> UpdateHiding(RequestContext<UpdateHidingRequest> request)
+        {
+            
+            PickUpEntity pickUp;
+            if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
+            {
+                pickUp = letterDal.PickUp(request.Content.PickUpId);
+            }
+            else
+            {
+                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
+                if (pickUp == null)
+                {
+                    var moment = letterDal.GetMoment(request.Content.MomentId);
+                    pickUp = new PickUpEntity()
+                    {
+                        PickUpId = Guid.NewGuid(),
+                        MomentId = moment.MomentId,
+                        MomentUId = moment.UId,
+                        PickUpUId = request.Content.UId,
+                        FromPage = PickUpFromPageEnum.AttentionPage,
+                        CreateTime = DateTime.Now,
+                        UpdateTime = DateTime.Now
+                    };
+                    letterDal.InsertPickUp(pickUp);
+                }
+            }
+            return new ResponseContext<UpdateHidingResponse>()
+            {
+                Content = new UpdateHidingResponse()
+                {
+                    Success = letterDal.UpdateHiding(pickUp.PickUpId, request.Content.IsHide, request.Content.HidingNickName)
                 }
             };
         }

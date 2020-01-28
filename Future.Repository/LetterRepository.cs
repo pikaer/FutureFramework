@@ -691,7 +691,7 @@ namespace Future.Repository
                                On moment.UId=attention.PartnerUId 
                                Inner Join dbo.hub_OnLineUserHub userInfo
                                On userInfo.UId=attention.UId 
-                               Where (userInfo.LastScanMomentTime is null or  userInfo.LastScanMomentTime<moment.CreateTime ) and userInfo.UId=@UId";
+                               Where (userInfo.LastScanMomentTime is null or  userInfo.LastScanMomentTime<moment.CreateTime ) and userInfo.UId=@UId and moment.IsHide=0 ";
                 return Db.QueryFirstOrDefault<int>(sql, new { UId = uId });
             }
         }
@@ -820,6 +820,20 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
             }
         }
+
+        public bool UpdateHiding(Guid pickUpId,bool isHide,string hidingNickName)
+        {
+            using (var Db = GetDbConnection())
+            {
+                string sql = @"UPDATE dbo.letter_PickUp
+                               SET IsHide =@IsHide
+                                  ,HidingNickName =@HidingNickName
+                                  ,UpdateTime = @UpdateTime
+                               WHERE PickUpId=@PickUpId";
+                return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, IsHide=isHide, HidingNickName = hidingNickName }) > 0;
+            }
+        }
+
 
         public bool UpdatePickUpPartnerDelete(Guid pickUpId)
         {
