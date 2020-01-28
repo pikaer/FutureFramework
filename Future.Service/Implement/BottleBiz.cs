@@ -186,10 +186,10 @@ namespace Future.Service.Implement
                         PickUpUId=item.UId,
                         IsMyReply= item.UId==request.Content.UId,
                         HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
-                        NickName = pickDto.Value.IsHide? pickDto.Value.HidingNickName.TextCut(15): pickDto.Value.NickName.TextCut(15),
+                        NickName = pickDto.Value.NickName.TextCut(15),
                         Gender = pickDto.Value.Gender,
                         IsHide= pickDto.Value.IsHide,
-                        ShortNickName= pickDto.Value.IsHide? pickDto.Value.HidingNickName.Substring(0,1):"",
+                        ShortNickName = pickDto.Value.NickName.Substring(0, 1),
                         TextContent = item.DiscussContent,
                         DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude,pickDto.Value.Latitude,pickDto.Value.Longitude),
                         RecentChatTime = item.CreateTime.GetDateDesc(true)
@@ -207,9 +207,9 @@ namespace Future.Service.Implement
                         PartnerUId= discuss.Key,
                         Gender= discuss.Value.Gender,
                         IsHide = discuss.Value.IsHide,
-                        ShortNickName = discuss.Value.IsHide ? discuss.Value.HidingNickName.Substring(0, 1) : "",
+                        ShortNickName = discuss.Value.NickName.Substring(0, 1),
                         HeadImgPath = discuss.Value.HeadPhotoPath.GetImgPath(),
-                        NickName = discuss.Value.IsHide ? discuss.Value.HidingNickName.TextCut(10) : discuss.Value.NickName.TextCut(10),
+                        NickName = discuss.Value.NickName.TextCut(10),
                         DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, discuss.Value.Latitude, discuss.Value.Longitude),
                         OnLineDesc = discuss.Value.LastOnLineTime.GetOnlineDesc(discuss.Value.IsOnLine)
                     };
@@ -256,20 +256,23 @@ namespace Future.Service.Implement
         {
             var user = userBiz.LetterUserByUId(uid);
             var online = letterDal.GetOnLineUser(uid);
-            return new PickUpDTO()
+            string nickName = GetHidingNickName(uid, moment, pickUp, user);
+            var dto= new PickUpDTO()
             {
-                NickName = user.NickName,
+                NickName = nickName,
                 UId = uid,
                 IsHide = moment.UId == uid ? moment.IsHide : pickUp.IsHide,
                 HidingNickName = moment.UId == uid ? moment.HidingNickName : pickUp.HidingNickName,
-                HeadPhotoPath =user.HeadPhotoPath,
-                Gender=user.Gender,
-                BirthDate=user.BirthDate,
-                IsOnLine=online.IsOnLine,
-                LastOnLineTime=online.LastOnLineTime,
-                Latitude=online.Latitude,
-                Longitude=online.Longitude,
+                HeadPhotoPath = user.HeadPhotoPath,
+                Gender = user.Gender,
+                BirthDate = user.BirthDate,
+                IsOnLine = online.IsOnLine,
+                LastOnLineTime = online.LastOnLineTime,
+                Latitude = online.Latitude,
+                Longitude = online.Longitude,
             };
+
+            return dto;
         }
 
         public ResponseContext<DiscussResponse> Discuss(RequestContext<DiscussRequest> request)
