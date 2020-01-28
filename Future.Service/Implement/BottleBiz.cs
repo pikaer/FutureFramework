@@ -167,7 +167,7 @@ namespace Future.Service.Implement
                 {
                     keyValues.Add(item.Key, buildPickUpDTO(item.Key, moment,pickUp));
                 }
-                foreach (var item in discussList.OrderByDescending(a=>a.CreateTime))
+                foreach (var item in discussList.OrderBy(a=>a.CreateTime))
                 {
                     var pickDto = keyValues.FirstOrDefault(a => a.Key == item.UId);
                     if (pickDto.Value==null)
