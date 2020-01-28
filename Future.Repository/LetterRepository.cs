@@ -490,7 +490,8 @@ namespace Future.Repository
 				          		  Inner join letter_LetterUser us on us.UId=pick.PickUpUId
                                   Inner join letter_Moment moment on moment.MomentId=pick.MomentId
                                   Inner join dbo.hub_OnLineUserHub online on online.UId=pick.PickUpUId
-                                  Where pick.MomentUId=@UId and pick.IsUserDelete=0) temp
+                                  Where pick.MomentUId=@UId and pick.IsUserDelete=0 and pick.MomentUId!=pick.PickUpUId
+                                 )temp
 				           Order by temp.CreateTime desc 
                            OFFSET @OFFSETCount ROWS 
                            FETCH NEXT @FETCHCount ROWS ONLY";
