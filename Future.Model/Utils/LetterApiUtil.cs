@@ -286,9 +286,19 @@ namespace Future.Model.Utils
         public string CreateTime { get; set; }
 
         /// <summary>
+        /// 是否显示切换匿名身份区域
+        /// </summary>
+        public bool ShowHideArea { get; set; }
+
+        /// <summary>
         /// 参与评论的另一半信息
         /// </summary>
         public PartnerDetailType PartnerDetail { get; set; }
+
+        /// <summary>
+        /// 自己的详情
+        /// </summary>
+        public MyDetailType MyDetail { get; set; }
 
         /// <summary>
         /// 互动列表
@@ -337,6 +347,34 @@ namespace Future.Model.Utils
         /// 在线状态描述
         /// </summary>
         public string OnLineDesc { get; set; }
+    }
+
+    public class MyDetailType
+    {
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 头像路径
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 短昵称
+        /// </summary>
+        public string ShortNickName { get; set; }
     }
 
     public class DiscussDetailType

@@ -115,13 +115,12 @@ namespace Future.Service.Implement
             {
                 return response;
             }
+
             var user= userBiz.LetterUserByUId(moment.UId);
-            if (user == null)
-            {
-                return response;
-            }
+            var resuestUser = userBiz.LetterUserByUId(request.Content.UId);
             var userOnline = letterDal.GetOnLineUser(request.Content.UId);
             var momentUserOnline = letterDal.GetOnLineUser(moment.UId);
+            string nickName = GetHidingNickName(request.Content.UId, moment, pickUp, resuestUser);
             response.Content = new DiscussDetailResponse()
             {
                 MomentId = moment.MomentId,
@@ -146,6 +145,14 @@ namespace Future.Service.Implement
                     HeadImgPath = user.HeadPhotoPath.GetImgPath(),
                     OnLineDesc = momentUserOnline.LastOnLineTime.GetOnlineDesc(momentUserOnline.IsOnLine),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
+                },
+                MyDetail=new MyDetailType() 
+                { 
+                    Gender = resuestUser.Gender,
+                    HeadImgPath= resuestUser.HeadPhotoPath.GetImgPath(),
+                    IsHide = moment.UId==request.Content.UId?moment.IsHide:pickUp.IsHide,
+                    NickName= nickName,
+                    ShortNickName=nickName.Substring(0,1)
                 }
             };
 
@@ -165,7 +172,7 @@ namespace Future.Service.Implement
                 var keyValues = new Dictionary<long, PickUpDTO>();
                 foreach(var item in discussList.GroupBy(a => a.UId))
                 {
-                    keyValues.Add(item.Key, buildPickUpDTO(item.Key, moment,pickUp));
+                    keyValues.Add(item.Key, BuildPickUpDTO(item.Key, moment,pickUp));
                 }
                 foreach (var item in discussList.OrderBy(a=>a.CreateTime))
                 {
@@ -191,6 +198,7 @@ namespace Future.Service.Implement
                     response.Content.DiscussDetailList.Add(dto);
                 }
 
+                //参与评论的小伙伴详情
                 var discuss = keyValues.FirstOrDefault(a => a.Key != request.Content.UId);
                 if (discuss.Value != null)
                 {
@@ -207,10 +215,44 @@ namespace Future.Service.Implement
                     };
                 }
             }
+            else
+            {
+                //首次加载展示是否切换匿名身份按钮
+                if (!pickUp.IsHide)
+                {
+                    response.Content.ShowHideArea = true;
+                }
+            }
             return response;
         }
 
-        private PickUpDTO buildPickUpDTO(long uid, MomentEntity moment, PickUpEntity pickUp)
+        private string GetHidingNickName(long uid,MomentEntity moment, PickUpEntity pickUp,LetterUserEntity user)
+        {
+            if (moment.UId == uid)
+            {
+                if (moment.IsHide)
+                {
+                    return moment.HidingNickName;
+                }
+                else
+                {
+                    return user.NickName;
+                }
+            }
+            else
+            {
+                if (pickUp.IsHide)
+                {
+                    return pickUp.HidingNickName;
+                }
+                else
+                {
+                    return user.NickName;
+                }
+            }
+        }
+
+        private PickUpDTO BuildPickUpDTO(long uid, MomentEntity moment, PickUpEntity pickUp)
         {
             var user = userBiz.LetterUserByUId(uid);
             var online = letterDal.GetOnLineUser(uid);
