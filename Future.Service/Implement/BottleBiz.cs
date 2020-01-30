@@ -1421,7 +1421,7 @@ namespace Future.Service.Implement
                         IsMyReply = item.UId == request.Content.UId,
                         HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
                         NickName = pickDto.Value.NickName.TextCut(15),
-                        ShortNickName = pickDto.Value.HidingNickName.Substring(0, 1),
+                        ShortNickName = pickDto.Value.NickName.Substring(0, 1),
                         Gender = pickDto.Value.Gender,
                         IsHide = pickDto.Value.IsHide,
                         TextContent = item.DiscussContent,
