@@ -185,7 +185,7 @@ namespace Future.Service.Implement
             }
 
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
-            if (discussList.IsNullOrEmpty()&& !pickUp.IsHide && moment.UId != request.Content.UId)
+            if (discussList.IsNullOrEmpty()&&moment.UId != request.Content.UId)
             {
                 if (pickUp.IsHide)
                 {
