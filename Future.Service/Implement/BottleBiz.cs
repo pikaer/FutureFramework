@@ -187,8 +187,14 @@ namespace Future.Service.Implement
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.IsNullOrEmpty()&& !pickUp.IsHide && moment.UId != request.Content.UId)
             {
-                //首次加载展示是否切换匿名身份按钮
-                response.Content.ShowHideArea = true;
+                if (pickUp.IsHide)
+                {
+                    response.Content.ShowHideStatus = 2;
+                }
+                else
+                {
+                    response.Content.ShowHideStatus = 1;
+                }
             }
             return response;
         }

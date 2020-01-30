@@ -286,9 +286,9 @@ namespace Future.Model.Utils
         public string CreateTime { get; set; }
 
         /// <summary>
-        /// 是否显示切换匿名身份区域
+        /// 分身状态（0：不展示，1：展示切换为匿名 2：展示切换为真身）
         /// </summary>
-        public bool ShowHideArea { get; set; }
+        public int ShowHideStatus { get; set; }
 
         /// <summary>
         /// 参与评论的另一半信息
