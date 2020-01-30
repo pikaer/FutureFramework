@@ -299,11 +299,6 @@ namespace Future.Model.Utils
         /// 自己的详情
         /// </summary>
         public MyDetailType MyDetail { get; set; }
-
-        /// <summary>
-        /// 互动列表
-        /// </summary>
-        public List<DiscussDetailType> DiscussDetailList { get; set; }
     }
 
     public class PartnerDetailType
@@ -434,6 +429,35 @@ namespace Future.Model.Utils
         /// </summary>
         public string RecentChatTime { get; set; }
     }
+    #endregion
+
+    #region ChatDetailList
+    public class ChatDetailListRequest
+    {
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid? PickUpId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid? MomentId { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+    }
+
+    public class ChatDetailListResponse
+    {
+        /// <summary>
+        /// 互动列表
+        /// </summary>
+        public List<DiscussDetailType> DiscussDetailList { get; set; }
+    }
+
     #endregion
 
     #region PickUp

@@ -116,10 +116,8 @@ namespace Future.Service.Implement
                 return response;
             }
 
-            var user= userBiz.LetterUserByUId(moment.UId);
+            var momentUser= userBiz.LetterUserByUId(moment.UId);
             var resuestUser = userBiz.LetterUserByUId(request.Content.UId);
-            var userOnline = letterDal.GetOnLineUser(request.Content.UId);
-            var momentUserOnline = letterDal.GetOnLineUser(moment.UId);
             string nickName = GetHidingNickName(request.Content.UId, moment, pickUp, resuestUser);
             response.Content = new DiscussDetailResponse()
             {
@@ -127,25 +125,12 @@ namespace Future.Service.Implement
                 PickUpId= pickUp.PickUpId,
                 IsMyMoment= moment.UId==request.Content.UId,
                 MomentUId = moment.UId,
-                HeadImgPath= user.HeadPhotoPath.GetImgPath(),
-                NickName= user.NickName.Trim().TextCut(15),
-                Gender = user.Gender,
+                HeadImgPath= momentUser.HeadPhotoPath.GetImgPath(),
+                NickName= momentUser.NickName.Trim().TextCut(15),
+                Gender = momentUser.Gender,
                 TextContent = moment.TextContent.Trim(),
                 ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
                 CreateTime = moment.CreateTime.GetDateDesc(true),
-                DiscussDetailList =new List<DiscussDetailType>(),
-                //当首次打开动态的时候，没有任何评论，此时拿动态发布人的信息
-                PartnerDetail=new PartnerDetailType()
-                {
-                    PartnerUId= moment.UId,
-                    Gender = user.Gender,
-                    IsHide=moment.IsHide,
-                    NickName= moment.IsHide? moment.HidingNickName: user.NickName,
-                    ShortNickName= moment.IsHide ? moment.HidingNickName.Substring(0,1):"",
-                    HeadImgPath = user.HeadPhotoPath.GetImgPath(),
-                    OnLineDesc = momentUserOnline.LastOnLineTime.GetOnlineDesc(momentUserOnline.IsOnLine),
-                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, momentUserOnline != null ? momentUserOnline.Latitude : 0, momentUserOnline != null ? momentUserOnline.Longitude : 0),
-                },
                 MyDetail=new MyDetailType() 
                 { 
                     Gender = resuestUser.Gender,
@@ -155,6 +140,39 @@ namespace Future.Service.Implement
                     ShortNickName=nickName.Substring(0,1)
                 }
             };
+            var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+            if (request.Content.UId == moment.UId)
+            {
+                var partnerUser = userBiz.LetterUserByUId(pickUp.PickUpUId);
+                var partnerOnline = userBiz.OnLineUser(pickUp.PickUpUId);
+                response.Content.PartnerDetail = new PartnerDetailType()
+                {
+                    PartnerUId = partnerUser.UId,
+                    Gender = partnerUser.Gender,
+                    IsHide = pickUp.IsHide,
+                    NickName = pickUp.IsHide ? pickUp.HidingNickName : partnerUser.NickName,
+                    ShortNickName = pickUp.IsHide ? pickUp.HidingNickName.Substring(0, 1) : "",
+                    HeadImgPath = partnerUser.HeadPhotoPath.GetImgPath(),
+                    OnLineDesc = partnerOnline.LastOnLineTime.GetOnlineDesc(partnerOnline.IsOnLine),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline.Latitude, partnerOnline.Longitude),
+                };
+            }
+            else
+            {
+                var partnerUser = userBiz.LetterUserByUId(moment.UId);
+                var partnerOnline = userBiz.OnLineUser(moment.UId);
+                response.Content.PartnerDetail = new PartnerDetailType()
+                {
+                    PartnerUId = partnerUser.UId,
+                    Gender = partnerUser.Gender,
+                    IsHide = moment.IsHide,
+                    NickName = moment.IsHide ? moment.HidingNickName : partnerUser.NickName,
+                    ShortNickName = moment.IsHide ? moment.HidingNickName.Substring(0, 1) : "",
+                    HeadImgPath = partnerUser.HeadPhotoPath.GetImgPath(),
+                    OnLineDesc = partnerOnline.LastOnLineTime.GetOnlineDesc(partnerOnline.IsOnLine),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline.Latitude, partnerOnline.Longitude),
+                };
+            }
 
             DateTime? deleteTime;
             if (moment.UId == request.Head.UId)
@@ -167,61 +185,10 @@ namespace Future.Service.Implement
             }
 
             var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
-            if (discussList.NotEmpty())
-            {
-                var keyValues = new Dictionary<long, PickUpDTO>();
-                foreach(var item in discussList.GroupBy(a => a.UId))
-                {
-                    keyValues.Add(item.Key, BuildPickUpDTO(item.Key, moment,pickUp));
-                }
-                foreach (var item in discussList.OrderBy(a=>a.CreateTime))
-                {
-                    var pickDto = keyValues.FirstOrDefault(a => a.Key == item.UId);
-                    if (pickDto.Value==null)
-                    {
-                        continue;
-                    }
-                    var dto = new DiscussDetailType()
-                    {
-                        PickUpUId=item.UId,
-                        IsMyReply= item.UId==request.Content.UId,
-                        HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
-                        NickName = pickDto.Value.NickName.TextCut(15),
-                        Gender = pickDto.Value.Gender,
-                        IsHide= pickDto.Value.IsHide,
-                        ShortNickName = pickDto.Value.NickName.Substring(0, 1),
-                        TextContent = item.DiscussContent,
-                        DistanceDesc= LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude,pickDto.Value.Latitude,pickDto.Value.Longitude),
-                        RecentChatTime = item.CreateTime.GetDateDesc(true)
-                    };
-
-                    response.Content.DiscussDetailList.Add(dto);
-                }
-
-                //参与评论的小伙伴详情
-                var discuss = keyValues.FirstOrDefault(a => a.Key != request.Content.UId);
-                if (discuss.Value != null)
-                {
-                    response.Content.PartnerDetail = new PartnerDetailType()
-                    {
-                        PartnerUId= discuss.Key,
-                        Gender= discuss.Value.Gender,
-                        IsHide = discuss.Value.IsHide,
-                        ShortNickName = discuss.Value.NickName.Substring(0, 1),
-                        HeadImgPath = discuss.Value.HeadPhotoPath.GetImgPath(),
-                        NickName = discuss.Value.NickName.TextCut(10),
-                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, discuss.Value.Latitude, discuss.Value.Longitude),
-                        OnLineDesc = discuss.Value.LastOnLineTime.GetOnlineDesc(discuss.Value.IsOnLine)
-                    };
-                }
-            }
-            else
+            if (discussList.IsNullOrEmpty()&& !pickUp.IsHide && moment.UId != request.Content.UId)
             {
                 //首次加载展示是否切换匿名身份按钮
-                if (!pickUp.IsHide)
-                {
-                    response.Content.ShowHideArea = true;
-                }
+                response.Content.ShowHideArea = true;
             }
             return response;
         }
@@ -255,7 +222,7 @@ namespace Future.Service.Implement
         private PickUpDTO BuildPickUpDTO(long uid, MomentEntity moment, PickUpEntity pickUp)
         {
             var user = userBiz.LetterUserByUId(uid);
-            var online = letterDal.GetOnLineUser(uid);
+            var online = userBiz.OnLineUser(uid);
             string nickName = GetHidingNickName(uid, moment, pickUp, user);
             var dto= new PickUpDTO()
             {
@@ -271,7 +238,6 @@ namespace Future.Service.Implement
                 Latitude = online.Latitude,
                 Longitude = online.Longitude,
             };
-
             return dto;
         }
 
@@ -1399,6 +1365,85 @@ namespace Future.Service.Implement
                 }
             };
         }
+
+        public ResponseContext<ChatDetailListResponse> ChatDetailList(RequestContext<ChatDetailListRequest> request)
+        {
+            var response = new ResponseContext<ChatDetailListResponse>();
+
+            MomentEntity moment;
+            PickUpEntity pickUp;
+            if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
+            {
+                pickUp = letterDal.PickUp(request.Content.PickUpId.Value);
+                moment = letterDal.GetMoment(pickUp.MomentId);
+            }
+            else
+            {
+                moment = letterDal.GetMoment(request.Content.MomentId.Value);
+                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId.Value, request.Content.UId);
+                if (pickUp == null)
+                {
+                    pickUp = new PickUpEntity()
+                    {
+                        PickUpId = Guid.NewGuid(),
+                        MomentId = moment.MomentId,
+                        MomentUId = moment.UId,
+                        PickUpUId = request.Content.UId,
+                        FromPage = PickUpFromPageEnum.AttentionPage,
+                        CreateTime = DateTime.Now,
+                        UpdateTime = DateTime.Now
+                    };
+                    letterDal.InsertPickUp(pickUp);
+                }
+            }
+            if (moment == null)
+            {
+                return response;
+            }
+
+            DateTime? deleteTime;
+            if (moment.UId == request.Head.UId)
+            {
+                deleteTime = pickUp.UserLastDeleteTime;
+            }
+            else
+            {
+                deleteTime = pickUp.PartnerLastDeleteTime;
+            }
+            var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
+            if (discussList.NotEmpty())
+            {
+                var keyValues = new Dictionary<long, PickUpDTO>();
+                foreach (var item in discussList.GroupBy(a => a.UId))
+                {
+                    keyValues.Add(item.Key, BuildPickUpDTO(item.Key, moment, pickUp));
+                }
+                foreach (var item in discussList.OrderBy(a => a.CreateTime))
+                {
+                    var pickDto = keyValues.FirstOrDefault(a => a.Key == item.UId);
+                    if (pickDto.Value == null)
+                    {
+                        continue;
+                    }
+                    var dto = new DiscussDetailType()
+                    {
+                        PickUpUId = item.UId,
+                        IsMyReply = item.UId == request.Content.UId,
+                        HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
+                        NickName = pickDto.Value.NickName.TextCut(15),
+                        ShortNickName = pickDto.Value.HidingNickName.Substring(0, 1),
+                        Gender = pickDto.Value.Gender,
+                        IsHide = pickDto.Value.IsHide,
+                        TextContent = item.DiscussContent,
+                        RecentChatTime = item.CreateTime.GetDateDesc(true)
+                    };
+                    response.Content.DiscussDetailList.Add(dto);
+                }
+            }
+            return response;
+        }
+
+
         #endregion
 
         #region private Method
@@ -1513,7 +1558,6 @@ namespace Future.Service.Implement
                 letterDal.UpdateLastLoginTime(user);
             });
         }
-
 
         #endregion
     }

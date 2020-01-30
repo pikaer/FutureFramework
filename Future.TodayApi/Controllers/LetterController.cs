@@ -143,6 +143,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 聊天列表数据获取
+        /// </summary>
+        [HttpPost]
+        public JsonResult ChatDetailList()
+        {
+            RequestContext<ChatDetailListRequest> request = null;
+            ResponseContext<ChatDetailListResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<ChatDetailListRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.ChatDetailList(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "ChatDetailList", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "ChatDetailList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 下拉捡起一个瓶子
         /// </summary>
         [HttpPost]

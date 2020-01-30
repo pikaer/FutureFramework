@@ -232,6 +232,11 @@
             更新最新浏览关注好友动态时间
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.UpdateHiding">
+            <summary>
+            更新用户身份状态
+            </summary>
+        </member>
         <member name="T:Future.TodayApi.Controllers.WeChatController">
             <summary>
             微信交互控制器

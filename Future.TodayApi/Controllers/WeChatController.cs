@@ -40,8 +40,8 @@ namespace Future.TodayApi.Controllers
 
                 string tmpStr = string.Join("", arrTmp);
 
-                var sha1 = new SHA1CryptoServiceProvider();//创建SHA1对象
-                var data = sha1.ComputeHash(Encoding.UTF8.GetBytes(tmpStr));//Hash运算
+                var sha1 = new SHA1CryptoServiceProvider();
+                var data = sha1.ComputeHash(Encoding.UTF8.GetBytes(tmpStr));
 
                 var sb = new StringBuilder();
                 foreach (var t in data)

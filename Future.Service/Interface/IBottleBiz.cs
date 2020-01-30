@@ -191,6 +191,8 @@ namespace Future.Service.Interface
         /// </summary>
         ResponseContext<UpdateUserLocationResponse> UpdateUserLocation(RequestContext<UpdateUserLocationRequest> request);
 
+        ResponseContext<ChatDetailListResponse> ChatDetailList(RequestContext<ChatDetailListRequest> request);
+
         /// <summary>
         /// 获取用户关注好友新增动态（未查阅）数量
         /// </summary>
