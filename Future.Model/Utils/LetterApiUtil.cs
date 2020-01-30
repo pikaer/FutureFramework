@@ -236,6 +236,25 @@ namespace Future.Model.Utils
     public class DiscussDetailResponse
     {
         /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+        public MomentDetailType MomentDetail { get; set; }
+        /// <summary>
+        /// 参与评论的另一半信息
+        /// </summary>
+        public PartnerDetailType PartnerDetail { get; set; }
+
+        /// <summary>
+        /// 自己的详情
+        /// </summary>
+        public MyDetailType MyDetail { get; set; }
+    }
+
+    public class MomentDetailType
+    {
+        /// <summary>
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
@@ -254,11 +273,6 @@ namespace Future.Model.Utils
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
         /// </summary>
         public GenderEnum Gender { get; set; }
-
-        /// <summary>
-        /// 互动Id
-        /// </summary>
-        public Guid PickUpId { get; set; }
 
         /// <summary>
         /// 头像路径
@@ -285,22 +299,7 @@ namespace Future.Model.Utils
         /// </summary>
         public string CreateTime { get; set; }
 
-        /// <summary>
-        /// 分身状态（0：不展示，1：展示切换为匿名 2：展示切换为真身）
-        /// </summary>
-        public int ShowHideStatus { get; set; }
-
-        /// <summary>
-        /// 参与评论的另一半信息
-        /// </summary>
-        public PartnerDetailType PartnerDetail { get; set; }
-
-        /// <summary>
-        /// 自己的详情
-        /// </summary>
-        public MyDetailType MyDetail { get; set; }
     }
-
     public class PartnerDetailType
     {
         /// <summary>
@@ -365,6 +364,12 @@ namespace Future.Model.Utils
         /// 是否隐身
         /// </summary>
         public bool IsHide { get; set; }
+
+
+        /// <summary>
+        /// 分身状态（0：不展示，1：展示切换为匿名 2：展示切换为真身）
+        /// </summary>
+        public int ShowHideStatus { get; set; }
 
         /// <summary>
         /// 短昵称

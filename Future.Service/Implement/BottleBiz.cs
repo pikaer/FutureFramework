@@ -121,16 +121,19 @@ namespace Future.Service.Implement
             string nickName = GetHidingNickName(request.Content.UId, moment, pickUp, resuestUser);
             response.Content = new DiscussDetailResponse()
             {
-                MomentId = moment.MomentId,
-                PickUpId= pickUp.PickUpId,
-                IsMyMoment= moment.UId==request.Content.UId,
-                MomentUId = moment.UId,
-                HeadImgPath= momentUser.HeadPhotoPath.GetImgPath(),
-                NickName= momentUser.NickName.Trim().TextCut(15),
-                Gender = momentUser.Gender,
-                TextContent = moment.TextContent.Trim(),
-                ImgContent= moment.ImgContent.IsNullOrEmpty()?"":moment.ImgContent.Trim().GetImgPath(),
-                CreateTime = moment.CreateTime.GetDateDesc(true),
+                PickUpId = pickUp.PickUpId,
+                MomentDetail =new MomentDetailType()
+                {
+                    MomentId = moment.MomentId,
+                    IsMyMoment = moment.UId == request.Content.UId,
+                    MomentUId = moment.UId,
+                    HeadImgPath = momentUser.HeadPhotoPath.GetImgPath(),
+                    NickName = momentUser.NickName.Trim().TextCut(15),
+                    Gender = momentUser.Gender,
+                    TextContent = moment.TextContent.Trim(),
+                    ImgContent = moment.ImgContent.IsNullOrEmpty() ? "" : moment.ImgContent.Trim().GetImgPath(),
+                    CreateTime = moment.CreateTime.GetDateDesc(true),
+                },
                 MyDetail=new MyDetailType() 
                 { 
                     Gender = resuestUser.Gender,
@@ -189,11 +192,11 @@ namespace Future.Service.Implement
             {
                 if (pickUp.IsHide)
                 {
-                    response.Content.ShowHideStatus = 2;
+                    response.Content.MyDetail.ShowHideStatus = 2;
                 }
                 else
                 {
-                    response.Content.ShowHideStatus = 1;
+                    response.Content.MyDetail.ShowHideStatus = 1;
                 }
             }
             return response;
