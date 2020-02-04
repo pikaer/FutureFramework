@@ -265,7 +265,7 @@ namespace Future.Model.Utils
         public long MomentUId { get; set; }
 
         /// <summary>
-        /// 自己发布的动态在右边
+        /// 是自己发布的动态
         /// </summary>
         public bool IsMyMoment { get; set; }
 
@@ -430,9 +430,14 @@ namespace Future.Model.Utils
         public string DistanceDesc { get; set; }
 
         /// <summary>
-        /// 最近一次交谈时间
+        /// 时间
         /// </summary>
         public string RecentChatTime { get; set; }
+
+        /// <summary>
+        /// 时间是否展示
+        /// </summary>
+        public bool IsTimeVisible { get; set; }
     }
     #endregion
 

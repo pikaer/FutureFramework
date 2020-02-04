@@ -191,6 +191,11 @@ namespace Future.Service.Interface
         /// </summary>
         ResponseContext<UpdateUserLocationResponse> UpdateUserLocation(RequestContext<UpdateUserLocationRequest> request);
 
+        /// <summary>
+        /// 聊天内容列表
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         ResponseContext<ChatDetailListResponse> ChatDetailList(RequestContext<ChatDetailListRequest> request);
 
         /// <summary>

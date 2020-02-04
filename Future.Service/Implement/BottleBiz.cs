@@ -1417,25 +1417,41 @@ namespace Future.Service.Implement
                 {
                     keyValues.Add(item.Key, BuildPickUpDTO(item.Key, moment, pickUp));
                 }
-                foreach (var item in discussList.OrderBy(a => a.CreateTime))
+                discussList=discussList.OrderBy(a => a.CreateTime).ToList();
+                for(int index=0;index< discussList.Count; index++)
                 {
-                    var pickDto = keyValues.FirstOrDefault(a => a.Key == item.UId);
+                    var pickDto = keyValues.FirstOrDefault(a => a.Key == discussList[index].UId);
                     if (pickDto.Value == null)
                     {
                         continue;
                     }
                     var dto = new DiscussDetailType()
                     {
-                        PickUpUId = item.UId,
-                        IsMyReply = item.UId == request.Content.UId,
+                        PickUpUId = discussList[index].UId,
+                        IsMyReply = discussList[index].UId == request.Content.UId,
                         HeadImgPath = pickDto.Value.HeadPhotoPath.GetImgPath(),
                         NickName = pickDto.Value.NickName.TextCut(15),
                         ShortNickName = pickDto.Value.NickName.Substring(0, 1),
                         Gender = pickDto.Value.Gender,
                         IsHide = pickDto.Value.IsHide,
-                        TextContent = item.DiscussContent,
-                        RecentChatTime = item.CreateTime.GetDateDesc(true)
+                        TextContent = discussList[index].DiscussContent,
+                        RecentChatTime = discussList[index].CreateTime.GetChatDetailDateTime()
                     };
+                    if (discussList.Count == 1)
+                    {
+                        dto.IsTimeVisible = true;
+                    }
+                    else
+                    {
+                        if (index == 0)
+                        {
+                            dto.IsTimeVisible = true;
+                        }
+                        else
+                        {
+                            dto.IsTimeVisible = discussList[index].CreateTime.Subtract(discussList[index - 1].CreateTime).TotalMinutes >= 5;
+                        }
+                    }
                     response.Content.DiscussDetailList.Add(dto);
                 }
             }
