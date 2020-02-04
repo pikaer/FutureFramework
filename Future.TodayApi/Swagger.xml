@@ -45,6 +45,11 @@
             瓶子互动详情列表
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.ChatDetailList">
+            <summary>
+            聊天列表数据获取string
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.PickUp">
             <summary>
             下拉捡起一个瓶子
@@ -252,6 +257,24 @@
             <summary>
             验证微信签名
             </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.WeChatController.V3List">
+            <summary>
+            供应商航变数据2020-2-3
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.WeChatController.V1List">
+            <summary>
+            2-2数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.WeChatController.V4List">
+            <summary>
+            2-4数据
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Future.TodayApi.Startup">
             <summary>

@@ -143,7 +143,7 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
-        /// 聊天列表数据获取
+        /// 聊天列表数据获取string
         /// </summary>
         [HttpPost]
         public JsonResult ChatDetailList()
