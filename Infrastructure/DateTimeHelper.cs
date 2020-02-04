@@ -215,44 +215,83 @@ namespace Infrastructure
             var yesterday = now.AddDays(-1).Date; 
             if (datetime> today)
             {
-                if(datetime.Hour>0&& datetime.Hour < 6)
+                if(datetime.Hour>=0&& datetime.Hour < 6)
                 {
                     //凌晨 12:10
-                    return string.Format("凌晨 {0}", datetime.ToString("t"));
+                    return string.Format("凌晨 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
                 else if(datetime.Hour>=6&& datetime.Hour < 9)
                 {
-                    return string.Format("早上 {0}", datetime.ToString("t"));
+                    return string.Format("早上 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
                 else if (datetime.Hour >= 9 && datetime.Hour < 12)
                 {
-                    return string.Format("上午 {0}", datetime.ToString("t"));
+                    return string.Format("上午 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
                 else if (datetime.Hour >= 12 && datetime.Hour < 13)
                 {
-                    return string.Format("中午 {0}", datetime.ToString("t"));
+                    return string.Format("中午 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
                 else if (datetime.Hour >= 13 && datetime.Hour < 14)
                 {
-                    return string.Format("中午 {0}:{1}", datetime.Hour-12, datetime.Minute);
+                    return string.Format("中午 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
                 else if (datetime.Hour >= 14 && datetime.Hour < 19)
                 {
-                    return string.Format("下午 {0}:{1}", datetime.Hour - 12, datetime.Minute);
+                    return string.Format("下午 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
                 else 
                 {
-                    return string.Format("晚上 {0}:{1}", datetime.Hour - 12, datetime.Minute);
+                    return string.Format("晚上 {0}", GetMinute(datetime.Hour, datetime.Minute));
                 }
             }
             else if (datetime> yesterday && datetime< today)
             {
-                return string.Format("昨天 {0}", datetime.ToString("t"));
+                return string.Format("昨天 {0}", GetMinute(datetime.Hour, datetime.Minute));
             }
             else
             {
                 return datetime.ToString("f");
             }
+        }
+
+        private static string GetMinute(int hour,int minute)
+        {
+            string hourDesc;
+            string minuteDesc;
+            if (hour < 10)
+            {
+                hourDesc = string.Format("0{0}", hour);
+            }
+            else
+            {
+                if (hour >= 13)
+                {
+                    int hour1 = hour - 12;
+                    if (hour1 < 10)
+                    {
+                        hourDesc = string.Format("0{0}", hour1);
+                    }
+                    else
+                    {
+                        hourDesc = hour1.ToString();
+                    }
+                }
+                else
+                {
+                    hourDesc = hour.ToString();
+                }
+            }
+
+            if (minute < 10)
+            {
+                minuteDesc = string.Format("0{0}", minute);
+            }
+            else
+            {
+                minuteDesc = minute.ToString();
+            }
+            return string.Format("{0}:{1}", hourDesc, minuteDesc);
         }
 
         /// <summary>
