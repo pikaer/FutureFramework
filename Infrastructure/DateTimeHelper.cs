@@ -213,7 +213,6 @@ namespace Infrastructure
             var now = DateTime.Now;
             var today = now.Date;
             var yesterday = now.AddDays(-1).Date; 
-            var lastYear = now.AddYears(-1).Date; //最近一年
             if (datetime> today)
             {
                 if(datetime.Hour>0&& datetime.Hour < 6)
@@ -235,28 +234,24 @@ namespace Infrastructure
                 }
                 else if (datetime.Hour >= 13 && datetime.Hour < 14)
                 {
-                    return string.Format("中午{0}:{1}", datetime.Hour-12, datetime.Minute);
+                    return string.Format("中午 {0}:{1}", datetime.Hour-12, datetime.Minute);
                 }
                 else if (datetime.Hour >= 14 && datetime.Hour < 19)
                 {
-                    return string.Format("下午{0}:{1}", datetime.Hour - 12, datetime.Minute);
+                    return string.Format("下午 {0}:{1}", datetime.Hour - 12, datetime.Minute);
                 }
                 else 
                 {
-                    return string.Format("晚上{0}:{1}", datetime.Hour - 12, datetime.Minute);
+                    return string.Format("晚上 {0}:{1}", datetime.Hour - 12, datetime.Minute);
                 }
             }
             else if (datetime> yesterday && datetime< today)
             {
                 return string.Format("昨天 {0}", datetime.ToString("t"));
             }
-            else if(datetime > lastYear && datetime < yesterday)
-            {
-                return datetime.ToString("MM-dd HH:mm");
-            }
             else
             {
-                return datetime.ToString("g");
+                return datetime.ToString("f");
             }
         }
 
@@ -303,6 +298,7 @@ namespace Infrastructure
                 return defaultValue;
             }
         }
+
         /// <summary>
         /// 根据出生日期计算年龄
         /// </summary>
