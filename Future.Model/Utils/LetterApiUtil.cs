@@ -519,7 +519,7 @@ namespace Future.Model.Utils
     public class PickUpType
     {
         /// <summary>
-        /// 自己发布的动态在右边
+        /// 自己发布的动态
         /// </summary>
         public bool IsMyMoment { get; set; }
 
@@ -589,6 +589,103 @@ namespace Future.Model.Utils
         public string CreateTime { get; set; }
     }
     #endregion
+
+    #region PlayTogetherList
+    public class PlayTogetherListRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        public PlayTypeEnum PlayType { get; set; }
+    }
+
+    public class PlayTogetherListResponse
+    {
+        /// <summary>
+        /// 一起玩
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList { get; set; }
+    }
+
+    public class PlayTogetherType
+    {
+        /// <summary>
+        /// 自己发布的动态
+        /// </summary>
+        public bool IsMyMoment { get; set; }
+
+        /// <summary>
+        /// 互动Id
+        /// </summary>
+        public Guid PickUpId { get; set; }
+
+        /// <summary>
+        /// 动态Id
+        /// </summary>
+        public Guid MomentId { get; set; }
+
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        /// <summary>
+        /// 头像路径
+        /// </summary>
+        public string HeadImgPath { get; set; }
+
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string TextContent { get; set; }
+
+        /// <summary>
+        /// 图片内容（图片最多支持一张）
+        /// </summary>
+        public string ImgContent { get; set; }
+
+        /// <summary>
+        /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+        /// </summary>
+        public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 年龄
+        /// </summary>
+        public int Age { get; set; }
+
+        /// <summary>
+        /// 在线状态描述
+        /// </summary>
+        public string OnLineDesc { get; set; }
+
+        /// <summary>
+        /// 是否隐身
+        /// </summary>
+        public bool IsHide { get; set; }
+
+        /// <summary>
+        /// 距离描述
+        /// </summary>
+        public string DistanceDesc { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string CreateTime { get; set; }
+
+        public PlayTypeEnum PlayType { get; set; }
+    }
+
+    #endregion
+
 
     #region AttentionList
     public class AttentionListRequest
@@ -669,6 +766,13 @@ namespace Future.Model.Utils
         /// 图片内容
         /// </summary>
         public string ImgContent { get; set; }
+
+        /// <summary>
+        /// 动态来源
+        /// </summary>
+        public MomentSourceEnum SourceFlag { get; set; }
+
+        public PlayTypeEnum PlayType { get; set; }
 
         public bool SubscribeMessageOpen { get; set; }
 
@@ -1002,6 +1106,16 @@ namespace Future.Model.Utils
         /// 个性签名
         /// </summary>
         public string Signature { get; set; }
+
+        /// <summary>
+        /// 星座
+        /// </summary>
+        public string Constellation { get; set; }
+
+        /// <summary>
+        /// 如 90后、00后
+        /// </summary>
+        public string AgeYear { get; set; }
 
         /// <summary>
         /// 是否已经注册账户

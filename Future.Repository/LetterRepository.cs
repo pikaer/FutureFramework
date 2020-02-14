@@ -16,7 +16,7 @@ namespace Future.Repository
 
         private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Platform,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
 
-        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
+        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SourceFlag,PlayType,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
 
         private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,FromPage,IsHide,HidingNickName,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
 
@@ -100,7 +100,7 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize)
+        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum momentSource, PlayTypeEnum playType= PlayTypeEnum.Other)
         {
             var sql = @"SELECT pick.PickUpId,
                                pick.MomentId,
@@ -114,18 +114,26 @@ namespace Future.Repository
                                moment.ImgContent,
                                moment.IsHide,
                                moment.HidingNickName,
+                               moment.PlayType,
                                moment.CreateTime
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
-                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 and pick.FromPage=0 
+                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 and pick.FromPage=0 and SourceFlag=@SourceFlag and PlayType=@PlayType
                         Order by pick.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
                         FETCH NEXT @FETCHCount ROWS ONLY";
 
             using (var Db = GetDbConnection())
             {
-                return Db.Query<PickUpDTO>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+                return Db.Query<PickUpDTO>(sql,new 
+                { 
+                    UId = uId,
+                    OFFSETCount = (pageIndex - 1) * pageSize, 
+                    FETCHCount = pageSize , 
+                    SourceFlag = momentSource, 
+                    PlayType = playType 
+                }).AsList();
             }
         }
 

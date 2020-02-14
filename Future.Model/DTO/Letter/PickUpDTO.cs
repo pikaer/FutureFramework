@@ -1,4 +1,5 @@
-﻿using Future.Model.Enum.Sys;
+﻿using Future.Model.Enum.Letter;
+using Future.Model.Enum.Sys;
 using System;
 
 namespace Future.Model.DTO.Letter
@@ -48,6 +49,8 @@ namespace Future.Model.DTO.Letter
         public string HeadPhotoPath { get; set; }
 
         public GenderEnum Gender { get; set; }
+
+        public PlayTypeEnum PlayType { get; set; }
 
         /// <summary>
         /// 是否在线状态

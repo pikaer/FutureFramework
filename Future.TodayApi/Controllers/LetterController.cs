@@ -266,6 +266,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 一起玩列表
+        /// </summary>
+        [HttpPost]
+        public JsonResult PlayTogetherList()
+        {
+            RequestContext<PlayTogetherListRequest> request = null;
+            ResponseContext<PlayTogetherListResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<PlayTogetherListRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.PlayTogetherList(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "PlayTogetherList", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "PlayTogetherList", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 关注的用户发布的所有动态列表
         /// </summary>
         [HttpPost]

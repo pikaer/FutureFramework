@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Future.Model.Enum.Letter;
+using System;
 
 namespace Future.Model.Entity.Letter
 {
@@ -56,5 +57,12 @@ namespace Future.Model.Entity.Letter
         /// 是否开启消息订阅
         /// </summary>
         public bool SubscribeMessageOpen { get; set; }
+
+        /// <summary>
+        /// 动态来源
+        /// </summary>
+        public MomentSourceEnum SourceFlag { get; set; }
+
+        public PlayTypeEnum PlayType { get; set; }
     }
 }

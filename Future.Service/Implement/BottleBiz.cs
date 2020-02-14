@@ -329,7 +329,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize, MomentSourceEnum.Default);
             if (pickUpList.NotEmpty())
             {
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
@@ -372,6 +372,68 @@ namespace Future.Service.Implement
                 }
             }
             
+            return response;
+        }
+
+        public ResponseContext<PlayTogetherListResponse> PlayTogetherList(RequestContext<PlayTogetherListRequest> request)
+        {
+            var response = new ResponseContext<PlayTogetherListResponse>()
+            {
+                Content = new PlayTogetherListResponse()
+                {
+                    PlayTogetherList = new List<PlayTogetherType>()
+                }
+            };
+
+            int pageSize = 20;
+            string pickUpPageSize = JsonSettingHelper.AppSettings["PlayTogetherPageSize"];
+            if (!pickUpPageSize.IsNullOrEmpty())
+            {
+                pageSize = Convert.ToInt32(pickUpPageSize);
+            }
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, MomentSourceEnum.PlayTogether, request.Content.PlayType);
+            if (pickUpList.NotEmpty())
+            {
+                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                foreach (var item in pickUpList)
+                {
+                    DateTime? datetime = null;
+                    bool isonline = false;
+                    var online = userBiz.OnLineUser(item.UId);
+                    if (online != null)
+                    {
+                        datetime = online.LastOnLineTime;
+                        isonline = online.IsOnLine;
+                    }
+                    var dto = new PlayTogetherType()
+                    {
+                        IsMyMoment = request.Content.UId == item.MomentUId,
+                        PickUpId = item.PickUpId,
+                        MomentId = item.MomentId,
+                        UId = item.UId,
+                        OnLineDesc = datetime.GetOnlineDesc(isonline),
+                        Gender = item.Gender,
+                        Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                        IsHide = item.IsHide,
+                        TextContent = item.TextContent,
+                        ImgContent = item.ImgContent.GetImgPath(),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
+                        CreateTime = item.CreateTime.GetDateDesc(true)
+                    };
+
+                    if (item.IsHide)
+                    {
+                        dto.NickName = CommonHelper.CutNickName(item.HidingNickName, 8);
+                    }
+                    else
+                    {
+                        dto.NickName = CommonHelper.CutNickName(item.NickName, 8);
+                    }
+                    response.Content.PlayTogetherList.Add(dto);
+                }
+            }
+
             return response;
         }
 
@@ -876,6 +938,8 @@ namespace Future.Service.Implement
                 Gender= userInfo.Gender,
                 NickName = userInfo.NickName.IsNullOrEmpty()?"":userInfo.NickName.Trim(),
                 IsRegister = userInfo.IsRegister,
+                Constellation= Convert.ToDateTime(userInfo.BirthDate).GetConstellation(),
+                AgeYear= Convert.ToDateTime(userInfo.BirthDate).GetAgeYear(),
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "却道天凉好个秋~" : userInfo.Signature.Trim(),
                 BasicUserInfo= BasicUserInfo(userInfo).TextCut(15),

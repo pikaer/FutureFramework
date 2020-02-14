@@ -212,5 +212,10 @@ namespace Future.Service.Interface
         /// 更新用户身份状态
         /// </summary>
         ResponseContext<UpdateHidingResponse> UpdateHiding(RequestContext<UpdateHidingRequest> request);
+
+        /// <summary>
+        /// 一起玩列表
+        /// </summary>
+        ResponseContext<PlayTogetherListResponse> PlayTogetherList(RequestContext<PlayTogetherListRequest> request);
     }
 }

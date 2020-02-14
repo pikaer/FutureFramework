@@ -352,6 +352,75 @@ namespace Infrastructure
             return age < 0 ? 0 : age;
         }
 
+        public static string GetAgeYear(this DateTime birthdate)
+        {
+            int year = birthdate.Year;
+            if (year >=2010)
+            {
+                return "10后";
+            }
+            else if(year>=2005&& year < 2010)
+            {
+                return "05后";
+            }
+            else if (year >= 2000 && year < 2005)
+            {
+                return "00后";
+            }
+            else if (year >= 1995 && year < 2000)
+            {
+                return "95后";
+            }
+            else if (year >= 1990 && year < 1995)
+            {
+                return "90后";
+            }
+            else if (year >= 1985 && year < 1990)
+            {
+                return "85后";
+            }
+            else if (year >= 1980 && year < 1985)
+            {
+                return "80后";
+            }
+            else if (year >= 1975 && year < 1980)
+            {
+                return "75后";
+            }
+            else if (year >= 1970 && year < 1975)
+            {
+                return "70后";
+            }
+            else if (year >= 1965 && year < 1970)
+            {
+                return "65后";
+            }
+            else if (year >= 1960&& year < 1965)
+            {
+                return "60后";
+            }
+            else if (year >= 1955 && year < 1960)
+            {
+                return "55后";
+            }
+            else if (year >= 1950 && year < 1955)
+            {
+                return "50后";
+            }
+            else if (year >= 1945 && year < 1950)
+            {
+                return "45后";
+            }
+            else if (year >= 1940 && year < 1945)
+            {
+                return "40后";
+            }
+            else
+            {
+                return "神秘年龄";
+            }
+        }
+
         /// <summary>
         /// 根据出生日期获得星座信息
         /// </summary>
@@ -382,7 +451,7 @@ namespace Infrastructure
             return rtn.ToDescription();
         }
 
-        public enum Constellation
+        private enum Constellation
         {
             [Description("水瓶座")]
             Aquarius = 1,//1.20 - 2.18

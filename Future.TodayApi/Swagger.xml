@@ -60,6 +60,11 @@
             捡起的漂流瓶列表
             </summary>
         </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.PlayTogetherList">
+            <summary>
+            一起玩列表
+            </summary>
+        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.AttentionList">
             <summary>
             关注的用户发布的所有动态列表
@@ -273,6 +278,12 @@
         <member name="M:Future.TodayApi.Controllers.WeChatController.V4List">
             <summary>
             2-4数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.WeChatController.V9List">
+            <summary>
+            19e 2-7 线下给的
             </summary>
             <returns></returns>
         </member>
