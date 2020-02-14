@@ -598,6 +598,8 @@ namespace Future.Service.Implement
                 SubscribeMessageOpen=request.Content.SubscribeMessageOpen,
                 IsHide=request.Content.IsHide,
                 HidingNickName=request.Content.HidingNickName,
+                SourceFlag=request.Content.SourceFlag,
+                PlayType=request.Content.PlayType,
                 CreateTime=DateTime.Now,
                 UpdateTime=DateTime.Now
             };

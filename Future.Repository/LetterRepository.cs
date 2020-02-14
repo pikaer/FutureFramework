@@ -1085,6 +1085,8 @@ namespace Future.Repository
                                   ,IsReport
                                   ,ReplyCount  
                                   ,IsHide
+                                  ,SourceFlag
+                                  ,PlayType
                                   ,HidingNickName  
                                   ,SubscribeMessageOpen       
                                   ,CreateTime
@@ -1097,7 +1099,9 @@ namespace Future.Repository
                                   ,@IsDelete
                                   ,@IsReport
                                   ,@ReplyCount
-                                  ,@IsHide
+                                  ,@IsHide 
+                                  ,@SourceFlag 
+                                  ,@PlayType
                                   ,@HidingNickName
                                   ,@SubscribeMessageOpen
                                   ,@CreateTime
