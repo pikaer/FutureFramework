@@ -100,7 +100,7 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum momentSource, PlayTypeEnum playType= PlayTypeEnum.Other)
+        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum momentSource)
         {
             var sql = @"SELECT pick.PickUpId,
                                pick.MomentId,
@@ -119,7 +119,7 @@ namespace Future.Repository
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
-                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 and pick.FromPage=0 and SourceFlag=@SourceFlag and PlayType=@PlayType
+                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 and pick.FromPage=0 and SourceFlag=@SourceFlag
                         Order by pick.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
                         FETCH NEXT @FETCHCount ROWS ONLY";
@@ -131,8 +131,7 @@ namespace Future.Repository
                     UId = uId,
                     OFFSETCount = (pageIndex - 1) * pageSize, 
                     FETCHCount = pageSize , 
-                    SourceFlag = momentSource, 
-                    PlayType = playType 
+                    SourceFlag = momentSource
                 }).AsList();
             }
         }
@@ -152,7 +151,7 @@ namespace Future.Repository
                                       FROM dbo.letter_Attention attention 
                                       Inner Join letter_Moment moment on moment.UId= attention.PartnerUId
                                       Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
-                                      Where attention.UId=@UId and moment.IsDelete=0 and moment.IsHide=0 and moment.CreateTime>=attention.CreateTime
+                                      Where attention.UId=@UId and moment.IsDelete=0 and moment.IsHide=0 and moment.SourceFlag=0 and moment.CreateTime>=attention.CreateTime
                                       
                                       Union
                                       
@@ -168,7 +167,7 @@ namespace Future.Repository
                                       FROM dbo.letter_Attention attention 
                                       Inner Join letter_Moment moment on moment.MomentId= attention.AttentionMomentId
                                       Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
-                                      Where attention.UId=@UId and moment.IsDelete=0 and moment.IsHide=0 ) temp
+                                      Where attention.UId=@UId and moment.IsDelete=0 and moment.IsHide=0 and moment.SourceFlag=0 ) temp
                         Order by temp.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
                         FETCH NEXT @FETCHCount ROWS ONLY ";
@@ -615,7 +614,7 @@ namespace Future.Repository
             }
         }
 
-        public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType)
+        public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType, MomentSourceEnum sourceEnum)
         {
             using (var Db = GetDbConnection())
             {
@@ -643,6 +642,7 @@ namespace Future.Repository
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
+                            and moment.SourceFlag=@SourceFlag
                             and us.Gender!=@Gender";
                 if (momentType == MomentTypeEnum.TextMoment)
                 {
@@ -655,7 +655,58 @@ namespace Future.Repository
                 }
 
                 sql += " Order by moment.CreateTime desc ,moment.ReplyCount ";
-                return Db.QueryFirstOrDefault<MomentEntity>(sql, new { UId = uId, PickUpCount = pickUpCount, Gender = gender , CreateTime =DateTime.Now});
+                return Db.QueryFirstOrDefault<MomentEntity>(sql,new 
+                { 
+                    UId = uId, 
+                    PickUpCount = pickUpCount, 
+                    Gender = gender , 
+                    CreateTime =DateTime.Now,
+                    SourceFlag= sourceEnum
+                });
+            }
+        }
+
+        public List<MomentEntity> GetPlayMoments(long uId, int pickUpCount, GenderEnum gender, PlayTypeEnum playType)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT top (20) 
+                               moment.MomentId
+                              ,moment.UId
+                              ,moment.TextContent
+                              ,moment.ImgContent
+                              ,moment.IsDelete
+                              ,moment.IsReport
+                              ,moment.ReplyCount
+                              ,moment.CreateTime
+                              ,moment.IsHide
+                              ,moment.HidingNickName
+                              ,moment.UpdateTime
+                          FROM dbo.letter_Moment moment
+                          Left join dbo.letter_PickUp pick
+                          ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
+                          Left join dbo.letter_Attention attention
+                          ON moment.UId=attention.PartnerUId and attention.UId=@UId
+                          Inner join dbo.letter_LetterUser us On us.UId=moment.UId
+                          Where moment.UId!=@UId  
+                            and moment.CreateTime<@CreateTime 
+                            and pick.MomentId is Null 
+                            and attention.AttentionId is Null 
+                            and moment.ReplyCount<=@PickUpCount 
+                            and moment.IsReport=0 
+                            and moment.IsDelete=0
+                            and moment.SourceFlag=1
+                            and moment.PlayType=@PlayType
+                            and us.Gender!=@Gender
+                         Order by moment.CreateTime desc ,moment.ReplyCount ";
+                return Db.Query<MomentEntity>(sql, new
+                {
+                    UId = uId,
+                    PickUpCount = pickUpCount,
+                    Gender = gender,
+                    CreateTime = DateTime.Now,
+                    PlayType = playType
+                }).AsList();
             }
         }
 

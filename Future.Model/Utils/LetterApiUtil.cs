@@ -597,16 +597,59 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
-
-        public PlayTypeEnum PlayType { get; set; }
     }
 
     public class PlayTogetherListResponse
     {
         /// <summary>
-        /// 一起玩
+        ///全部
         /// </summary>
-        public List<PlayTogetherType> PlayTogetherList { get; set; }
+        public List<PlayTogetherType> PlayTogetherList_Other { get; set; }
+
+        /// <summary>
+        /// 王者
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_WangZhe { get; set; }
+
+        /// <summary>
+        /// 吃鸡
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_ChiJi { get; set; }
+
+        /// <summary>
+        /// 连麦
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_LianMai { get; set; }
+
+        /// <summary>
+        /// 游戏
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_Game { get; set; }
+
+        /// <summary>
+        /// 学习
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_Learn { get; set; }
+
+        /// <summary>
+        /// 追剧
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_TVTracker { get; set; }
+
+        /// <summary>
+        /// 早起
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_Earlybird { get; set; }
+
+        /// <summary>
+        /// 散步
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_Walk { get; set; }
+
+        /// <summary>
+        /// 看电影
+        /// </summary>
+        public List<PlayTogetherType> PlayTogetherList_Movie { get; set; }
     }
 
     public class PlayTogetherType

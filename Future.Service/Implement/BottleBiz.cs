@@ -371,7 +371,6 @@ namespace Future.Service.Implement
                     response.Content.PickUpList.Add(dto);
                 }
             }
-            
             return response;
         }
 
@@ -380,9 +379,6 @@ namespace Future.Service.Implement
             var response = new ResponseContext<PlayTogetherListResponse>()
             {
                 Content = new PlayTogetherListResponse()
-                {
-                    PlayTogetherList = new List<PlayTogetherType>()
-                }
             };
 
             int pageSize = 20;
@@ -391,50 +387,81 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, MomentSourceEnum.PlayTogether, request.Content.PlayType);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, MomentSourceEnum.PlayTogether);
             if (pickUpList.NotEmpty())
             {
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
-                foreach (var item in pickUpList)
-                {
-                    DateTime? datetime = null;
-                    bool isonline = false;
-                    var online = userBiz.OnLineUser(item.UId);
-                    if (online != null)
-                    {
-                        datetime = online.LastOnLineTime;
-                        isonline = online.IsOnLine;
-                    }
-                    var dto = new PlayTogetherType()
-                    {
-                        IsMyMoment = request.Content.UId == item.MomentUId,
-                        PickUpId = item.PickUpId,
-                        MomentId = item.MomentId,
-                        UId = item.UId,
-                        OnLineDesc = datetime.GetOnlineDesc(isonline),
-                        Gender = item.Gender,
-                        Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
-                        HeadImgPath = item.HeadPhotoPath.GetImgPath(),
-                        IsHide = item.IsHide,
-                        TextContent = item.TextContent,
-                        ImgContent = item.ImgContent.GetImgPath(),
-                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
-                        CreateTime = item.CreateTime.GetDateDesc(true)
-                    };
-
-                    if (item.IsHide)
-                    {
-                        dto.NickName = CommonHelper.CutNickName(item.HidingNickName, 8);
-                    }
-                    else
-                    {
-                        dto.NickName = CommonHelper.CutNickName(item.NickName, 8);
-                    }
-                    response.Content.PlayTogetherList.Add(dto);
-                }
+                response.Content.PlayTogetherList_Other=PlayTogetherList(pickUpList, PlayTypeEnum.Other, request.Content.UId);
+                response.Content.PlayTogetherList_WangZhe = PlayTogetherList(pickUpList, PlayTypeEnum.WangZhe, request.Content.UId);
+                response.Content.PlayTogetherList_ChiJi = PlayTogetherList(pickUpList, PlayTypeEnum.ChiJi, request.Content.UId);
+                response.Content.PlayTogetherList_LianMai = PlayTogetherList(pickUpList, PlayTypeEnum.LianMai, request.Content.UId);
+                response.Content.PlayTogetherList_Game = PlayTogetherList(pickUpList, PlayTypeEnum.Game, request.Content.UId);
+                response.Content.PlayTogetherList_Learn = PlayTogetherList(pickUpList, PlayTypeEnum.Learn, request.Content.UId);
+                response.Content.PlayTogetherList_TVTracker = PlayTogetherList(pickUpList, PlayTypeEnum.TVTracker, request.Content.UId);
+                response.Content.PlayTogetherList_Earlybird = PlayTogetherList(pickUpList, PlayTypeEnum.Earlybird, request.Content.UId);
+                response.Content.PlayTogetherList_Walk = PlayTogetherList(pickUpList, PlayTypeEnum.Walk, request.Content.UId);
+                response.Content.PlayTogetherList_Movie = PlayTogetherList(pickUpList, PlayTypeEnum.Movie, request.Content.UId);
             }
 
+            Task.Factory.StartNew(() =>
+            {
+                RefreshPlayTogetherList(request.Content.UId);
+            });
+
             return response;
+        }
+
+
+        private List<PlayTogetherType> PlayTogetherList(List<PickUpDTO> pickUpList, PlayTypeEnum playType,long uid)
+        {
+            List<PickUpDTO> pickUps = null;
+            if (playType != PlayTypeEnum.Other)
+            {
+                pickUps = pickUpList.Where(a => a.PlayType == playType).ToList();
+            }
+            if (pickUps.IsNullOrEmpty())
+            {
+                return null;
+            }
+            var rtnList = new List<PlayTogetherType>();
+            var userOnline = letterDal.GetOnLineUser(uid);
+            foreach (var item in pickUps)
+            {
+                DateTime? datetime = null;
+                bool isonline = false;
+                var online = userBiz.OnLineUser(item.UId);
+                if (online != null)
+                {
+                    datetime = online.LastOnLineTime;
+                    isonline = online.IsOnLine;
+                }
+                var dto = new PlayTogetherType()
+                {
+                    IsMyMoment = uid == item.MomentUId,
+                    PickUpId = item.PickUpId,
+                    MomentId = item.MomentId,
+                    UId = item.UId,
+                    OnLineDesc = datetime.GetOnlineDesc(isonline),
+                    Gender = item.Gender,
+                    Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                    HeadImgPath = item.HeadPhotoPath.GetImgPath(),
+                    IsHide = item.IsHide,
+                    TextContent = item.TextContent,
+                    ImgContent = item.ImgContent.GetImgPath(),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
+                    CreateTime = item.CreateTime.GetDateDesc(true)
+                };
+
+                if (item.IsHide)
+                {
+                    dto.NickName = CommonHelper.CutNickName(item.HidingNickName, 8);
+                }
+                else
+                {
+                    dto.NickName = CommonHelper.CutNickName(item.NickName, 8);
+                }
+                rtnList.Add(dto);
+            }
+            return rtnList;
         }
 
         public ResponseContext<AttentionListResponse> AttentionList(RequestContext<AttentionListRequest> request)
@@ -522,7 +549,7 @@ namespace Future.Service.Implement
                     pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["DefaultBottlePickUpCount"]);
                     break;
             }
-            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType);
+            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType, MomentSourceEnum.Default);
             if (moment == null)
             {
                 return response;
@@ -580,6 +607,63 @@ namespace Future.Service.Implement
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");
             }
             return response;
+        }
+
+        private void RefreshPlayTogetherList(long uid)
+        {
+            var user = userBiz.LetterUserByUId(uid);
+            if (user == null)
+            {
+                return;
+            }
+            int pickUpCount;
+            switch (user.Gender)
+            {
+                case GenderEnum.Woman:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["WomanPlayTogetherPickUpCount"]);
+                    break;
+                case GenderEnum.Man:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["ManPlayTogetherPickUpCount"]);
+                    break;
+                default:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["DefaultPlayTogetherPickUpCount"]);
+                    break;
+            }
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.WangZhe);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.ChiJi);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.LianMai);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.Game);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.Learn);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.TVTracker);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.Earlybird);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.Walk);
+            PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.Movie);
+        }
+
+        private void PickUpPlayTogetherMoment(LetterUserEntity userInfo,int pickUpCount, PlayTypeEnum playType)
+        {
+            var momentList = letterDal.GetPlayMoments(userInfo.UId, pickUpCount, userInfo.Gender, playType);
+            if (momentList.IsNullOrEmpty())
+            {
+                return;
+            }
+            foreach(var item in momentList)
+            {
+                var pickUp = new PickUpEntity()
+                {
+                    PickUpId = Guid.NewGuid(),
+                    MomentId = item.MomentId,
+                    MomentUId = item.UId,
+                    PickUpUId = userInfo.UId,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+                bool success = letterDal.InsertPickUp(pickUp);
+                if (success)
+                {
+                    letterDal.UpdatePickCount(item.MomentId);
+                }
+            }
         }
 
         public ResponseContext<PublishMomentResponse> PublishMoment(RequestContext<PublishMomentRequest> request)
@@ -762,6 +846,8 @@ namespace Future.Service.Implement
                 UId = userInfo.UId,
                 Gender = userInfo.Gender,
                 NickName = userInfo.NickName,
+                Constellation = Convert.ToDateTime(userInfo.BirthDate).GetConstellation(),
+                AgeYear = Convert.ToDateTime(userInfo.BirthDate).GetAgeYear(),
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 BasicUserInfo = BasicUserInfo(userInfo).TextCut(15),
                 PlaceInfo = PlaceInfo(userInfo),

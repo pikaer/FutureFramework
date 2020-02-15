@@ -7,7 +7,7 @@ namespace Future.Model.Enum.Letter
     /// </summary>
     public enum PlayTypeEnum
     {
-        [Description("其它")]
+        [Description("全部")]
         Other =0,
 
         [Description("王者")]
