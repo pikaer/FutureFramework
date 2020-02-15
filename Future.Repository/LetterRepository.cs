@@ -751,7 +751,7 @@ namespace Future.Repository
                                On moment.UId=attention.PartnerUId 
                                Inner Join dbo.hub_OnLineUserHub userInfo
                                On userInfo.UId=attention.UId 
-                               Where (userInfo.LastScanMomentTime is null or  userInfo.LastScanMomentTime<moment.CreateTime ) and userInfo.UId=@UId and moment.IsHide=0 ";
+                               Where (userInfo.LastScanMomentTime is null or  userInfo.LastScanMomentTime<moment.CreateTime ) and userInfo.UId=@UId and moment.IsHide=0 and moment.SourceFlag=0 ";
                 return Db.QueryFirstOrDefault<int>(sql, new { UId = uId });
             }
         }
