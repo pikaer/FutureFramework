@@ -418,6 +418,10 @@ namespace Future.Service.Implement
             {
                 pickUps = pickUpList.Where(a => a.PlayType == playType).ToList();
             }
+            else
+            {
+                pickUps = pickUpList;
+            }
             if (pickUps.IsNullOrEmpty())
             {
                 return null;
@@ -448,7 +452,8 @@ namespace Future.Service.Implement
                     TextContent = item.TextContent,
                     ImgContent = item.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
-                    CreateTime = item.CreateTime.GetDateDesc(true)
+                    CreateTime = item.CreateTime.GetDateDesc(true),
+                    PlayType=playType
                 };
 
                 if (item.IsHide)
