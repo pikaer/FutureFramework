@@ -485,8 +485,8 @@ namespace Future.Service.Implement
                     ImgContent = item.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                     CreateTime = item.CreateTime.GetDateDesc(true),
-                    PlayType=playType,
-                    PlayTypeSesc=playType.ToDescription(),
+                    PlayType= item.PlayType,
+                    PlayTypeSesc= item.PlayType.ToDescription(),
                     AgeYear=Convert.ToDateTime(item.BirthDate).GetAgeYear(),
                     Constellation=Convert.ToDateTime(item.BirthDate).GetConstellation(),
                     RecentPlayMomentImgs= imgList[item.UId]
