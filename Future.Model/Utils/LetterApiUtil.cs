@@ -725,6 +725,23 @@ namespace Future.Model.Utils
         public string CreateTime { get; set; }
 
         public PlayTypeEnum PlayType { get; set; }
+
+        public string PlayTypeSesc { get; set; }
+
+        /// <summary>
+        /// 星座
+        /// </summary>
+        public string Constellation { get; set; }
+
+        /// <summary>
+        /// 如 90后、00后
+        /// </summary>
+        public string AgeYear { get; set; }
+
+        /// <summary>
+        /// 最近的5个一起玩动态背景图片
+        /// </summary>
+        public List<string>RecentPlayMomentImgs { get; set; }
     }
 
     #endregion

@@ -571,6 +571,18 @@ namespace Future.Repository
             }
         }
 
+        public List<MomentEntity> GetRecentPlayMomentList(long uId)
+        {
+            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and SourceFlag=1 and IsHide=0
+                                               Order by CreateTime desc 
+                                               OFFSET 0 ROWS 
+                                               FETCH NEXT 5 ROWS ONLY";
+            using (var Db = GetDbConnection())
+            {
+                return Db.Query<MomentEntity>(sql, new { UId = uId}).AsList();
+            }
+        }
+
         public List<CoinDetailEntity> GetCoinDetailListByUId(long uId, int pageIndex, int pageSize)
         {
             var sql = SELECT_CoinDetailEntity + @" Where UId=@UId 
@@ -893,7 +905,6 @@ namespace Future.Repository
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId, IsHide=isHide, HidingNickName = hidingNickName }) > 0;
             }
         }
-
 
         public bool UpdatePickUpPartnerDelete(Guid pickUpId)
         {

@@ -390,16 +390,17 @@ namespace Future.Service.Implement
             var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, MomentSourceEnum.PlayTogether);
             if (pickUpList.NotEmpty())
             {
-                response.Content.PlayTogetherList_Other=PlayTogetherList(pickUpList, PlayTypeEnum.Other, request.Content.UId);
-                response.Content.PlayTogetherList_WangZhe = PlayTogetherList(pickUpList, PlayTypeEnum.WangZhe, request.Content.UId);
-                response.Content.PlayTogetherList_ChiJi = PlayTogetherList(pickUpList, PlayTypeEnum.ChiJi, request.Content.UId);
-                response.Content.PlayTogetherList_LianMai = PlayTogetherList(pickUpList, PlayTypeEnum.LianMai, request.Content.UId);
-                response.Content.PlayTogetherList_Game = PlayTogetherList(pickUpList, PlayTypeEnum.Game, request.Content.UId);
-                response.Content.PlayTogetherList_Learn = PlayTogetherList(pickUpList, PlayTypeEnum.Learn, request.Content.UId);
-                response.Content.PlayTogetherList_TVTracker = PlayTogetherList(pickUpList, PlayTypeEnum.TVTracker, request.Content.UId);
-                response.Content.PlayTogetherList_Earlybird = PlayTogetherList(pickUpList, PlayTypeEnum.Earlybird, request.Content.UId);
-                response.Content.PlayTogetherList_Walk = PlayTogetherList(pickUpList, PlayTypeEnum.Walk, request.Content.UId);
-                response.Content.PlayTogetherList_Movie = PlayTogetherList(pickUpList, PlayTypeEnum.Movie, request.Content.UId);
+                var recentPlayMomentImgs = RecentPlayMomentImgs(pickUpList);
+                response.Content.PlayTogetherList_Other=PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Other, request.Content.UId);
+                response.Content.PlayTogetherList_WangZhe = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.WangZhe, request.Content.UId);
+                response.Content.PlayTogetherList_ChiJi = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.ChiJi, request.Content.UId);
+                response.Content.PlayTogetherList_LianMai = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.LianMai, request.Content.UId);
+                response.Content.PlayTogetherList_Game = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Game, request.Content.UId);
+                response.Content.PlayTogetherList_Learn = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Learn, request.Content.UId);
+                response.Content.PlayTogetherList_TVTracker = PlayTogetherList(recentPlayMomentImgs, pickUpList, PlayTypeEnum.TVTracker, request.Content.UId);
+                response.Content.PlayTogetherList_Earlybird = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Earlybird, request.Content.UId);
+                response.Content.PlayTogetherList_Walk = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Walk, request.Content.UId);
+                response.Content.PlayTogetherList_Movie = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Movie, request.Content.UId);
             }
 
             Task.Factory.StartNew(() =>
@@ -410,8 +411,39 @@ namespace Future.Service.Implement
             return response;
         }
 
+        /// <summary>
+        /// 获取用户最新5个一起玩动态
+        /// </summary>
+        private Dictionary<long,List<string>> RecentPlayMomentImgs(List<PickUpDTO> pickUpList)
+        {
+            var uidList = new List<long>();
+            foreach(var pickDto in pickUpList)
+            {
+                if (uidList.Contains(pickDto.UId))
+                {
+                    continue;
+                }
+                uidList.Add(pickDto.UId);
+            }
+            var rtnList = new Dictionary<long, List<string>>();
+            foreach(long uid in uidList)
+            {
+                var imgList = new List<string>();
+                var momentList = letterDal.GetRecentPlayMomentList(uid);
+                if (momentList.NotEmpty())
+                {
+                    foreach(var moment in momentList)
+                    {
+                        imgList.Add(moment.ImgContent);
+                    }
+                }
+                rtnList.Add(uid, imgList);
+            }
+            return rtnList;
+        }
 
-        private List<PlayTogetherType> PlayTogetherList(List<PickUpDTO> pickUpList, PlayTypeEnum playType,long uid)
+
+        private List<PlayTogetherType> PlayTogetherList(Dictionary<long,List<string>> imgList, List<PickUpDTO> pickUpList, PlayTypeEnum playType,long uid)
         {
             List<PickUpDTO> pickUps = null;
             if (playType != PlayTypeEnum.Other)
@@ -453,7 +485,11 @@ namespace Future.Service.Implement
                     ImgContent = item.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                     CreateTime = item.CreateTime.GetDateDesc(true),
-                    PlayType=playType
+                    PlayType=playType,
+                    PlayTypeSesc=playType.ToDescription(),
+                    AgeYear=Convert.ToDateTime(item.BirthDate).GetAgeYear(),
+                    Constellation=Convert.ToDateTime(item.BirthDate).GetConstellation(),
+                    RecentPlayMomentImgs= imgList[item.UId]
                 };
 
                 if (item.IsHide)
