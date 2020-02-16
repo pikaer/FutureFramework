@@ -571,9 +571,9 @@ namespace Future.Repository
             }
         }
 
-        public List<MomentEntity> GetRecentPlayMomentList(long uId)
+        public List<MomentEntity> GetRecentImgMomentList(long uId)
         {
-            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and SourceFlag=1 and IsHide=0
+            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and ImgContent!='' and ImgContent is not null and IsHide=0
                                                Order by CreateTime desc 
                                                OFFSET 0 ROWS 
                                                FETCH NEXT 5 ROWS ONLY";

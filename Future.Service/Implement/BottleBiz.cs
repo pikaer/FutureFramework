@@ -390,17 +390,17 @@ namespace Future.Service.Implement
             var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, MomentSourceEnum.PlayTogether);
             if (pickUpList.NotEmpty())
             {
-                var recentPlayMomentImgs = RecentPlayMomentImgs(pickUpList);
-                response.Content.PlayTogetherList_Other=PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Other, request.Content.UId);
-                response.Content.PlayTogetherList_WangZhe = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.WangZhe, request.Content.UId);
-                response.Content.PlayTogetherList_ChiJi = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.ChiJi, request.Content.UId);
-                response.Content.PlayTogetherList_LianMai = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.LianMai, request.Content.UId);
-                response.Content.PlayTogetherList_Game = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Game, request.Content.UId);
-                response.Content.PlayTogetherList_Learn = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Learn, request.Content.UId);
-                response.Content.PlayTogetherList_TVTracker = PlayTogetherList(recentPlayMomentImgs, pickUpList, PlayTypeEnum.TVTracker, request.Content.UId);
-                response.Content.PlayTogetherList_Earlybird = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Earlybird, request.Content.UId);
-                response.Content.PlayTogetherList_Walk = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Walk, request.Content.UId);
-                response.Content.PlayTogetherList_Movie = PlayTogetherList(recentPlayMomentImgs,pickUpList, PlayTypeEnum.Movie, request.Content.UId);
+                var recentMomentImgs = RecentImgMomentImgs(pickUpList);
+                response.Content.PlayTogetherList_Other=PlayTogetherList(recentMomentImgs,pickUpList, PlayTypeEnum.Other, request.Content.UId);
+                response.Content.PlayTogetherList_WangZhe = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.WangZhe, request.Content.UId);
+                response.Content.PlayTogetherList_ChiJi = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.ChiJi, request.Content.UId);
+                response.Content.PlayTogetherList_LianMai = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.LianMai, request.Content.UId);
+                response.Content.PlayTogetherList_Game = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.Game, request.Content.UId);
+                response.Content.PlayTogetherList_Learn = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.Learn, request.Content.UId);
+                response.Content.PlayTogetherList_TVTracker = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.TVTracker, request.Content.UId);
+                response.Content.PlayTogetherList_Earlybird = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.Earlybird, request.Content.UId);
+                response.Content.PlayTogetherList_Walk = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.Walk, request.Content.UId);
+                response.Content.PlayTogetherList_Movie = PlayTogetherList(recentMomentImgs, pickUpList, PlayTypeEnum.Movie, request.Content.UId);
             }
 
             Task.Factory.StartNew(() =>
@@ -414,7 +414,7 @@ namespace Future.Service.Implement
         /// <summary>
         /// 获取用户最新5个一起玩动态
         /// </summary>
-        private Dictionary<long,List<string>> RecentPlayMomentImgs(List<PickUpDTO> pickUpList)
+        private Dictionary<long,List<string>> RecentImgMomentImgs(List<PickUpDTO> pickUpList)
         {
             var uidList = new List<long>();
             foreach(var pickDto in pickUpList)
@@ -429,12 +429,12 @@ namespace Future.Service.Implement
             foreach(long uid in uidList)
             {
                 var imgList = new List<string>();
-                var momentList = letterDal.GetRecentPlayMomentList(uid);
+                var momentList = letterDal.GetRecentImgMomentList(uid);
                 if (momentList.NotEmpty())
                 {
                     foreach(var moment in momentList)
                     {
-                        imgList.Add(moment.ImgContent);
+                        imgList.Add(moment.ImgContent.GetImgPath());
                     }
                 }
                 rtnList.Add(uid, imgList);
