@@ -103,6 +103,13 @@ namespace Future.Model.Utils
         /// </summary>
         public long UId { get; set; }
 
+        public MomentSourceEnum SourceFlag { get; set; }
+
+        /// <summary>
+        /// 是否需要将匿名动态过滤
+        /// </summary>
+        public bool FilterHideMoment { get; set; }
+
         /// <summary>
         /// 页码（分页传递数据）
         /// </summary>
@@ -745,7 +752,6 @@ namespace Future.Model.Utils
     }
 
     #endregion
-
 
     #region AttentionList
     public class AttentionListRequest

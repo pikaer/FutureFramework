@@ -770,7 +770,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
+            var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize, request.Content.SourceFlag, request.Content.FilterHideMoment);
             if (myMomentList.NotEmpty())
             {
                 var user = userBiz.LetterUserByUId(request.Content.UId);

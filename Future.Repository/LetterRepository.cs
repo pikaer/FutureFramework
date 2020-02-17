@@ -559,15 +559,22 @@ namespace Future.Repository
             }
         }
 
-        public List<MomentEntity> GetMomentByPageIndex(long uId, int pageIndex, int pageSize)
+        public List<MomentEntity> GetMomentByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum sourceFlag,bool isHide)
         {
-            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0
+            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and SourceFlag=@SourceFlag and IsHide=@IsHide
                                                Order by CreateTime desc 
                                                OFFSET @OFFSETCount ROWS 
                                                FETCH NEXT @FETCHCount ROWS ONLY";
             using (var Db = GetDbConnection())
             {
-                return Db.Query<MomentEntity>(sql, new { UId = uId, OFFSETCount = (pageIndex - 1) * pageSize, FETCHCount = pageSize }).AsList();
+                return Db.Query<MomentEntity>(sql, new 
+                { 
+                    UId = uId, 
+                    OFFSETCount = (pageIndex - 1) * pageSize, 
+                    FETCHCount = pageSize ,
+                    SourceFlag= sourceFlag,
+                    IsHide=isHide
+                }).AsList();
             }
         }
 
