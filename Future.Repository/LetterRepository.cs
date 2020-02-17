@@ -559,12 +559,23 @@ namespace Future.Repository
             }
         }
 
-        public List<MomentEntity> GetMomentByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum sourceFlag,bool isHide)
+        public List<MomentEntity> GetMomentByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum sourceFlag,bool isFilterHide)
         {
-            var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and SourceFlag=@SourceFlag and IsHide=@IsHide
+            string sql;
+            if (isFilterHide)
+            {
+                sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and SourceFlag=@SourceFlag and IsHide=0
                                                Order by CreateTime desc 
                                                OFFSET @OFFSETCount ROWS 
                                                FETCH NEXT @FETCHCount ROWS ONLY";
+            }
+            else
+            {
+                sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and SourceFlag=@SourceFlag
+                                               Order by CreateTime desc 
+                                               OFFSET @OFFSETCount ROWS 
+                                               FETCH NEXT @FETCHCount ROWS ONLY";
+            }
             using (var Db = GetDbConnection())
             {
                 return Db.Query<MomentEntity>(sql, new 
@@ -572,8 +583,7 @@ namespace Future.Repository
                     UId = uId, 
                     OFFSETCount = (pageIndex - 1) * pageSize, 
                     FETCHCount = pageSize ,
-                    SourceFlag= sourceFlag,
-                    IsHide=isHide
+                    SourceFlag= sourceFlag
                 }).AsList();
             }
         }
