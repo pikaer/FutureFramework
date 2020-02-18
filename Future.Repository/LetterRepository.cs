@@ -714,13 +714,10 @@ namespace Future.Repository
                           FROM dbo.letter_Moment moment
                           Left join dbo.letter_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
-                          Left join dbo.letter_Attention attention
-                          ON moment.UId=attention.PartnerUId and attention.UId=@UId
                           Inner join dbo.letter_LetterUser us On us.UId=moment.UId
                           Where moment.UId!=@UId  
                             and moment.CreateTime<@CreateTime 
                             and pick.MomentId is Null 
-                            and attention.AttentionId is Null 
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
