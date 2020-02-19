@@ -7,7 +7,7 @@ namespace Future.Model.Enum.Letter
     /// </summary>
     public enum MomentSourceEnum
     {
-        [Description("正常动态")]
+        [Description("闪聊动态")]
         Default = 0,
 
         [Description("一起玩动态")]

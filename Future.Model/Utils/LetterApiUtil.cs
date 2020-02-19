@@ -103,8 +103,6 @@ namespace Future.Model.Utils
         /// </summary>
         public long UId { get; set; }
 
-        public MomentSourceEnum SourceFlag { get; set; }
-
         /// <summary>
         /// 是否需要将匿名动态过滤
         /// </summary>
@@ -164,6 +162,20 @@ namespace Future.Model.Utils
         /// 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知,此时一般是用户未授权
         /// </summary>
         public GenderEnum Gender { get; set; }
+
+        public PlayTypeEnum PlayType { get; set; }
+
+        public string PlayTypeSesc { get; set; }
+
+        /// <summary>
+        /// 动态来源
+        /// </summary>
+        public MomentSourceEnum SourceFlag { get; set; }
+
+        /// <summary>
+        /// 动态来源
+        /// </summary>
+        public string SourceDesc { get; set; }
 
         /// <summary>
         /// 最近一次交谈时间

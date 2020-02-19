@@ -642,7 +642,7 @@ namespace Future.Service.Implement
                     TextContent = moment.TextContent.Trim(),
                     ImgContent= moment.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
-                    CreateTime = moment.CreateTime.GetDateDesc(true)
+                    CreateTime = moment.CreateTime.GetDateDesc()
                 });
                 
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");
@@ -770,7 +770,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize, request.Content.SourceFlag, request.Content.FilterHideMoment);
+            var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize,request.Content.FilterHideMoment);
             if (myMomentList.NotEmpty())
             {
                 var user = userBiz.LetterUserByUId(request.Content.UId);
@@ -788,6 +788,10 @@ namespace Future.Service.Implement
                     Gender=user.Gender,
                     TextContent =a.TextContent.Trim(),
                     ImgContent=a.ImgContent.GetImgPath(),
+                    PlayType=a.PlayType,
+                    PlayTypeSesc=a.PlayType.ToDescription(),
+                    SourceFlag=a.SourceFlag,
+                    SourceDesc=a.SourceFlag.ToDescription(),
                     PublishTime=a.CreateTime.GetDateDesc()
                 }).ToList();
             }

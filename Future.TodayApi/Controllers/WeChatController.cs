@@ -79,8 +79,9 @@ namespace Future.TodayApi.Controllers
             var list14 = V14List();
             var list15 = V15List();
             var list16 = V16List();
+            var list17 = V17List();
             List<string> list0 = new List<string>();
-            foreach (string str in list16)
+            foreach (string str in list17)
             {
                 if (list0.Contains(str)|| 
                     list1.Contains(str) || 
@@ -96,7 +97,8 @@ namespace Future.TodayApi.Controllers
                     list12.Contains(str)||
                     list13.Contains(str)||
                     list14.Contains(str)||
-                    list15.Contains(str))
+                    list15.Contains(str)||
+                    list16.Contains(str))
                 {
                     continue;
                 }
@@ -12106,5 +12108,33 @@ namespace Future.TodayApi.Controllers
 "12244101712"
             };
         }
+
+        private List<string> V17List()
+        {
+            return new List<string>()
+            {
+                "11474586805",
+"11764582139",
+"11853730407",
+"11908309910",
+"12046877095",
+"12104890515",
+"12128538774",
+"12130265006",
+"12155441577",
+"12155521500",
+"12205219309",
+"12222587677",
+"12237611995",
+"12238376123",
+"12240306019",
+"12240413615",
+"12243385755",
+"12243914429"
+            };
+        }
     }
 }
+
+
+
