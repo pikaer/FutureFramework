@@ -631,6 +631,25 @@ namespace Future.Model.Utils
         public string OnLineDesc { get; set; }
 
         /// <summary>
+        /// 位置信息
+        /// </summary>
+        public string PlaceInfo { get; set; }
+        /// <summary>
+        /// 个性签名
+        /// </summary>
+        public string Signature { get; set; }
+
+        /// <summary>
+        /// 星座
+        /// </summary>
+        public string Constellation { get; set; }
+
+        /// <summary>
+        /// 如 90后、00后
+        /// </summary>
+        public string AgeYear { get; set; }
+
+        /// <summary>
         /// 是否隐身
         /// </summary>
         public bool IsHide { get; set; }

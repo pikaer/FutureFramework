@@ -679,6 +679,10 @@ namespace Future.Service.Implement
                 Gender = letterUser.Gender,
                 TextContent = moment.TextContent.Trim(),
                 ImgContent = moment.ImgContent.GetImgPath(),
+                Constellation = Convert.ToDateTime(letterUser.BirthDate).GetConstellation(),
+                AgeYear = Convert.ToDateTime(letterUser.BirthDate).GetAgeYear(),
+                Signature = letterUser.Signature.IsNullOrEmpty() ? "却道天凉好个秋~" : letterUser.Signature.Trim(),
+                PlaceInfo = PlaceInfo(letterUser),
                 DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
                 CreateTime = moment.CreateTime.GetDateDesc()
             };
