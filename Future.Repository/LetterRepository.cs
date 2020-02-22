@@ -722,7 +722,6 @@ namespace Future.Repository
                             and moment.ReplyCount<=@PickUpCount 
                             and moment.IsReport=0 
                             and moment.IsDelete=0
-                            and us.Gender!=@Gender
                             and (moment.ImgContent is Null or moment.ImgContent='' )";
 
                 switch (gender)
