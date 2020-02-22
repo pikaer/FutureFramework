@@ -374,6 +374,8 @@ namespace Future.Service.Implement
             return response;
         }
 
+      
+
         public ResponseContext<PlayTogetherListResponse> PlayTogetherList(RequestContext<PlayTogetherListRequest> request)
         {
             var response = new ResponseContext<PlayTogetherListResponse>()
@@ -559,6 +561,24 @@ namespace Future.Service.Implement
             return response;
         }
 
+        private int GetPickUpCount(GenderEnum gender)
+        {
+            int pickUpCount;
+            switch (gender)
+            {
+                case GenderEnum.Woman:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["ManBottlePickUpCount"]);
+                    break;
+                case GenderEnum.Man:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["WomanBottlePickUpCount"]);
+                    break;
+                default:
+                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["DefaultBottlePickUpCount"]);
+                    break;
+            }
+            return pickUpCount;
+        }
+
         public ResponseContext<PickUpResponse> PickUp(RequestContext<PickUpRequest> request)
         {
             var response = new ResponseContext<PickUpResponse>()
@@ -573,23 +593,7 @@ namespace Future.Service.Implement
             {
                 return response;
             }
-            if (userBiz.UserTotalCoin(request.Content.UId) <= 0)
-            {
-                return new ResponseContext<PickUpResponse>(false, ErrCodeEnum.CoinEmpty, null, "金币余额不足，快去发布动态赚金币吧");
-            }
-            int pickUpCount;
-            switch (user.Gender)
-            {
-                case GenderEnum.Woman:
-                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["ManBottlePickUpCount"]);
-                    break;
-                case GenderEnum.Man:
-                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["WomanBottlePickUpCount"]);
-                    break;
-                default:
-                    pickUpCount = Convert.ToInt16(JsonSettingHelper.AppSettings["DefaultBottlePickUpCount"]);
-                    break;
-            }
+            int pickUpCount= GetPickUpCount(user.Gender);
             var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType, MomentSourceEnum.Default);
             if (moment == null)
             {
@@ -646,6 +650,106 @@ namespace Future.Service.Implement
                 });
                 
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");
+            }
+            return response;
+        }
+
+        private PickUpType BuildPickUpType(MomentEntity moment, PickUpEntity pickUp, OnLineUserHubEntity userOnline)
+        {
+            var partnerOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
+            var letterUser = userBiz.LetterUserByUId(moment.UId);
+            DateTime? datetime = null;
+            bool isonline = false;
+            if (partnerOnline != null)
+            {
+                datetime = partnerOnline.LastOnLineTime;
+                isonline = partnerOnline.IsOnLine;
+            }
+            return new PickUpType()
+            {
+                IsMyMoment = false,
+                PickUpId = pickUp.PickUpId,
+                MomentId = pickUp.MomentId,
+                UId = moment.UId,
+                OnLineDesc = datetime.GetOnlineDesc(isonline),
+                HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
+                IsHide = moment.IsHide,
+                NickName = moment.IsHide ? CommonHelper.CutNickName(moment.HidingNickName, 8) : CommonHelper.CutNickName(letterUser.NickName, 8),
+                Age = letterUser.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
+                Gender = letterUser.Gender,
+                TextContent = moment.TextContent.Trim(),
+                ImgContent = moment.ImgContent.GetImgPath(),
+                DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
+                CreateTime = moment.CreateTime.GetDateDesc()
+            };
+        }
+
+        public ResponseContext<NineMomentResponse> NineMoment(RequestContext<NineMomentRequest> request)
+        {
+            var response = new ResponseContext<NineMomentResponse>()
+            {
+                Content = new NineMomentResponse()
+            };
+            var user = userBiz.LetterUserByUId(request.Content.UId);
+            if (user == null)
+            {
+                response.Content.IsEmpty = true;
+                return response;
+            }
+            int pickUpCount = GetPickUpCount(user.Gender);
+            var momentList = letterDal.GetMomentList(request.Content.UId, pickUpCount, request.Content.Gender);
+            if (momentList.IsNullOrEmpty())
+            {
+                response.Content.IsEmpty = true;
+                return response;
+            }
+            var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+            for (int i = 0; i < momentList.Count; i++)
+            {
+                var pickUp = new PickUpEntity()
+                {
+                    PickUpId = Guid.NewGuid(),
+                    MomentId = momentList[i].MomentId,
+                    MomentUId = momentList[i].UId,
+                    PickUpUId = request.Content.UId,
+                    IsPickUpDelete=true,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+                letterDal.InsertPickUp(pickUp);
+                var pickType = BuildPickUpType(momentList[i], pickUp, userOnline);
+                switch (i)
+                {
+                    case 0:
+                        response.Content.Moment1= pickType;
+                        break;
+                    case 1:
+                        response.Content.Moment2 =pickType;
+                        break;                    
+                    case 2:                       
+                        response.Content.Moment3 =pickType;
+                        break;                    
+                    case 3:                       
+                        response.Content.Moment4 =pickType;
+                        break;                    
+                    case 4:                       
+                        response.Content.Moment5 =pickType;
+                        break;                    
+                    case 5:                       
+                        response.Content.Moment6 =pickType;
+                        break;                    
+                    case 6:                       
+                        response.Content.Moment7 =pickType;
+                        break;                    
+                    case 7:                       
+                        response.Content.Moment8 =pickType;
+                        break;                    
+                    case 8:                       
+                        response.Content.Moment9 = pickType;
+                        break;
+                    default:
+                        break;
+                }
             }
             return response;
         }
@@ -894,11 +998,9 @@ namespace Future.Service.Implement
                 Constellation = Convert.ToDateTime(userInfo.BirthDate).GetConstellation(),
                 AgeYear = Convert.ToDateTime(userInfo.BirthDate).GetAgeYear(),
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
-                BasicUserInfo = BasicUserInfo(userInfo).TextCut(15),
                 PlaceInfo = PlaceInfo(userInfo),
                 Signature = userInfo.Signature,
-                IsRegister= userInfo.IsRegister,
-                TotalCoin = userBiz.UserTotalCoin(userInfo.UId)
+                IsRegister= userInfo.IsRegister
             };
             return response;
         }
@@ -1075,13 +1177,8 @@ namespace Future.Service.Implement
                 AgeYear= Convert.ToDateTime(userInfo.BirthDate).GetAgeYear(),
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "却道天凉好个秋~" : userInfo.Signature.Trim(),
-                BasicUserInfo= BasicUserInfo(userInfo).TextCut(15),
                 PlaceInfo=PlaceInfo(userInfo)
             };
-            if (request.Content.Type == 1)
-            {
-                response.Content.TotalCoin = userBiz.UserTotalCoin(userInfo.UId);
-            }
             return response;
         }
 
@@ -1308,8 +1405,7 @@ namespace Future.Service.Implement
             user.Province = request.Content.Province;
             user.City = request.Content.City;
             user.UpdateTime = DateTime.Now;
-            letterDal.UpdateUserBasicInfo(user);
-            response.Content.TotalCoin = userBiz.UserTotalCoin(request.Content.UId);
+            response.Content.IsExecuteSuccess = letterDal.UpdateUserBasicInfo(user);
             return response;
         }
 
@@ -1320,17 +1416,6 @@ namespace Future.Service.Implement
                 Content = new DeleteAllCollectResponse()
                 {
                     IsExecuteSuccess = letterDal.DeleteAllCollect(request.Content.UId)
-                }
-            };
-        }
-
-        public ResponseContext<UserCoinInfoResponse> UserCoinInfo(RequestContext<UserCoinInfoRequest> request)
-        {
-            return new ResponseContext<UserCoinInfoResponse>
-            {
-                Content = new UserCoinInfoResponse()
-                {
-                    TotalCoin = userBiz.UserTotalCoin(request.Content.UId)
                 }
             };
         }
@@ -1655,7 +1740,6 @@ namespace Future.Service.Implement
             return response;
         }
 
-
         #endregion
 
         #region private Method
@@ -1692,28 +1776,6 @@ namespace Future.Service.Implement
             }
         }
 
-        private string BasicUserInfo(LetterUserEntity userInfo)
-        {
-            if (userInfo == null)
-            {
-                return null;
-            }
-            var sb = new StringBuilder();
-            if (userInfo.Gender != GenderEnum.Default)
-            {
-                sb.Append(userInfo.Gender == GenderEnum.Man ? "男" : "女");
-                sb.Append("•");
-            }
-            if (!userInfo.BirthDate.IsNullOrEmpty())
-            {
-                sb.AppendFormat("{0}岁", Convert.ToDateTime(userInfo.BirthDate).GetAgeByBirthdate());
-                sb.Append("•");
-
-                sb.Append(Convert.ToDateTime(userInfo.BirthDate).GetConstellation());
-                sb.Append("•");
-            }
-            return sb.ToString().TrimEnd('•');
-        }
         private string PlaceInfo(LetterUserEntity userInfo)
         {
             if (userInfo == null)

@@ -145,11 +145,6 @@ namespace Future.Service.Interface
         ResponseContext<DeleteAllCollectResponse> DeleteAllCollect(RequestContext<DeleteAllCollectRequest> request);
 
         /// <summary>
-        /// 获取用户金币信息
-        /// </summary>
-        ResponseContext<UserCoinInfoResponse> UserCoinInfo(RequestContext<UserCoinInfoRequest> request);
-
-        /// <summary>
         /// 金币明细
         /// </summary>
         ResponseContext<CoinDetailResponse> CoinDetail(RequestContext<CoinDetailRequest> request);
@@ -217,5 +212,10 @@ namespace Future.Service.Interface
         /// 一起玩列表
         /// </summary>
         ResponseContext<PlayTogetherListResponse> PlayTogetherList(RequestContext<PlayTogetherListRequest> request);
+        
+        /// <summary>
+        /// 九宫格动态
+        /// </summary>
+        ResponseContext<NineMomentResponse> NineMoment(RequestContext<NineMomentRequest> request);
     }
 }

@@ -513,6 +513,44 @@ namespace Future.Model.Utils
 
     #endregion
 
+    #region NineMoment
+    public class NineMomentRequest
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public long UId { get; set; }
+
+        public GenderEnum Gender { get; set; }
+    }
+
+    public class NineMomentResponse
+    {
+        /// <summary>
+        /// 是否为空
+        /// </summary>
+        public bool IsEmpty { get; set; }
+
+        public PickUpType Moment1 { get; set; }
+
+        public PickUpType Moment2 { get; set; }
+
+        public PickUpType Moment3 { get; set; }
+
+        public PickUpType Moment4 { get; set; }
+
+        public PickUpType Moment5 { get; set; }
+
+        public PickUpType Moment6 { get; set; }
+
+        public PickUpType Moment7 { get; set; }
+
+        public PickUpType Moment8 { get; set; }
+
+        public PickUpType Moment9 { get; set; }
+    }
+    #endregion
+
     #region PickUpList
     public class PickUpListRequest
     {
@@ -920,9 +958,9 @@ namespace Future.Model.Utils
     public class SetUserInfoResponse
     {
         /// <summary>
-        /// 用户金币数
+        /// 处理结果
         /// </summary>
-        public int TotalCoin { get; set; }
+        public bool IsExecuteSuccess { get; set; }
     }
     #endregion
 
@@ -1142,11 +1180,6 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
-
-        /// <summary>
-        ///0： 默认只获取用户信息，1：获取金币信息
-        /// </summary>
-        public int Type { get; set; }
     }
 
     public class BasicUserInfoResponse
@@ -1172,11 +1205,6 @@ namespace Future.Model.Utils
         public string HeadPhotoPath { get; set; }
 
         /// <summary>
-        /// 基础信息
-        /// </summary>
-        public string BasicUserInfo { get; set; }
-
-        /// <summary>
         /// 位置信息
         /// </summary>
         public string PlaceInfo { get; set; }
@@ -1199,11 +1227,6 @@ namespace Future.Model.Utils
         /// 是否已经注册账户
         /// </summary>
         public bool IsRegister { get; set; }
-
-        /// <summary>
-        /// 账户金币余额
-        /// </summary>
-        public int TotalCoin { get; set; }
     }
     #endregion
 

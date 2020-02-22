@@ -11,6 +11,9 @@ namespace Future.Model.Enum.Letter
         Default = 0,
 
         [Description("一起玩动态")]
-        PlayTogether =1
+        PlayTogether =1,
+
+        [Description("九宫格动态")]
+        NineMoment = 2
     }
 }

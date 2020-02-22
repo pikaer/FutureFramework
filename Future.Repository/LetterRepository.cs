@@ -694,6 +694,59 @@ namespace Future.Repository
             }
         }
 
+        public List<MomentEntity> GetMomentList(long uId, int pickUpCount, GenderEnum gender)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT top (9)  moment.MomentId
+                              ,moment.UId
+                              ,moment.TextContent
+                              ,moment.ImgContent
+                              ,moment.IsDelete
+                              ,moment.IsReport
+                              ,moment.ReplyCount
+                              ,moment.CreateTime
+                              ,moment.IsHide
+                              ,moment.HidingNickName
+                              ,moment.UpdateTime
+                          FROM dbo.letter_Moment moment
+                          Left join dbo.letter_PickUp pick
+                          ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
+                          Left join dbo.letter_Attention attention
+                          ON moment.UId=attention.PartnerUId and attention.UId=@UId
+                          Inner join dbo.letter_LetterUser us On us.UId=moment.UId
+                          Where moment.UId!=@UId  
+                            and moment.CreateTime<@CreateTime 
+                            and pick.MomentId is Null 
+                            and attention.AttentionId is Null 
+                            and moment.ReplyCount<=@PickUpCount 
+                            and moment.IsReport=0 
+                            and moment.IsDelete=0
+                            and us.Gender!=@Gender
+                            and (moment.ImgContent is Null or moment.ImgContent='' )";
+
+                switch (gender)
+                {
+                    case GenderEnum.Man:
+                        sql += " and us.Gender=1 ";
+                        break;
+                    case GenderEnum.Woman:
+                        sql += " and us.Gender=2 ";
+                        break;
+                    case GenderEnum.All:
+                        break;
+                }
+                sql += " Order by moment.CreateTime desc ,moment.ReplyCount ";
+                return Db.Query<MomentEntity>(sql, new
+                {
+                    UId = uId,
+                    PickUpCount = pickUpCount,
+                    Gender = gender,
+                    CreateTime = DateTime.Now
+                }).AsList();
+            }
+        }
+
         public List<MomentEntity> GetPlayMoments(long uId, int pickUpCount, GenderEnum gender, PlayTypeEnum playType)
         {
             using (var Db = GetDbConnection())
@@ -924,7 +977,8 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 string sql = @"UPDATE dbo.letter_PickUp
-                               SET IsPartnerDelete =0
+                               SET IsPickUpDelete =0,
+                                   IsPartnerDelete =0
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
@@ -1194,7 +1248,10 @@ namespace Future.Repository
                                   ,MomentId
                                   ,MomentUId
                                   ,FromPage      
-                                  ,PickUpUId      
+                                  ,PickUpUId  
+                                  ,IsPickUpDelete  
+                                  ,IsPartnerDelete  
+                                  ,PartnerLastDeleteTime  
                                   ,CreateTime
                                   ,UpdateTime)
                             VALUES
@@ -1203,6 +1260,9 @@ namespace Future.Repository
                                   ,@MomentUId
                                   ,@FromPage
                                   ,@PickUpUId
+                                  ,@IsPickUpDelete
+                                  ,@IsPartnerDelete
+                                  ,@PartnerLastDeleteTime
                                   ,@CreateTime
                                   ,@UpdateTime)";
                 return Db.Execute(sql, pickUpEntity) > 0;
