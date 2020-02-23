@@ -100,7 +100,7 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, int momentSource=-1)
+        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, bool playMoment=false)
         {
             using (var Db = GetDbConnection())
             {
@@ -122,9 +122,13 @@ namespace Future.Repository
                                           Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                                           Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
                                           Where pick.PickUpUId={0} and pick.IsPickUpDelete=0 and pick.FromPage=0 ", uId);
-                if (momentSource >= 0)
+                if (playMoment)
                 {
-                    sql += string.Format(" and SourceFlag={0} ", momentSource);
+                    sql += " and SourceFlag=1 ";
+                }
+                else
+                {
+                    sql += " and SourceFlag!=1 ";
                 }
 
                 sql += string.Format(" Order by pick.CreateTime desc  OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY ", (pageIndex - 1) * pageSize, pageSize);

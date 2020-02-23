@@ -392,7 +392,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, (int)MomentSourceEnum.PlayTogether);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, true);
             if (pickUpList.NotEmpty())
             {
                 var recentMomentImgs = RecentImgMomentImgs(pickUpList);
