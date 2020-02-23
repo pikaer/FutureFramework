@@ -287,7 +287,10 @@ namespace Future.Service.Implement
             }
             else
             {
-                letterDal.UpdatePickUpPartnerDelete(pickUp.PickUpId);
+                if(pickUp.IsPartnerDelete|| pickUp.IsPartnerDelete)
+                {
+                    letterDal.UpdatePickUpPartnerDelete(pickUp.PickUpId);
+                }
             }
             var discuss = new DiscussEntity()
             {

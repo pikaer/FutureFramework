@@ -987,9 +987,11 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
+                //同步创建时间为当前
                 string sql = @"UPDATE dbo.letter_PickUp
                                SET IsPickUpDelete =0,
                                    IsPartnerDelete =0
+                                  ,CreateTime = @UpdateTime
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
                 return Db.Execute(sql, new { UpdateTime = DateTime.Now, PickUpId = pickUpId }) > 0;
