@@ -287,7 +287,7 @@ namespace Future.Service.Implement
             }
             else
             {
-                if(pickUp.IsPartnerDelete|| pickUp.IsPartnerDelete)
+                if(pickUp.IsPartnerDelete|| pickUp.IsPickUpDelete)
                 {
                     letterDal.UpdatePickUpPartnerDelete(pickUp.PickUpId);
                 }
