@@ -100,39 +100,36 @@ namespace Future.Repository
             }
         }
 
-        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, MomentSourceEnum momentSource)
+        public List<PickUpDTO> PickUpListByPageIndex(long uId, int pageIndex, int pageSize, int momentSource=-1)
         {
-            var sql = @"SELECT pick.PickUpId,
-                               pick.MomentId,
-                               useinfo.UId,
-                               useinfo.Gender,
-                               useinfo.BirthDate,
-                               useinfo.NickName,
-                               useinfo.HeadPhotoPath,
-                               moment.UId as 'MomentUId',
-                               moment.TextContent,
-                               moment.ImgContent,
-                               moment.IsHide,
-                               moment.HidingNickName,
-                               moment.PlayType,
-                               moment.CreateTime
-                        FROM dbo.letter_PickUp pick 
-                        Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
-                        Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
-                        Where pick.PickUpUId=@UId and pick.IsPickUpDelete=0 and pick.FromPage=0 and SourceFlag=@SourceFlag
-                        Order by pick.CreateTime desc 
-                        OFFSET @OFFSETCount ROWS
-                        FETCH NEXT @FETCHCount ROWS ONLY";
-
             using (var Db = GetDbConnection())
             {
-                return Db.Query<PickUpDTO>(sql,new 
-                { 
-                    UId = uId,
-                    OFFSETCount = (pageIndex - 1) * pageSize, 
-                    FETCHCount = pageSize , 
-                    SourceFlag = momentSource
-                }).AsList();
+                var sql = string.Format(@"SELECT pick.PickUpId,
+                                                 pick.MomentId,
+                                                 useinfo.UId,
+                                                 useinfo.Gender,
+                                                 useinfo.BirthDate,
+                                                 useinfo.NickName,
+                                                 useinfo.HeadPhotoPath,
+                                                 moment.UId as 'MomentUId',
+                                                 moment.TextContent,
+                                                 moment.ImgContent,
+                                                 moment.IsHide,
+                                                 moment.HidingNickName,
+                                                 moment.PlayType,
+                                                 moment.CreateTime
+                                          FROM dbo.letter_PickUp pick 
+                                          Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
+                                          Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
+                                          Where pick.PickUpUId={0} and pick.IsPickUpDelete=0 and pick.FromPage=0 ", uId);
+                if (momentSource >= 0)
+                {
+                    sql += string.Format(" and SourceFlag={0} ", momentSource);
+                }
+
+                sql += string.Format(" Order by pick.CreateTime desc  OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY ", (pageIndex - 1) * pageSize, pageSize);
+
+                return Db.Query<PickUpDTO>(sql).AsList();
             }
         }
 

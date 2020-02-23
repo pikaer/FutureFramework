@@ -332,7 +332,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize, MomentSourceEnum.Default);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
@@ -392,7 +392,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, MomentSourceEnum.PlayTogether);
+            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, (int)MomentSourceEnum.PlayTogether);
             if (pickUpList.NotEmpty())
             {
                 var recentMomentImgs = RecentImgMomentImgs(pickUpList);
