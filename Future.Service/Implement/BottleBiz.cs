@@ -333,7 +333,7 @@ namespace Future.Service.Implement
             if (pickUpList.NotEmpty())
             {
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
-                foreach (var item in pickUpList.OrderByDescending(a=>a.PickUpCreateTime))
+                foreach (var item in pickUpList)
                 {
                     DateTime? datetime = null;
                     bool isonline = false;
@@ -357,7 +357,7 @@ namespace Future.Service.Implement
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
                         DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
-                        CreateTime = item.MomentCreateTime.GetDateDesc(true)
+                        CreateTime = item.CreateTime.GetDateDesc(true)
                     };
 
                     if (item.IsHide)
@@ -486,7 +486,7 @@ namespace Future.Service.Implement
                     TextContent = item.TextContent,
                     ImgContent = item.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
-                    CreateTime = item.MomentCreateTime.GetDateDesc(true),
+                    CreateTime = item.CreateTime.GetDateDesc(true),
                     PlayType= item.PlayType,
                     PlayTypeSesc= item.PlayType.ToDescription(),
                     AgeYear= item.BirthDate.Value.GetAgeYear(),

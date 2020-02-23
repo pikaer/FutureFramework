@@ -115,8 +115,7 @@ namespace Future.Repository
                                moment.IsHide,
                                moment.HidingNickName,
                                moment.PlayType,
-                               pick.CreateTime as 'PickUpCreateTime' ,
-                               moment.CreateTime as 'MomentCreateTime'
+                               moment.CreateTime
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId

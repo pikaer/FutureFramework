@@ -81,9 +81,5 @@ namespace Future.Model.DTO.Letter
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
-
-        public DateTime MomentCreateTime { get; set; }
-
-        public DateTime PickUpCreateTime { get; set; }
     }
 }
