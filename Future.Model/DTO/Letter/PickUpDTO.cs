@@ -75,11 +75,15 @@ namespace Future.Model.DTO.Letter
         /// <summary>
         /// 生日（2018-08-20）
         /// </summary>
-        public string BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
+
+        public DateTime MomentCreateTime { get; set; }
+
+        public DateTime PickUpCreateTime { get; set; }
     }
 }

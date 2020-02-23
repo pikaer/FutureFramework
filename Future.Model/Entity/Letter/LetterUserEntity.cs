@@ -59,7 +59,7 @@ namespace Future.Model.Entity.Letter
         /// <summary>
         /// 生日（2018-08-20）
         /// </summary>
-        public string BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// 用户所在区域

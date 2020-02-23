@@ -201,11 +201,6 @@
             删除收藏的动态
             </summary>
         </member>
-        <member name="M:Future.TodayApi.Controllers.LetterController.UserCoinInfo">
-            <summary>
-            用户金币余额信息
-            </summary>
-        </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.CoinDetail">
             <summary>
             用户金币余额详情
@@ -243,6 +238,11 @@
             </summary>
         </member>
         <member name="M:Future.TodayApi.Controllers.LetterController.UpdateHiding">
+            <summary>
+            更新用户身份状态
+            </summary>
+        </member>
+        <member name="M:Future.TodayApi.Controllers.LetterController.NineMoment">
             <summary>
             更新用户身份状态
             </summary>

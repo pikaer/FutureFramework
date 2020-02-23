@@ -522,6 +522,16 @@ namespace Future.Model.Utils
         public long UId { get; set; }
 
         public GenderEnum Gender { get; set; }
+
+        /// <summary>
+        /// 搜索最小年龄
+        /// </summary>
+        public int MinAge { get; set; }
+
+        /// <summary>
+        /// 搜索最大年龄
+        /// </summary>
+        public int MaxAge { get; set; }
     }
 
     public class NineMomentResponse

@@ -135,7 +135,7 @@ namespace Future.Service.Implement
                     EntranceDate = a.EntranceDate,
                     SchoolName = a.SchoolName,
                     NickName = a.NickName,
-                    BirthDate = a.BirthDate,
+                    BirthDate =a.BirthDate.HasValue?a.BirthDate.Value.ToString("yyyy-MM-dd"):"",
                     Province = a.Province,
                     City = a.City,
                     Area = a.Area,

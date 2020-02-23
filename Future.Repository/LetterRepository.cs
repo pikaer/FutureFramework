@@ -115,7 +115,8 @@ namespace Future.Repository
                                moment.IsHide,
                                moment.HidingNickName,
                                moment.PlayType,
-                               moment.CreateTime
+                               pick.CreateTime as 'PickUpCreateTime' ,
+                               moment.CreateTime as 'MomentCreateTime'
                         FROM dbo.letter_PickUp pick 
                         Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
                         Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
@@ -694,7 +695,7 @@ namespace Future.Repository
             }
         }
 
-        public List<MomentEntity> GetMomentList(long uId, int pickUpCount, GenderEnum gender)
+        public List<MomentEntity> GetMomentList(long uId, int pickUpCount, GenderEnum gender,int minAge,int maxAge)
         {
             using (var Db = GetDbConnection())
             {
@@ -735,7 +736,19 @@ namespace Future.Repository
                     case GenderEnum.All:
                         break;
                 }
+                if (minAge > 0&& minAge<maxAge)
+                {
+                    string minAgeStr = DateTime.Now.AddYears(-minAge).ToString("yyyy-MM-dd");
+                    sql +=string.Format(" and us.BirthDate<'{0}' ", minAgeStr);
+                }
+                if (maxAge > 0&&maxAge<100&&maxAge>minAge)
+                {
+                    string maxAgeStr = DateTime.Now.AddYears(-maxAge).ToString("yyyy-MM-dd");
+                    sql += string.Format(" and us.BirthDate>'{0}' ", maxAgeStr);
+                }
+
                 sql += " Order by moment.CreateTime desc ,moment.ReplyCount ";
+
                 return Db.Query<MomentEntity>(sql, new
                 {
                     UId = uId,

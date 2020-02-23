@@ -1,5 +1,6 @@
 ﻿using Future.Model.Enum.Letter;
 using Future.Model.Enum.Sys;
+using System;
 
 namespace Future.Model.DTO.Today
 {
@@ -60,7 +61,7 @@ namespace Future.Model.DTO.Today
         /// <summary>
         /// 生日（2018-08-20）
         /// </summary>
-        public string BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// 用户所在区域

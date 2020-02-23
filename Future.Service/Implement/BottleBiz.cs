@@ -333,7 +333,7 @@ namespace Future.Service.Implement
             if (pickUpList.NotEmpty())
             {
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
-                foreach (var item in pickUpList)
+                foreach (var item in pickUpList.OrderByDescending(a=>a.PickUpCreateTime))
                 {
                     DateTime? datetime = null;
                     bool isonline = false;
@@ -351,13 +351,13 @@ namespace Future.Service.Implement
                         UId = item.UId,
                         OnLineDesc = datetime.GetOnlineDesc(isonline),
                         Gender =item.Gender,
-                        Age= item.BirthDate.IsNullOrEmpty()?18:Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                        Age= item.BirthDate.HasValue? item.BirthDate.Value.GetAgeByBirthdate():18,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         IsHide=item.IsHide,
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
                         DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
-                        CreateTime = item.CreateTime.GetDateDesc(true)
+                        CreateTime = item.MomentCreateTime.GetDateDesc(true)
                     };
 
                     if (item.IsHide)
@@ -480,17 +480,17 @@ namespace Future.Service.Implement
                     UId = item.UId,
                     OnLineDesc = datetime.GetOnlineDesc(isonline),
                     Gender = item.Gender,
-                    Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                    Age = item.BirthDate.HasValue ? item.BirthDate.Value.GetAgeByBirthdate() : 18,
                     HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                     IsHide = item.IsHide,
                     TextContent = item.TextContent,
                     ImgContent = item.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
-                    CreateTime = item.CreateTime.GetDateDesc(true),
+                    CreateTime = item.MomentCreateTime.GetDateDesc(true),
                     PlayType= item.PlayType,
                     PlayTypeSesc= item.PlayType.ToDescription(),
-                    AgeYear=Convert.ToDateTime(item.BirthDate).GetAgeYear(),
-                    Constellation=Convert.ToDateTime(item.BirthDate).GetConstellation(),
+                    AgeYear= item.BirthDate.Value.GetAgeYear(),
+                    Constellation= item.BirthDate.Value.GetConstellation(),
                     RecentPlayMomentImgs= imgList[item.UId]
                 };
 
@@ -545,7 +545,7 @@ namespace Future.Service.Implement
                             UId = item.UId,
                             OnLineDesc = datetime.GetOnlineDesc(isonline),
                             Gender = item.Gender,
-                            Age = item.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(item.BirthDate).GetAgeByBirthdate(),
+                            Age = item.BirthDate.HasValue ? item.BirthDate.Value.GetAgeByBirthdate() : 18,
                             HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                             NickName = CommonHelper.CutNickName(item.NickName,8),
                             TextContent = item.TextContent,
@@ -641,8 +641,8 @@ namespace Future.Service.Implement
                     HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
                     IsHide=moment.IsHide,
                     NickName=moment.IsHide? CommonHelper.CutNickName(moment.HidingNickName, 8): CommonHelper.CutNickName(letterUser.NickName, 8),
-                    Age= letterUser.BirthDate.IsNullOrEmpty()?18: Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
-                    Gender= letterUser.Gender,
+                    Age= letterUser.BirthDate.HasValue ? letterUser.BirthDate.Value.GetAgeByBirthdate() : 18,
+                    Gender = letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),
                     ImgContent= moment.ImgContent.GetImgPath(),
                     DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
@@ -675,7 +675,7 @@ namespace Future.Service.Implement
                 HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
                 IsHide = moment.IsHide,
                 NickName = moment.IsHide ? CommonHelper.CutNickName(moment.HidingNickName, 8) : CommonHelper.CutNickName(letterUser.NickName, 8),
-                Age = letterUser.BirthDate.IsNullOrEmpty() ? 18 : Convert.ToDateTime(letterUser.BirthDate).GetAgeByBirthdate(),
+                Age = letterUser.BirthDate.HasValue ? letterUser.BirthDate.Value.GetAgeByBirthdate() : 18,
                 Gender = letterUser.Gender,
                 TextContent = moment.TextContent.Trim(),
                 ImgContent = moment.ImgContent.GetImgPath(),
@@ -701,7 +701,7 @@ namespace Future.Service.Implement
                 return response;
             }
             int pickUpCount = GetPickUpCount(user.Gender);
-            var momentList = letterDal.GetMomentList(request.Content.UId, pickUpCount, request.Content.Gender);
+            var momentList = letterDal.GetMomentList(request.Content.UId, pickUpCount, request.Content.Gender,request.Content.MinAge,request.Content.MinAge);
             if (momentList.IsNullOrEmpty())
             {
                 response.Content.IsEmpty = true;
@@ -963,7 +963,7 @@ namespace Future.Service.Implement
                     Area= "全部",
                     Signature = "却道天凉好个秋~",
                     Platform = request.Head.Platform,
-                    BirthDate = "2000-01-01",
+                    BirthDate = new DateTime(2000,1,1),
                     EntranceDate = "2000-07-01",
                     LastLoginTime = DateTime.Now,
                     CreateTime = DateTime.Now,
@@ -1198,7 +1198,7 @@ namespace Future.Service.Implement
                 LiveState = request.Content.LiveState,
                 EntranceDate = request.Content.EntranceDate,
                 SchoolName = request.Content.SchoolName,
-                BirthDate = request.Content.BirthDate,
+                BirthDate = Convert.ToDateTime(request.Content.BirthDate),
                 Area = request.Content.Area,
                 Province = request.Content.Province,
                 City = request.Content.City,
@@ -1228,7 +1228,7 @@ namespace Future.Service.Implement
                 LiveState = userInfo.LiveState,
                 EntranceDate = userInfo.EntranceDate.IsNullOrEmpty()? "2000-01-01" : userInfo.EntranceDate,
                 SchoolName = userInfo.SchoolName.IsNullOrEmpty()?"": userInfo.SchoolName,
-                BirthDate = userInfo.BirthDate.IsNullOrEmpty() ? "2000-01-01" : userInfo.BirthDate,
+                BirthDate = userInfo.BirthDate.HasValue ? userInfo.BirthDate.Value.ToString("yyyy-MM-dd"):"2000 -01-01",
                 Area = userInfo.Area.IsNullOrEmpty() ? "全部" : userInfo.Area,
                 Province = userInfo.Province.IsNullOrEmpty() ? "全部" : userInfo.Province,
                 City = userInfo.City.IsNullOrEmpty() ? "全部" : userInfo.City,
