@@ -156,8 +156,8 @@ namespace Future.Service.Implement
                     NickName = pickUp.IsHide ? pickUp.HidingNickName : partnerUser.NickName,
                     ShortNickName = pickUp.IsHide ? pickUp.HidingNickName.Substring(0, 1) : "",
                     HeadImgPath = partnerUser.HeadPhotoPath.GetImgPath(),
-                    OnLineDesc = partnerOnline.LastOnLineTime.GetOnlineDesc(partnerOnline.IsOnLine),
-                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline.Latitude, partnerOnline.Longitude),
+                    OnLineDesc = partnerOnline==null?"":partnerOnline.LastOnLineTime.GetOnlineDesc(partnerOnline.IsOnLine),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, partnerOnline!=null?partnerOnline.Latitude:0, partnerOnline!=null?partnerOnline.Longitude:0),
                 };
             }
             else
@@ -173,7 +173,7 @@ namespace Future.Service.Implement
                     ShortNickName = moment.IsHide ? moment.HidingNickName.Substring(0, 1) : "",
                     HeadImgPath = partnerUser.HeadPhotoPath.GetImgPath(),
                     OnLineDesc = partnerOnline.LastOnLineTime.GetOnlineDesc(partnerOnline.IsOnLine),
-                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline.Latitude, partnerOnline.Longitude),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline !=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, partnerOnline!=null?partnerOnline.Latitude:0, partnerOnline!=null?partnerOnline.Longitude:0),
                 };
             }
 
@@ -359,7 +359,7 @@ namespace Future.Service.Implement
                         IsHide=item.IsHide,
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
-                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline != null ? userOnline.Longitude:0, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                         CreateTime = item.CreateTime.GetDateDesc(true)
                     };
 
@@ -488,7 +488,7 @@ namespace Future.Service.Implement
                     IsHide = item.IsHide,
                     TextContent = item.TextContent,
                     ImgContent = item.ImgContent.GetImgPath(),
-                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                     CreateTime = item.CreateTime.GetDateDesc(true),
                     PlayType= item.PlayType,
                     PlayTypeSesc= item.PlayType.ToDescription(),
@@ -554,7 +554,7 @@ namespace Future.Service.Implement
                             TextContent = item.TextContent,
                             ImgContent = item.ImgContent.GetImgPath(),
                             CreateTime = item.CreateTime.GetDateDesc(true),
-                            DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, online!=null?online.Latitude:0, online != null ? online.Longitude:0)
+                            DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, online!=null?online.Latitude:0, online != null ? online.Longitude:0)
                         };
                         response.Content.AttentionList.Add(dto);
                     }
@@ -648,7 +648,7 @@ namespace Future.Service.Implement
                     Gender = letterUser.Gender,
                     TextContent = moment.TextContent.Trim(),
                     ImgContent= moment.ImgContent.GetImgPath(),
-                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
+                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
                     CreateTime = moment.CreateTime.GetDateDesc()
                 });
                 
@@ -686,7 +686,7 @@ namespace Future.Service.Implement
                 AgeYear = Convert.ToDateTime(letterUser.BirthDate).GetAgeYear(),
                 Signature = letterUser.Signature.IsNullOrEmpty() ? "却道天凉好个秋~" : letterUser.Signature.Trim(),
                 PlaceInfo = PlaceInfo(letterUser),
-                DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
+                DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
                 CreateTime = moment.CreateTime.GetDateDesc()
             };
         }
@@ -1306,10 +1306,6 @@ namespace Future.Service.Implement
             if (collectList.NotEmpty())
             {
                 var userOnline = letterDal.GetOnLineUser(request.Content.UId);
-                if (userOnline == null)
-                {
-                    return response;
-                }
                 foreach (var item in collectList)
                 {
                     var dto = new CollectType()
@@ -1322,7 +1318,7 @@ namespace Future.Service.Implement
                         PickUpId = item.PickUpId,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         OnLineDesc = item.LastOnLineTime.GetOnlineDesc(item.IsOnLine),
-                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline.Latitude, userOnline.Longitude, item != null ? item.Latitude : 0, item != null ? item.Longitude : 0),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, item != null ? item.Latitude : 0, item != null ? item.Longitude : 0),
                         TextContent = item.TextContent.Trim(),
                         ImgContent = item.ImgContent.GetImgPath(),
                         CreateTime = item.CreateTime.GetDateDesc()
