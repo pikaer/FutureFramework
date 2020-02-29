@@ -1,7 +1,7 @@
 ﻿using Future.Model.DTO.Today;
-using Future.Model.Entity.Letter;
+using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Sys;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service.Implement;
@@ -236,7 +236,7 @@ namespace Future.Web.Controllers
         {
             try
             {
-                var request = data.JsonToObject<LetterUserEntity>();
+                var request = data.JsonToObject<UserInfoEntity>();
                 if (request == null)
                 {
                     return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);

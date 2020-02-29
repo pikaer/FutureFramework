@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Future.Model.Enum.Letter
+namespace Future.Model.Enum.Bingo
 {
     public enum UserTypeEnum
     {

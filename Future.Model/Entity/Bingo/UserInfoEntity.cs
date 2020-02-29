@@ -1,10 +1,10 @@
-﻿using Future.Model.Enum.Letter;
+﻿using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using System;
 
-namespace Future.Model.Entity.Letter
+namespace Future.Model.Entity.Bingo
 {
-    public class LetterUserEntity:BaseEntity
+    public class UserInfoEntity:BaseEntity
     {
         /// <summary>
         /// 用户唯一标示

@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Future.Model.DTO.Letter;
+using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Hubs;
-using Future.Model.Entity.Letter;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using System;
 using System.Collections.Generic;
@@ -38,7 +38,7 @@ namespace Future.Repository
 
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
-        public LetterUserEntity LetterUser(long uId, string openId = "")
+        public UserInfoEntity LetterUser(long uId, string openId = "")
         {
             string sql;
             if (!string.IsNullOrWhiteSpace(openId))
@@ -51,7 +51,7 @@ namespace Future.Repository
             }
             using (var Db = GetDbConnection())
             {
-                return Db.QueryFirstOrDefault<LetterUserEntity>(sql);
+                return Db.QueryFirstOrDefault<UserInfoEntity>(sql);
             }
         }
 
@@ -234,7 +234,7 @@ namespace Future.Repository
             }
         }
 
-        public Tuple<List<LetterUserEntity>,int> GetSimulateUserList(int pageIndex, int pageSize, long uId, string nickName, GenderEnum gender, long creater, DateTime? startDateTime, DateTime? endCreateTime)
+        public Tuple<List<UserInfoEntity>,int> GetSimulateUserList(int pageIndex, int pageSize, long uId, string nickName, GenderEnum gender, long creater, DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
@@ -271,17 +271,17 @@ namespace Future.Repository
                     sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
                 }
 
-                int count = Db.Query<LetterUserEntity>(sql.ToString()).AsList().Count;
+                int count = Db.Query<UserInfoEntity>(sql.ToString()).AsList().Count;
 
                 sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
 
-                var list= Db.Query<LetterUserEntity>(sql.ToString()).AsList();
+                var list= Db.Query<UserInfoEntity>(sql.ToString()).AsList();
 
-                return new Tuple<List<LetterUserEntity>, int>(list, count);
+                return new Tuple<List<UserInfoEntity>, int>(list, count);
             }
         }
 
-        public Tuple<List<LetterUserEntity>, int> GetRealUserList(int pageIndex, int pageSize, long uId, string nickName, string openId, GenderEnum gender, DateTime? startDateTime, DateTime? endCreateTime)
+        public Tuple<List<UserInfoEntity>, int> GetRealUserList(int pageIndex, int pageSize, long uId, string nickName, string openId, GenderEnum gender, DateTime? startDateTime, DateTime? endCreateTime)
         {
             using (var Db = GetDbConnection())
             {
@@ -318,13 +318,13 @@ namespace Future.Repository
                     sql.AppendFormat("and CreateTime<'{0}' ", endCreateTime.Value.ToString());
                 }
 
-                int count = Db.Query<LetterUserEntity>(sql.ToString()).AsList().Count;
+                int count = Db.Query<UserInfoEntity>(sql.ToString()).AsList().Count;
 
                 sql.AppendFormat(" order by CreateTime desc OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", (pageIndex - 1) * pageSize, pageSize);
 
-                var list = Db.Query<LetterUserEntity>(sql.ToString()).AsList();
+                var list = Db.Query<UserInfoEntity>(sql.ToString()).AsList();
 
-                return new Tuple<List<LetterUserEntity>, int>(list, count);
+                return new Tuple<List<UserInfoEntity>, int>(list, count);
             }
         }
 
@@ -593,7 +593,7 @@ namespace Future.Repository
             var sql = SELECT_MomentEntity + @" Where UId=@UId and IsDelete=0 and ImgContent!='' and ImgContent is not null and IsHide=0
                                                Order by CreateTime desc 
                                                OFFSET 0 ROWS 
-                                               FETCH NEXT 5 ROWS ONLY";
+                                               FETCH NEXT 3 ROWS ONLY";
             using (var Db = GetDbConnection())
             {
                 return Db.Query<MomentEntity>(sql, new { UId = uId}).AsList();
@@ -1139,7 +1139,7 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdateLetterUser(LetterUserEntity userEntity)
+        public bool UpdateLetterUser(UserInfoEntity userEntity)
         {
             using (var Db = GetDbConnection())
             {
@@ -1161,7 +1161,7 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdateUserBasicInfo(LetterUserEntity userEntity)
+        public bool UpdateUserBasicInfo(UserInfoEntity userEntity)
         {
             using (var Db = GetDbConnection())
             {
@@ -1179,7 +1179,7 @@ namespace Future.Repository
             }
         }
 
-        public bool UpdateLastLoginTime(LetterUserEntity userEntity)
+        public bool UpdateLastLoginTime(UserInfoEntity userEntity)
         {
             using (var Db = GetDbConnection())
             {
@@ -1305,7 +1305,7 @@ namespace Future.Repository
             }
         }
 
-        public bool InsertLetterUser(LetterUserEntity userEntity)
+        public bool InsertLetterUser(UserInfoEntity userEntity)
         {
             using (var Db = GetDbConnection())
             {

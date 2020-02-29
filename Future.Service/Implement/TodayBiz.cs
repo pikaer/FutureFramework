@@ -1,7 +1,7 @@
 ﻿using Future.Model.DTO.Today;
-using Future.Model.Entity.Letter;
+using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Sys;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Future.Service.Implement
 {
@@ -196,7 +195,7 @@ namespace Future.Service.Implement
             }
         }
 
-        public ResponseContext<bool> AddOrUpdateSimulateUser(LetterUserEntity request)
+        public ResponseContext<bool> AddOrUpdateSimulateUser(UserInfoEntity request)
         {
             bool success;
             if (request.UId <= 0)

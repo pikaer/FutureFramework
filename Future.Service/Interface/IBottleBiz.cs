@@ -1,4 +1,4 @@
-﻿using Future.Model.Entity.Letter;
+﻿using Future.Model.Entity.Bingo;
 using Future.Model.Utils;
 using System;
 

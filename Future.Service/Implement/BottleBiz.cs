@@ -1,8 +1,8 @@
 ﻿using Future.CommonBiz;
 using Future.Model.DTO.Letter;
+using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Hubs;
-using Future.Model.Entity.Letter;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Repository;
@@ -202,7 +202,7 @@ namespace Future.Service.Implement
             return response;
         }
 
-        private string GetHidingNickName(long uid,MomentEntity moment, PickUpEntity pickUp,LetterUserEntity user)
+        private string GetHidingNickName(long uid,MomentEntity moment, PickUpEntity pickUp,UserInfoEntity user)
         {
             if (moment.UId == uid)
             {
@@ -792,7 +792,7 @@ namespace Future.Service.Implement
             PickUpPlayTogetherMoment(user, pickUpCount, PlayTypeEnum.Movie);
         }
 
-        private void PickUpPlayTogetherMoment(LetterUserEntity userInfo,int pickUpCount, PlayTypeEnum playType)
+        private void PickUpPlayTogetherMoment(UserInfoEntity userInfo,int pickUpCount, PlayTypeEnum playType)
         {
             var momentList = letterDal.GetPlayMoments(userInfo.UId, pickUpCount, userInfo.Gender, playType);
             if (momentList.IsNullOrEmpty())
@@ -956,7 +956,7 @@ namespace Future.Service.Implement
             var userInfo = letterDal.LetterUser(0, openIdInfo.OpenId);
             if (userInfo == null)
             {
-                userInfo = new LetterUserEntity()
+                userInfo = new UserInfoEntity()
                 {
                     OpenId = openIdInfo.OpenId,
                     Gender = 0,
@@ -1192,7 +1192,7 @@ namespace Future.Service.Implement
         public ResponseContext<UpdateUserInfoResponse> UpdateUserInfo(RequestContext<UpdateUserInfoRequest> request)
         {
             var response = new ResponseContext<UpdateUserInfoResponse>();
-            var userEntity = new LetterUserEntity()
+            var userEntity = new UserInfoEntity()
             {
                 UId = request.Content.UId,
                 NickName = request.Content.NickName,
@@ -1779,7 +1779,7 @@ namespace Future.Service.Implement
             }
         }
 
-        private string PlaceInfo(LetterUserEntity userInfo)
+        private string PlaceInfo(UserInfoEntity userInfo)
         {
             if (userInfo == null)
             {
@@ -1814,7 +1814,7 @@ namespace Future.Service.Implement
         /// 更新最新登录时间
         /// </summary>
         /// <param name="user"></param>
-        private void UpdateLastLoginTime(LetterUserEntity user)
+        private void UpdateLastLoginTime(UserInfoEntity user)
         {
             if (user.LastLoginTime.HasValue)
             {

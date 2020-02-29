@@ -1,5 +1,5 @@
 ﻿using Future.Model.DTO.Sys;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using Future.Service.Implement;

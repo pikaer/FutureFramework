@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Future.Model.Enum.Letter
+namespace Future.Model.Enum.Bingo
 {
     /// <summary>
     /// 一起玩类别枚举

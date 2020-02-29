@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Future.Model.Entity.Letter
+namespace Future.Model.Entity.Bingo
 {
     /// <summary>
     /// 关注用户列表

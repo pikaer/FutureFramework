@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Future.Model.Entity.Letter
+namespace Future.Model.Entity.Bingo
 {
     public class DiscussEntity:BaseEntity
     {

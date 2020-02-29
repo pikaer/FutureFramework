@@ -1,4 +1,4 @@
-﻿namespace Future.Model.Entity.Letter
+﻿namespace Future.Model.Entity.Bingo
 {
     /// <summary>
     /// 用户画像

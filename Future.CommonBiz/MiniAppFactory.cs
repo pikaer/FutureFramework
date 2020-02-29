@@ -1,5 +1,5 @@
 ﻿using Future.CommonBiz.Impls;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Infrastructure;
 
 namespace Future.CommonBiz

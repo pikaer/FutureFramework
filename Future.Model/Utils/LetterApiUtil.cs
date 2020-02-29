@@ -1,4 +1,4 @@
-﻿using Future.Model.Enum.Letter;
+﻿using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿using Future.CommonBiz;
+using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Hubs;
-using Future.Model.Entity.Letter;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Repository;
 using Future.Service.Interface;
 using Future.Utility;
@@ -36,7 +36,7 @@ namespace Future.Service.Implement
             return letterDal.GetCoinDetailListByUId(uId, 1, pageSize);
         }
 
-        public LetterUserEntity LetterUserByUId(long uId)
+        public UserInfoEntity LetterUserByUId(long uId)
         {
             if (uId <= 0)
             {

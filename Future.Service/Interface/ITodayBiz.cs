@@ -1,7 +1,7 @@
 ﻿using Future.Model.DTO.Today;
-using Future.Model.Entity.Letter;
+using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Sys;
-using Future.Model.Enum.Letter;
+using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
 using Future.Model.Utils;
 using System;
@@ -25,7 +25,7 @@ namespace Future.Service.Interface
 
         PageResult<RealUserDTO> GetRealUserList(int pageIndex, int pageSize, long uId, string nickName, string openId, GenderEnum gender, DateTime? startDateTime, DateTime? endCreateTime);
 
-        ResponseContext<bool> AddOrUpdateSimulateUser(LetterUserEntity request);
+        ResponseContext<bool> AddOrUpdateSimulateUser(UserInfoEntity request);
 
         ResponseContext<bool> DeleteLetterUser(long uId);
 

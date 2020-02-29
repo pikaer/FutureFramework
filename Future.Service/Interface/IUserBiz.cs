@@ -1,6 +1,6 @@
-﻿using Future.Model.Entity.Hubs;
-using Future.Model.Entity.Letter;
-using Future.Model.Enum.Letter;
+﻿using Future.Model.Entity.Bingo;
+using Future.Model.Entity.Hubs;
+using Future.Model.Enum.Bingo;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +14,7 @@ namespace Future.Service.Interface
         /// <summary>
         /// 通过UId获取用户信息
         /// </summary>
-        LetterUserEntity LetterUserByUId(long uId);
+        UserInfoEntity LetterUserByUId(long uId);
 
         /// <summary>
         /// 获取用户账户总金币数量
