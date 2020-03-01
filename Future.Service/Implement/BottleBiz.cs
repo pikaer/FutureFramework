@@ -21,7 +21,7 @@ namespace Future.Service.Implement
     {
         #region public Method
 
-        private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
+        private readonly BingoRepository bingoDal = SingletonProvider<BingoRepository>.Instance;
 
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 
@@ -42,10 +42,10 @@ namespace Future.Service.Implement
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
 
-            var pickUpList = letterDal.PickUpDTOs(request.Content.UId, request.Content.PageIndex, pageSize);
+            var pickUpList = bingoDal.PickUpDTOs(request.Content.UId, request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in pickUpList)
                 {
                     var dto = new DiscussType()
@@ -89,13 +89,13 @@ namespace Future.Service.Implement
             PickUpEntity pickUp;
             if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
-                pickUp = letterDal.PickUp(request.Content.PickUpId.Value);
-                moment = letterDal.GetMoment(pickUp.MomentId);
+                pickUp = bingoDal.PickUp(request.Content.PickUpId.Value);
+                moment = bingoDal.GetMoment(pickUp.MomentId);
             }
             else
             {
-                moment = letterDal.GetMoment(request.Content.MomentId.Value);
-                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId.Value, request.Content.UId);
+                moment = bingoDal.GetMoment(request.Content.MomentId.Value);
+                pickUp = bingoDal.PickUpByMomentId(request.Content.MomentId.Value, request.Content.UId);
                 if (pickUp == null)
                 {
                     pickUp = new PickUpEntity()
@@ -108,7 +108,7 @@ namespace Future.Service.Implement
                         CreateTime = DateTime.Now,
                         UpdateTime = DateTime.Now
                     };
-                    letterDal.InsertPickUp(pickUp);
+                    bingoDal.InsertPickUp(pickUp);
                 }
             }
             if (moment == null)
@@ -143,7 +143,7 @@ namespace Future.Service.Implement
                     ShortNickName=nickName.Substring(0,1)
                 }
             };
-            var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+            var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
             if (request.Content.UId == moment.UId)
             {
                 var partnerUser = userBiz.LetterUserByUId(pickUp.PickUpUId);
@@ -187,7 +187,7 @@ namespace Future.Service.Implement
                 deleteTime = pickUp.PartnerLastDeleteTime;
             }
 
-            var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
+            var discussList = bingoDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.IsNullOrEmpty()&&moment.UId != request.Content.UId)
             {
                 if (pickUp.IsHide)
@@ -256,15 +256,15 @@ namespace Future.Service.Implement
             {
                 Content = new DiscussResponse()
             };
-            var moment = letterDal.GetMoment(request.Content.MomentId);
+            var moment = bingoDal.GetMoment(request.Content.MomentId);
             PickUpEntity pickUp;
             if(request.Content.PickUpId!=null&& request.Content.PickUpId != Guid.Empty)
             {
-                pickUp = letterDal.PickUp(request.Content.PickUpId);
+                pickUp = bingoDal.PickUp(request.Content.PickUpId);
             }
             else
             {
-                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
+                pickUp = bingoDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
                 if (pickUp == null)
                 {
                     pickUp = new PickUpEntity() 
@@ -277,19 +277,19 @@ namespace Future.Service.Implement
                         CreateTime=DateTime.Now,
                         UpdateTime=DateTime.Now
                     };
-                    letterDal.InsertPickUp(pickUp);
+                    bingoDal.InsertPickUp(pickUp);
                 }
             }
 
             if(pickUp.MomentUId== request.Head.UId)
             {
-                letterDal.UpdatePickUpUserDelete(pickUp.PickUpId);
+                bingoDal.UpdatePickUpUserDelete(pickUp.PickUpId);
             }
             else
             {
                 if(pickUp.IsPartnerDelete|| pickUp.IsPickUpDelete)
                 {
-                    letterDal.UpdatePickUpPartnerDelete(pickUp.PickUpId);
+                    bingoDal.UpdatePickUpPartnerDelete(pickUp.PickUpId);
                 }
             }
             var discuss = new DiscussEntity()
@@ -301,7 +301,7 @@ namespace Future.Service.Implement
                 CreateTime=DateTime.Now,
                 UpdateTime=DateTime.Now
             };
-            response.Content.IsExecuteSuccess= letterDal.InsertDiscuss(discuss);
+            response.Content.IsExecuteSuccess= bingoDal.InsertDiscuss(discuss);
 
             if (pickUp.MomentUId != request.Head.UId)
             {
@@ -332,10 +332,10 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
+            var pickUpList = bingoDal.PickUpListByPageIndex(request.Content.UId,request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in pickUpList)
                 {
                     DateTime? datetime = null;
@@ -392,7 +392,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, true);
+            var pickUpList = bingoDal.PickUpListByPageIndex(request.Content.UId, 1, pageSize, true);
             if (pickUpList.NotEmpty())
             {
                 var recentMomentImgs = RecentImgMomentImgs(pickUpList);
@@ -434,7 +434,7 @@ namespace Future.Service.Implement
             foreach(long uid in uidList)
             {
                 var imgList = new List<string>();
-                var momentList = letterDal.GetRecentImgMomentList(uid);
+                var momentList = bingoDal.GetRecentImgMomentList(uid);
                 if (momentList.NotEmpty())
                 {
                     foreach(var moment in momentList)
@@ -464,7 +464,7 @@ namespace Future.Service.Implement
                 return null;
             }
             var rtnList = new List<PlayTogetherType>();
-            var userOnline = letterDal.GetOnLineUser(uid);
+            var userOnline = bingoDal.GetOnLineUser(uid);
             foreach (var item in pickUps)
             {
                 DateTime? datetime = null;
@@ -526,10 +526,10 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var pickUpList = letterDal.AttentionListByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
+            var pickUpList = bingoDal.AttentionListByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize);
             if (pickUpList.NotEmpty())
             {
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
                 if (userOnline != null)
                 {
                     foreach (var item in pickUpList)
@@ -597,7 +597,7 @@ namespace Future.Service.Implement
                 return response;
             }
             int pickUpCount= GetPickUpCount(user.Gender);
-            var moment= letterDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType, MomentSourceEnum.Default);
+            var moment= bingoDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType, MomentSourceEnum.Default);
             if (moment == null)
             {
                 return response;
@@ -612,10 +612,10 @@ namespace Future.Service.Implement
                 CreateTime=DateTime.Now,
                 UpdateTime= DateTime.Now
             };
-            bool success=letterDal.InsertPickUp(pickUp);
+            bool success=bingoDal.InsertPickUp(pickUp);
             if (success)
             {
-                letterDal.UpdatePickCount(moment.MomentId);
+                bingoDal.UpdatePickCount(moment.MomentId);
                 var letterUser= userBiz.LetterUserByUId(moment.UId);
                 if (letterUser == null)
                 {
@@ -625,7 +625,7 @@ namespace Future.Service.Implement
                 {
                     moment.TextContent = moment.TextContent.TextCut(18);
                 }
-                var partnerOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
+                var partnerOnline = bingoDal.GetOnLineUser(pickUp.MomentUId);
                 DateTime? datetime = null;
                 bool isonline = false;
                 if (partnerOnline != null)
@@ -633,7 +633,7 @@ namespace Future.Service.Implement
                     datetime = partnerOnline.LastOnLineTime;
                     isonline = partnerOnline.IsOnLine;
                 }
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
                 response.Content.PickUpList.Add(new PickUpType()
                 {
                     IsMyMoment=false,
@@ -659,7 +659,7 @@ namespace Future.Service.Implement
 
         private PickUpType BuildPickUpType(MomentEntity moment, PickUpEntity pickUp, OnLineUserHubEntity userOnline)
         {
-            var partnerOnline = letterDal.GetOnLineUser(pickUp.MomentUId);
+            var partnerOnline = bingoDal.GetOnLineUser(pickUp.MomentUId);
             var letterUser = userBiz.LetterUserByUId(moment.UId);
             DateTime? datetime = null;
             bool isonline = false;
@@ -704,13 +704,13 @@ namespace Future.Service.Implement
                 return response;
             }
             int pickUpCount = GetPickUpCount(user.Gender);
-            var momentList = letterDal.GetMomentList(request.Content.UId, pickUpCount, request.Content.Gender,request.Content.MinAge,request.Content.MinAge);
+            var momentList = bingoDal.GetMomentList(request.Content.UId, pickUpCount, request.Content.Gender,request.Content.MinAge,request.Content.MinAge);
             if (momentList.IsNullOrEmpty())
             {
                 response.Content.IsEmpty = true;
                 return response;
             }
-            var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+            var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
             for (int i = 0; i < momentList.Count; i++)
             {
                 var pickUp = new PickUpEntity()
@@ -723,7 +723,7 @@ namespace Future.Service.Implement
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
-                letterDal.InsertPickUp(pickUp);
+                bingoDal.InsertPickUp(pickUp);
                 var pickType = BuildPickUpType(momentList[i], pickUp, userOnline);
                 switch (i)
                 {
@@ -794,7 +794,7 @@ namespace Future.Service.Implement
 
         private void PickUpPlayTogetherMoment(UserInfoEntity userInfo,int pickUpCount, PlayTypeEnum playType)
         {
-            var momentList = letterDal.GetPlayMoments(userInfo.UId, pickUpCount, userInfo.Gender, playType);
+            var momentList = bingoDal.GetPlayMoments(userInfo.UId, pickUpCount, userInfo.Gender, playType);
             if (momentList.IsNullOrEmpty())
             {
                 return;
@@ -810,10 +810,10 @@ namespace Future.Service.Implement
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
-                bool success = letterDal.InsertPickUp(pickUp);
+                bool success = bingoDal.InsertPickUp(pickUp);
                 if (success)
                 {
-                    letterDal.UpdatePickCount(item.MomentId);
+                    bingoDal.UpdatePickCount(item.MomentId);
                 }
             }
         }
@@ -840,7 +840,7 @@ namespace Future.Service.Implement
                 UpdateTime=DateTime.Now
             };
 
-            response.Content.IsExecuteSuccess= letterDal.InsertMoment(moment);
+            response.Content.IsExecuteSuccess= bingoDal.InsertMoment(moment);
             response.Content.MomentId = moment.MomentId;
             if (response.Content.IsExecuteSuccess)
             {
@@ -859,7 +859,7 @@ namespace Future.Service.Implement
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
-                letterDal.InsertPickUp(pickUp);
+                bingoDal.InsertPickUp(pickUp);
             }
 
             return response;
@@ -881,7 +881,7 @@ namespace Future.Service.Implement
             {
                 pageSize = Convert.ToInt32(pickUpPageSize);
             }
-            var myMomentList = letterDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize,request.Content.FilterHideMoment);
+            var myMomentList = bingoDal.GetMomentByPageIndex(request.Content.UId, request.Content.PageIndex, pageSize,request.Content.FilterHideMoment);
             if (myMomentList.NotEmpty())
             {
                 var user = userBiz.LetterUserByUId(request.Content.UId);
@@ -915,7 +915,7 @@ namespace Future.Service.Implement
             {
                 Content=new MomentDetailResponse()
             };
-            var moment = letterDal.GetMoment(request.Content.MomentId);
+            var moment = bingoDal.GetMoment(request.Content.MomentId);
             if (moment != null)
             {
                 var user = userBiz.LetterUserByUId(moment.UId);
@@ -953,7 +953,7 @@ namespace Future.Service.Implement
                 });
                 return response;
             }
-            var userInfo = letterDal.LetterUser(0, openIdInfo.OpenId);
+            var userInfo = bingoDal.LetterUser(0, openIdInfo.OpenId);
             if (userInfo == null)
             {
                 userInfo = new UserInfoEntity()
@@ -973,10 +973,10 @@ namespace Future.Service.Implement
                     UpdateTime = DateTime.Now
                 };
 
-                bool success = letterDal.InsertLetterUser(userInfo);
+                bool success = bingoDal.InsertLetterUser(userInfo);
                 if (success)
                 {
-                    userInfo = letterDal.LetterUser(0, openIdInfo.OpenId);
+                    userInfo = bingoDal.LetterUser(0, openIdInfo.OpenId);
                     userBiz.CoinChange(userInfo.UId, CoinChangeEnum.FirstLoginReward, "新注册用户赠送金币");
                 }
             }
@@ -1019,7 +1019,7 @@ namespace Future.Service.Implement
                 Content = new DeleteBottleResponse()
             };
 
-            var pickUp = letterDal.PickUp(request.Content.PickUpId);
+            var pickUp = bingoDal.PickUp(request.Content.PickUpId);
             if (pickUp == null)
             {
                 return response;
@@ -1027,20 +1027,20 @@ namespace Future.Service.Implement
             var updateTime = DateTime.Now;
             if (pickUp.MomentUId == request.Content.UId)
             {
-                letterDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, true);
+                bingoDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, true);
             }
             else
             {
                 if (request.Content.DeleteType == 1)
                 {
-                    letterDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, false);
+                    bingoDal.UpdatePickDeleteTime(pickUp.PickUpId, updateTime, false);
                 }
                 else
                 {
-                    letterDal.UpdatePickDelete(pickUp.PickUpId);
+                    bingoDal.UpdatePickDelete(pickUp.PickUpId);
                 }
             }
-            letterDal.UpdateHasRead(pickUp.PickUpId, request.Content.UId, updateTime);
+            bingoDal.UpdateHasRead(pickUp.PickUpId, request.Content.UId, updateTime);
             response.Content.IsExecuteSuccess = true;
             response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
             return response;
@@ -1052,16 +1052,16 @@ namespace Future.Service.Implement
             {
                 Content = new ReportBottleResponse()
             };
-            var pickUp= letterDal.PickUp(request.Content.PickUpId);
+            var pickUp= bingoDal.PickUp(request.Content.PickUpId);
             if (pickUp == null)
             {
                 return response;
             }
 
-            var moment = letterDal.GetMoment(pickUp.MomentId);
+            var moment = bingoDal.GetMoment(pickUp.MomentId);
             if (moment != null)
             {
-                response.Content.IsExecuteSuccess= letterDal.UpdatePickUpReport(pickUp.MomentId);
+                response.Content.IsExecuteSuccess= bingoDal.UpdatePickUpReport(pickUp.MomentId);
                 if (response.Content.IsExecuteSuccess)
                 {
                     userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.ReportedDeducted, "动态被举报，扣除金币");
@@ -1076,7 +1076,7 @@ namespace Future.Service.Implement
             {
                 Content = new ClearAllBottleResponse()
                 {
-                    IsExecuteSuccess = letterDal.UpdateAllPickDeleteByUId(request.Content.UId)
+                    IsExecuteSuccess = bingoDal.UpdateAllPickDeleteByUId(request.Content.UId)
                 }
             };
         }
@@ -1088,7 +1088,7 @@ namespace Future.Service.Implement
                 Content = new ClearUnReadCountResponse()
             };
 
-            letterDal.UpdateHasRead(request.Content.PickUpId,request.Content.UId);
+            bingoDal.UpdateHasRead(request.Content.PickUpId,request.Content.UId);
             response.Content.IsExecuteSuccess = true;
             response.Content.CurrentTotalUnReadCount = UnReadTotalCount(request.Content.UId);
             return response;
@@ -1113,7 +1113,7 @@ namespace Future.Service.Implement
                 Content = new DeleteAllBottleResponse()
             };
 
-            var myPickUpList= letterDal.PickUpListByPickUpUId(request.Content.UId);
+            var myPickUpList= bingoDal.PickUpListByPickUpUId(request.Content.UId);
             if (myPickUpList.NotEmpty())
             {
                 foreach(var item in myPickUpList)
@@ -1121,23 +1121,23 @@ namespace Future.Service.Implement
                     //当瓶子发布者删除的时候，直接清空评论数据
                     if (item.IsUserDelete)
                     {
-                        letterDal.DeleteDiscuss(item.PickUpId);
+                        bingoDal.DeleteDiscuss(item.PickUpId);
                     }
 
-                    letterDal.DeleteAllPickBottle(item.PickUpId);
+                    bingoDal.DeleteAllPickBottle(item.PickUpId);
                 }
             }
 
-            var partnerPickUpList = letterDal.PickUpListByMomentUId(request.Content.UId);
+            var partnerPickUpList = bingoDal.PickUpListByMomentUId(request.Content.UId);
             if (partnerPickUpList.NotEmpty())
             {
                 foreach (var item in partnerPickUpList)
                 {
                     if (item.IsPartnerDelete)
                     {
-                        letterDal.DeleteDiscuss(item.PickUpId);
+                        bingoDal.DeleteDiscuss(item.PickUpId);
                     }
-                    letterDal.DeleteAllPublishBottle(item.PickUpId);
+                    bingoDal.DeleteAllPublishBottle(item.PickUpId);
                 }
             }
             
@@ -1151,16 +1151,16 @@ namespace Future.Service.Implement
             {
                 Content = new ClearAllUnReadCountResponse()
             };
-            var myPickUpList = letterDal.PickUpListByPickUpUId(request.Content.UId);
+            var myPickUpList = bingoDal.PickUpListByPickUpUId(request.Content.UId);
             foreach(var item in myPickUpList)
             {
-                letterDal.UpdateDiscussHasRead(item.PickUpId, item.MomentUId);
+                bingoDal.UpdateDiscussHasRead(item.PickUpId, item.MomentUId);
             }
 
-            var partnerPickUpList = letterDal.PickUpListByMomentUId(request.Content.UId);
+            var partnerPickUpList = bingoDal.PickUpListByMomentUId(request.Content.UId);
             foreach (var item in partnerPickUpList)
             {
-                letterDal.UpdateDiscussHasRead(item.PickUpId, item.PickUpUId);
+                bingoDal.UpdateDiscussHasRead(item.PickUpId, item.PickUpUId);
             }
             response.Content.IsExecuteSuccess = true;
             return response;
@@ -1174,6 +1174,7 @@ namespace Future.Service.Implement
             {
                 return response;
             }
+            
             response.Content = new BasicUserInfoResponse()
             {
                 UId= userInfo.UId,
@@ -1210,9 +1211,66 @@ namespace Future.Service.Implement
             };
             response.Content = new UpdateUserInfoResponse()
             {
-                IsExecuteSuccess = letterDal.UpdateLetterUser(userEntity)
+                IsExecuteSuccess = bingoDal.UpdateLetterUser(userEntity)
             };
             return response;
+        }
+
+        public ResponseContext<UpdateUserTagResponse> UpdateUserTag(RequestContext<UpdateUserTagRequest> request)
+        {
+            var userTagList = bingoDal.GetUserTagListByUId(request.Content.UId);
+            foreach(var item in request.Content.TagList)
+            {
+                if (userTagList.IsNullOrEmpty())
+                {
+                    if (item.Checked)
+                    {
+                        bingoDal.InsertUserTag(new UserTagEntity()
+                        {
+                            TagId = Guid.NewGuid(),
+                            UId = request.Content.UId,
+                            TagType = request.Content.TagType,
+                            Tag = item.Tag,
+                            CreateTime=DateTime.Now,
+                            UpdateTime=DateTime.Now
+                        });
+                    }
+                }
+                else
+                {
+                    var tagEntity = userTagList.FirstOrDefault(a => a.TagType == request.Content.TagType && a.Tag == item.Tag);
+                    if (tagEntity == null)
+                    {
+                        if (item.Checked)
+                        {
+                            bingoDal.InsertUserTag(new UserTagEntity()
+                            {
+                                TagId = Guid.NewGuid(),
+                                UId = request.Content.UId,
+                                TagType = request.Content.TagType,
+                                Tag = item.Tag,
+                                CreateTime = DateTime.Now,
+                                UpdateTime = DateTime.Now
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if (item.Checked)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            bingoDal.DeleteUserTag(tagEntity.TagId);
+                        }
+                    }
+                }
+            }
+            return new ResponseContext<UpdateUserTagResponse>()
+            {
+                Content = new UpdateUserTagResponse { IsExecuteSuccess = true }
+            };
         }
 
         public ResponseContext<GetUserInfoResponse> GetUserInfo(RequestContext<GetUserInfoRequest> request)
@@ -1223,6 +1281,7 @@ namespace Future.Service.Implement
             {
                 return response;
             }
+            var tagList = bingoDal.GetUserTagListByUId(userInfo.UId);
             response.Content = new GetUserInfoResponse()
             {
                 UId = userInfo.UId,
@@ -1237,13 +1296,19 @@ namespace Future.Service.Implement
                 City = userInfo.City.IsNullOrEmpty() ? "全部" : userInfo.City,
                 NickName = userInfo.NickName.Trim(),
                 Signature = userInfo.Signature.IsNullOrEmpty() ? "却道天凉好个秋~" : userInfo.Signature.Trim(),
+                CharacterTagList = userBiz.GetTagList(tagList, TagTypeEnum.个性标签),
+                SportTagList = userBiz.GetTagList(tagList, TagTypeEnum.运动标签),
+                MusicTagList = userBiz.GetTagList(tagList, TagTypeEnum.音乐标签),
+                FoodTagList = userBiz.GetTagList(tagList, TagTypeEnum.食物标签),
+                MovieTagList = userBiz.GetTagList(tagList, TagTypeEnum.电影标签),
+                TravelTagList = userBiz.GetTagList(tagList, TagTypeEnum.旅行标签)
             };
             return response;
         }
 
         public ResponseContext<DeleteMomentResponse> DeleteMoment(RequestContext<DeleteMomentRequest> request)
         {
-            var moment = letterDal.GetMoment(request.Content.MomentId);
+            var moment = bingoDal.GetMoment(request.Content.MomentId);
             //物理删除
             if(moment!=null&& moment.ReplyCount == 0)
             {
@@ -1252,13 +1317,13 @@ namespace Future.Service.Implement
                     string path = JsonSettingHelper.AppSettings["SetImgPath"] + moment.ImgContent;
                     System.IO.File.Delete(path);
                 }
-                letterDal.DeleteMoment(request.Content.MomentId);
+                bingoDal.DeleteMoment(request.Content.MomentId);
             }
             return new ResponseContext<DeleteMomentResponse>
             {
                 Content = new DeleteMomentResponse()
                 {
-                    IsExecuteSuccess = letterDal.UpdateMomentDelete(request.Content.MomentId)
+                    IsExecuteSuccess = bingoDal.UpdateMomentDelete(request.Content.MomentId)
                 }
             };        
         }
@@ -1269,7 +1334,7 @@ namespace Future.Service.Implement
             {
                 Content = new DeleteAllMomentResponse()
                 {
-                    IsExecuteSuccess = letterDal.UpdateMomentDelete(request.Content.UId)
+                    IsExecuteSuccess = bingoDal.UpdateMomentDelete(request.Content.UId)
                 }
             };
         }
@@ -1280,7 +1345,7 @@ namespace Future.Service.Implement
             {
                 Content = new UpdateAvatarUrlResponse()
                 {
-                    IsExecuteSuccess = letterDal.UpdateAvatarUrl(request.Content.AvatarUrl,request.Content.UId)
+                    IsExecuteSuccess = bingoDal.UpdateAvatarUrl(request.Content.AvatarUrl,request.Content.UId)
                 }
             };
         }
@@ -1302,10 +1367,10 @@ namespace Future.Service.Implement
                 pageSize = Convert.ToInt32(collectPageSize);
             }
 
-            var collectList = letterDal.CollectListByUId(request.Content.UId, request.Content.PageIndex, pageSize);
+            var collectList = bingoDal.CollectListByUId(request.Content.UId, request.Content.PageIndex, pageSize);
             if (collectList.NotEmpty())
             {
-                var userOnline = letterDal.GetOnLineUser(request.Content.UId);
+                var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
                 foreach (var item in collectList)
                 {
                     var dto = new CollectType()
@@ -1344,19 +1409,19 @@ namespace Future.Service.Implement
             {
                 Content = new DeleteCollectResponse()
                 {
-                    IsExecuteSuccess = letterDal.DeleteCollect(request.Content.CollectId)
+                    IsExecuteSuccess = bingoDal.DeleteCollect(request.Content.CollectId)
                 }
             };
         }
 
         public ResponseContext<AddCollectResponse> AddCollect(RequestContext<AddCollectRequest> request)
         {
-            var collect = letterDal.GetCollect(request.Content.MomentId,request.Content.UId);
+            var collect = bingoDal.GetCollect(request.Content.MomentId,request.Content.UId);
 
             bool success;
             if (collect == null)
             {
-                success=letterDal.InsertCollect(new CollectEntity()
+                success=bingoDal.InsertCollect(new CollectEntity()
                 {
                     CollectId = Guid.NewGuid(),
                     UId = request.Content.UId,
@@ -1368,7 +1433,7 @@ namespace Future.Service.Implement
                 });
                 if(success)
                 {
-                    var moment = letterDal.GetMoment(request.Content.MomentId);
+                    var moment = bingoDal.GetMoment(request.Content.MomentId);
                     if (moment != null)
                     {
                         userBiz.CoinChangeAsync(moment.UId, CoinChangeEnum.CollectedReward, "发布的动态被别人收藏，奖励金币");
@@ -1378,7 +1443,7 @@ namespace Future.Service.Implement
             else
             {
                 collect.UpdateTime = DateTime.Now;
-                success = letterDal.UpdateCollectUpdateTime(collect);
+                success = bingoDal.UpdateCollectUpdateTime(collect);
             }
 
             return new ResponseContext<AddCollectResponse>
@@ -1408,7 +1473,7 @@ namespace Future.Service.Implement
             user.Province = request.Content.Province;
             user.City = request.Content.City;
             user.UpdateTime = DateTime.Now;
-            response.Content.IsExecuteSuccess = letterDal.UpdateUserBasicInfo(user);
+            response.Content.IsExecuteSuccess = bingoDal.UpdateUserBasicInfo(user);
             return response;
         }
 
@@ -1418,7 +1483,7 @@ namespace Future.Service.Implement
             {
                 Content = new DeleteAllCollectResponse()
                 {
-                    IsExecuteSuccess = letterDal.DeleteAllCollect(request.Content.UId)
+                    IsExecuteSuccess = bingoDal.DeleteAllCollect(request.Content.UId)
                 }
             };
         }
@@ -1459,7 +1524,7 @@ namespace Future.Service.Implement
 
         public PickUpEntity GetPickUpEntity(Guid pickUpId)
         {
-            return letterDal.PickUp(pickUpId);
+            return bingoDal.PickUp(pickUpId);
         }
 
         public ResponseContext<MsgSecCheckResponse> MsgSecCheck(RequestContext<MsgSecCheckRequest> request)
@@ -1479,7 +1544,7 @@ namespace Future.Service.Implement
             {
                 Content = new ForwardMomentResponse()
             };
-            var moment = letterDal.GetMoment(request.Content.MomentId);
+            var moment = bingoDal.GetMoment(request.Content.MomentId);
             if (moment == null)
             {
                 return new ResponseContext<ForwardMomentResponse>(false, ErrCodeEnum.DataIsnotExist, null, "转发失败");
@@ -1498,7 +1563,7 @@ namespace Future.Service.Implement
                 CreateTime=DateTime.Now,
                 UpdateTime=DateTime.Now
             };
-            response.Content.Success = letterDal.InsertMoment(newMoment);
+            response.Content.Success = bingoDal.InsertMoment(newMoment);
             return response;
         }
 
@@ -1508,7 +1573,7 @@ namespace Future.Service.Implement
             {
                 Content = new OnlineNotifyResponse()
             };
-            var onlineNotify= letterDal.OnlineNotify(request.Content.UId, request.Content.PartnerUId);
+            var onlineNotify= bingoDal.OnlineNotify(request.Content.UId, request.Content.PartnerUId);
             if (onlineNotify == null)
             {
                 onlineNotify = new OnlineNotifyEntity()
@@ -1519,7 +1584,7 @@ namespace Future.Service.Implement
                     CreateTime = DateTime.Now,
                     UpdateTime = DateTime.Now
                 };
-                response.Content.Success = letterDal.InsertOnlineNotify(onlineNotify);
+                response.Content.Success = bingoDal.InsertOnlineNotify(onlineNotify);
             }
             else
             {
@@ -1535,7 +1600,7 @@ namespace Future.Service.Implement
             {
                 Content = new CancelAttentionResponse()
                 {
-                    IsExecuteSuccess = letterDal.DeleteAttention(request.Content.UId, request.Content.PartnerUId)
+                    IsExecuteSuccess = bingoDal.DeleteAttention(request.Content.UId, request.Content.PartnerUId)
                 }
             };
         }
@@ -1546,7 +1611,7 @@ namespace Future.Service.Implement
             {
                 Content = new AddAttentionResponse() { IsExecuteSuccess=true }
             };
-            AttentionEntity entity = letterDal.Attention(request.Content.UId, request.Content.PartnerUId);
+            AttentionEntity entity = bingoDal.Attention(request.Content.UId, request.Content.PartnerUId);
             if (entity != null)
             {
                 return response;
@@ -1563,7 +1628,7 @@ namespace Future.Service.Implement
                     UpdateTime = DateTime.Now
                 };
 
-                response.Content.IsExecuteSuccess = letterDal.InsertAttention(entity);
+                response.Content.IsExecuteSuccess = bingoDal.InsertAttention(entity);
             }
             return response;
         }
@@ -1581,7 +1646,7 @@ namespace Future.Service.Implement
                 onLineUser.Longitude = request.Content.Longitude;
                 onLineUser.UpdateTime = DateTime.Now;
 
-                response.Content.Success = letterDal.UpdateUserLocation(onLineUser);
+                response.Content.Success = bingoDal.UpdateUserLocation(onLineUser);
             }
             return response;
         }
@@ -1592,7 +1657,7 @@ namespace Future.Service.Implement
             {
                Content = new AttentionMomentCountResponse()
                {
-                   UnReadCountStr = UnRead(letterDal.UnReadAttentionMomentCount(request.Content.UId))
+                   UnReadCountStr = UnRead(bingoDal.UnReadAttentionMomentCount(request.Content.UId))
                }
             };
         }
@@ -1603,7 +1668,7 @@ namespace Future.Service.Implement
             {
                 Content = new UpdateLastScanMomentTimeResponse()
                 {
-                    Success = letterDal.UpdateLastScanMomentTime(request.Content.UId)
+                    Success = bingoDal.UpdateLastScanMomentTime(request.Content.UId)
                 }
             };
         }
@@ -1614,14 +1679,14 @@ namespace Future.Service.Implement
             PickUpEntity pickUp;
             if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
-                pickUp = letterDal.PickUp(request.Content.PickUpId);
+                pickUp = bingoDal.PickUp(request.Content.PickUpId);
             }
             else
             {
-                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
+                pickUp = bingoDal.PickUpByMomentId(request.Content.MomentId, request.Content.UId);
                 if (pickUp == null)
                 {
-                    var moment = letterDal.GetMoment(request.Content.MomentId);
+                    var moment = bingoDal.GetMoment(request.Content.MomentId);
                     pickUp = new PickUpEntity()
                     {
                         PickUpId = Guid.NewGuid(),
@@ -1632,14 +1697,14 @@ namespace Future.Service.Implement
                         CreateTime = DateTime.Now,
                         UpdateTime = DateTime.Now
                     };
-                    letterDal.InsertPickUp(pickUp);
+                    bingoDal.InsertPickUp(pickUp);
                 }
             }
             return new ResponseContext<UpdateHidingResponse>()
             {
                 Content = new UpdateHidingResponse()
                 {
-                    Success = letterDal.UpdateHiding(pickUp.PickUpId, request.Content.IsHide, request.Content.HidingNickName)
+                    Success = bingoDal.UpdateHiding(pickUp.PickUpId, request.Content.IsHide, request.Content.HidingNickName)
                 }
             };
         }
@@ -1658,13 +1723,13 @@ namespace Future.Service.Implement
             PickUpEntity pickUp;
             if (request.Content.PickUpId != null && request.Content.PickUpId != Guid.Empty)
             {
-                pickUp = letterDal.PickUp(request.Content.PickUpId.Value);
-                moment = letterDal.GetMoment(pickUp.MomentId);
+                pickUp = bingoDal.PickUp(request.Content.PickUpId.Value);
+                moment = bingoDal.GetMoment(pickUp.MomentId);
             }
             else
             {
-                moment = letterDal.GetMoment(request.Content.MomentId.Value);
-                pickUp = letterDal.PickUpByMomentId(request.Content.MomentId.Value, request.Content.UId);
+                moment = bingoDal.GetMoment(request.Content.MomentId.Value);
+                pickUp = bingoDal.PickUpByMomentId(request.Content.MomentId.Value, request.Content.UId);
                 if (pickUp == null)
                 {
                     pickUp = new PickUpEntity()
@@ -1677,7 +1742,7 @@ namespace Future.Service.Implement
                         CreateTime = DateTime.Now,
                         UpdateTime = DateTime.Now
                     };
-                    letterDal.InsertPickUp(pickUp);
+                    bingoDal.InsertPickUp(pickUp);
                 }
             }
             if (moment == null)
@@ -1694,7 +1759,7 @@ namespace Future.Service.Implement
             {
                 deleteTime = pickUp.PartnerLastDeleteTime;
             }
-            var discussList = letterDal.DiscussList(pickUp.PickUpId, deleteTime);
+            var discussList = bingoDal.DiscussList(pickUp.PickUpId, deleteTime);
             if (discussList.NotEmpty())
             {
                 var keyValues = new Dictionary<long, PickUpDTO>();
@@ -1752,12 +1817,12 @@ namespace Future.Service.Implement
         /// </summary>
         private string UnReadCount(Guid pickUpId,long uId)
         {
-            return UnRead(letterDal.UnReadCount(pickUpId, uId));
+            return UnRead(bingoDal.UnReadCount(pickUpId, uId));
         }
 
         private string UnReadTotalCount(long uId)
         {
-            return UnRead(letterDal.UnReadTotalCount(uId));
+            return UnRead(bingoDal.UnReadTotalCount(uId));
         }
 
         /// <summary>
@@ -1832,7 +1897,7 @@ namespace Future.Service.Implement
 
             Task.Factory.StartNew(() =>
             {
-                letterDal.UpdateLastLoginTime(user);
+                bingoDal.UpdateLastLoginTime(user);
             });
         }
 

@@ -19,7 +19,7 @@ namespace Future.Service.Implement
     {
         private readonly SysRepository sysDal = SingletonProvider<SysRepository>.Instance;
 
-        private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
+        private readonly BingoRepository letterDal = SingletonProvider<BingoRepository>.Instance;
 
         private readonly IUserBiz userBiz = SingletonProvider<UserBiz>.Instance;
 

@@ -1,6 +1,7 @@
 ﻿using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Hubs;
 using Future.Model.Enum.Bingo;
+using Future.Model.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -45,6 +46,8 @@ namespace Future.Service.Interface
         /// 通过UId获取用户金币明细列表
         /// </summary>
         List<CoinDetailEntity> CoinDetailListByUId(long uId);
+
+        List<TagType> GetTagList(List<UserTagEntity> userTagList, TagTypeEnum tagType);
 
         /// <summary>
         /// 在线用户数据

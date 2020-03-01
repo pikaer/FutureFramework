@@ -217,5 +217,12 @@ namespace Future.Service.Interface
         /// 九宫格动态
         /// </summary>
         ResponseContext<NineMomentResponse> NineMoment(RequestContext<NineMomentRequest> request);
+
+        /// <summary>
+        /// 更新用户标签
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        ResponseContext<UpdateUserTagResponse> UpdateUserTag(RequestContext<UpdateUserTagRequest> request);
     }
 }

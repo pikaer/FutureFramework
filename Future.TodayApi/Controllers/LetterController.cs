@@ -1162,6 +1162,47 @@ namespace Future.TodayApi.Controllers
         }
 
         /// <summary>
+        /// 更新用户标签
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult UpdateUserTag()
+        {
+            RequestContext<UpdateUserTagRequest> request = null;
+            ResponseContext<UpdateUserTagResponse> response = null;
+            try
+            {
+                string json = GetInputString();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotAllowedEmpty_Code);
+                }
+                request = json.JsonToObject<RequestContext<UpdateUserTagRequest>>();
+                if (request == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.ParametersIsNotValid_Code);
+                }
+                if (request.Head == null)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestHead);
+                }
+                if (request.Content == null || request.Content.UId <= 0)
+                {
+                    return ErrorJsonResult(ErrCodeEnum.InvalidRequestBody);
+                }
+                response = api.UpdateUserTag(request);
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorJsonResult(ErrCodeEnum.InnerError, "UpdateUserTag", ex);
+            }
+            finally
+            {
+                WriteServiceLog(MODULE, "UpdateUserTag", request?.Head, response == null ? ErrCodeEnum.Failure : response.Code, response?.ResultMessage, request, response);
+            }
+        }
+
+        /// <summary>
         /// 更新用户头像
         /// </summary>
         [HttpPost]

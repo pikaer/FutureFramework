@@ -1237,6 +1237,7 @@ namespace Future.Model.Utils
         /// 位置信息
         /// </summary>
         public string PlaceInfo { get; set; }
+
         /// <summary>
         /// 个性签名
         /// </summary>
@@ -1256,6 +1257,19 @@ namespace Future.Model.Utils
         /// 是否已经注册账户
         /// </summary>
         public bool IsRegister { get; set; }
+    }
+
+    public class TagType
+    {
+        /// <summary>
+        /// 标签内容
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
+        /// 是否选中
+        /// </summary>
+        public bool Checked { get; set; }
     }
     #endregion
 
@@ -1328,6 +1342,58 @@ namespace Future.Model.Utils
         /// 个性签名
         /// </summary>
         public string Signature { get; set; }
+
+        /// <summary>
+        /// 个性标签
+        /// </summary>
+        public List<TagType> CharacterTagList { get; set; }
+
+        /// <summary>
+        /// 运动标签
+        /// </summary>
+        public List<TagType> SportTagList { get; set; }
+
+        /// <summary>
+        /// 音乐标签
+        /// </summary>
+        public List<TagType> MusicTagList { get; set; }
+
+        /// <summary>
+        /// 美食爱好标签
+        /// </summary>
+        public List<TagType> FoodTagList { get; set; }
+
+        /// <summary>
+        /// 电影爱好标签
+        /// </summary>
+        public List<TagType> MovieTagList { get; set; }
+
+        /// <summary>
+        /// 旅行标签
+        /// </summary>
+        public List<TagType> TravelTagList { get; set; }
+    }
+    #endregion
+
+    #region UpdateUserTag(更新用户标签）
+    public class UpdateUserTagRequest
+    {
+        /// <summary>
+        /// 用户唯一标示
+        /// </summary>
+        public long UId { get; set; }
+
+        public TagTypeEnum TagType { get; set; }
+
+        public List<TagType> TagList { get; set; }
+    }
+
+    public class UpdateUserTagResponse
+    {
+        /// <summary>
+        /// 处理结果
+        /// </summary>
+        public bool IsExecuteSuccess { get; set; }
     }
     #endregion
 

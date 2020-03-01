@@ -10,21 +10,23 @@ using System.Text;
 
 namespace Future.Repository
 {
-    public class LetterRepository : BaseRepository
+    public class BingoRepository : BaseRepository
     {
-        private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.letter_Discuss ";
+        private readonly string SELECT_DiscussEntity = "SELECT DiscussId,PickUpId,UId,DiscussContent,HasRead,CreateTime,UpdateTime FROM dbo.bingo_Discuss ";
 
-        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Platform,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.letter_LetterUser ";
+        private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Platform,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.bingo_UserInfo ";
 
-        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SourceFlag,PlayType,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.letter_Moment ";
+        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SourceFlag,PlayType,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.bingo_Moment ";
 
-        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,FromPage,IsHide,HidingNickName,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.letter_PickUp ";
+        private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,FromPage,IsHide,HidingNickName,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.bingo_PickUp ";
 
-        private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.letter_Collect ";
+        private readonly string SELECT_CollectEntity = "SELECT CollectId,UId,MomentId,PickUpId,FromPage,CreateTime,UpdateTime FROM dbo.bingo_Collect ";
 
-        private readonly string SELECT_CoinEntity = "SELECT CoinId,UId,TotalCoin,CreateTime,UpdateTime FROM dbo.letter_Coin ";
+        private readonly string SELECT_CoinEntity = "SELECT CoinId,UId,TotalCoin,CreateTime,UpdateTime FROM dbo.bingo_Coin ";
 
-        private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.letter_CoinDetail ";
+        private readonly string SELECT_UserTagEntity = "SELECT TagId,UId,TagType,Tag,CreateTime,UpdateTime FROM dbo.bingo_UserTag ";
+
+        private readonly string SELECT_CoinDetailEntity = "SELECT CoinDetailId,UId,CoinId,ChangeValue,CoinChangeType,Remark,OperateUser,CreateTime,UpdateTime FROM dbo.bingo_CoinDetail ";
 
         private readonly string SELECT_OnLineUserEntity = "SELECT OnLineId,UId,ConnectionId,IsOnLine,Latitude,Longitude,LastOnLineTime,LastScanMomentTime,CreateTime,UpdateTime FROM dbo.hub_OnLineUserHub ";
 
@@ -34,7 +36,7 @@ namespace Future.Repository
 
         private readonly string SELECT_OnlineNotifyEntity = "SELECT OnlineNotifyId,UId,PartnerUId,CreateTime,UpdateTime FROM dbo.hub_OnlineNotify ";
 
-        private readonly string SELECT_AttentionEntity = "SELECT AttentionId,UId,PartnerUId,AttentionMomentId,CreateTime,UpdateTime FROM dbo.letter_Attention ";
+        private readonly string SELECT_AttentionEntity = "SELECT AttentionId,UId,PartnerUId,AttentionMomentId,CreateTime,UpdateTime FROM dbo.bingo_Attention ";
 
         protected override DbEnum GetDbEnum() => DbEnum.LetterService;
 
@@ -118,9 +120,9 @@ namespace Future.Repository
                                                  moment.HidingNickName,
                                                  moment.PlayType,
                                                  moment.CreateTime
-                                          FROM dbo.letter_PickUp pick 
-                                          Inner Join letter_Moment moment on moment.MomentId= pick.MomentId
-                                          Inner Join letter_LetterUser useinfo on useinfo.UId=pick.MomentUId
+                                          FROM dbo.bingo_PickUp pick 
+                                          Inner Join bingo_Moment moment on moment.MomentId= pick.MomentId
+                                          Inner Join bingo_UserInfo useinfo on useinfo.UId=pick.MomentUId
                                           Where pick.PickUpUId={0} and pick.IsPickUpDelete=0 and pick.FromPage=0 ", uId);
                 if (playMoment)
                 {
@@ -149,9 +151,9 @@ namespace Future.Repository
                                              moment.TextContent,
                                              moment.ImgContent,
                                              moment.CreateTime
-                                      FROM dbo.letter_Attention attention 
-                                      Inner Join letter_Moment moment on moment.UId= attention.PartnerUId
-                                      Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
+                                      FROM dbo.bingo_Attention attention 
+                                      Inner Join bingo_Moment moment on moment.UId= attention.PartnerUId
+                                      Inner Join bingo_UserInfo useinfo on useinfo.UId=attention.PartnerUId
                                       Where attention.UId=@UId and moment.IsDelete=0 and moment.IsHide=0 and moment.SourceFlag=0 and moment.CreateTime>=attention.CreateTime
                                       
                                       Union
@@ -165,9 +167,9 @@ namespace Future.Repository
                                              moment.TextContent,
                                              moment.ImgContent,
                                              moment.CreateTime
-                                      FROM dbo.letter_Attention attention 
-                                      Inner Join letter_Moment moment on moment.MomentId= attention.AttentionMomentId
-                                      Inner Join letter_LetterUser useinfo on useinfo.UId=attention.PartnerUId
+                                      FROM dbo.bingo_Attention attention 
+                                      Inner Join bingo_Moment moment on moment.MomentId= attention.AttentionMomentId
+                                      Inner Join bingo_UserInfo useinfo on useinfo.UId=attention.PartnerUId
                                       Where attention.UId=@UId and moment.IsDelete=0 and moment.IsHide=0 and moment.SourceFlag=0 ) temp
                         Order by temp.CreateTime desc 
                         OFFSET @OFFSETCount ROWS
@@ -184,7 +186,7 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 var sql0 = @"SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.CreateTime,pick.UpdateTime 
-                            FROM dbo.letter_PickUp pick  ";
+                            FROM dbo.bingo_PickUp pick  ";
 
                 switch (pickType)
                 {
@@ -195,11 +197,11 @@ namespace Future.Repository
                         sql0 += "Where PickUpUId=@UId and  IsPartnerDelete=0 ";
                         break;
                     case PickUpTypeEnum.HasDiscuss:
-                        sql0 += @"inner Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
+                        sql0 += @"inner Join bingo_Discuss discuss on pick.PickUpId= discuss.PickUpId
                                   Where pick.PickUpUId = @UId ";
                         break;
                     case PickUpTypeEnum.NoDiscuss:
-                        sql0 += @"Left Join letter_Discuss discuss on pick.PickUpId= discuss.PickUpId
+                        sql0 += @"Left Join bingo_Discuss discuss on pick.PickUpId= discuss.PickUpId
                                   Where pick.PickUpUId = @UId and discuss.PickUpId is Null ";
                         break;
                     default:
@@ -225,8 +227,8 @@ namespace Future.Repository
                               ,pick.IsPartnerDelete
                               ,pick.CreateTime
                               ,pick.UpdateTime
-                          FROM dbo.letter_PickUp pick
-                          Inner join letter_Discuss dis on pick.PickUpId=dis.PickUpId
+                          FROM dbo.bingo_PickUp pick
+                          Inner join bingo_Discuss dis on pick.PickUpId=dis.PickUpId
                           Where PickUpUId=@UId";
             using (var Db = GetDbConnection())
             {
@@ -332,7 +334,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = new StringBuilder("SELECT DISTINCT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.letter_Moment  moment");
+                var sql = new StringBuilder("SELECT DISTINCT moment.MomentId,moment.UId,moment.TextContent,moment.ImgContent,moment.IsDelete,moment.IsReport,moment.ReplyCount,moment.CreateTime,moment.UpdateTime FROM dbo.bingo_Moment  moment");
                
                 switch (state)
                 {
@@ -346,8 +348,8 @@ namespace Future.Repository
                         sql.Append("where moment.ReplyCount=0 ");
                         break;
                     case MomentStateEnum.HasDiscuss:
-                        sql.Append(" Inner Join dbo.letter_PickUp pick on pick.MomentId=moment.MomentId" +
-                                   " Inner Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId where 1=1");
+                        sql.Append(" Inner Join dbo.bingo_PickUp pick on pick.MomentId=moment.MomentId" +
+                                   " Inner Join dbo.bingo_Discuss disc on pick.PickUpId=disc.PickUpId where 1=1");
                         break;
                     default:
                         sql.Append(" where 1=1 ");
@@ -384,15 +386,15 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = new StringBuilder("SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.IsUserDelete,pick.IsPartnerDelete,pick.CreateTime,pick.UpdateTime FROM dbo.letter_PickUp  pick ");
+                var sql = new StringBuilder("SELECT pick.PickUpId,pick.MomentId,pick.MomentUId,pick.PickUpUId,pick.IsUserDelete,pick.IsPartnerDelete,pick.CreateTime,pick.UpdateTime FROM dbo.bingo_PickUp  pick ");
 
                 switch (state)
                 {
                     case MomentPickUpEnum.NoDiscuss:
-                        sql.AppendFormat("Left Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId where disc.PickUpId is null and MomentId={0} ", momentId.ToString());
+                        sql.AppendFormat("Left Join dbo.bingo_Discuss disc on pick.PickUpId=disc.PickUpId where disc.PickUpId is null and MomentId={0} ", momentId.ToString());
                         break;
                     case MomentPickUpEnum.HasDiscuss:
-                        sql.AppendFormat("Inner Join dbo.letter_Discuss disc on pick.PickUpId=disc.PickUpId and MomentId={0} ", momentId.ToString());
+                        sql.AppendFormat("Inner Join dbo.bingo_Discuss disc on pick.PickUpId=disc.PickUpId and MomentId={0} ", momentId.ToString());
                         break;
                     case MomentPickUpEnum.IsDelete:
                         sql.AppendFormat("where pick.IsPartnerDelete=1 and MomentId='{0}' ", momentId.ToString());
@@ -429,8 +431,8 @@ namespace Future.Repository
                               ,pick.IsPartnerDelete
                               ,pick.CreateTime
                               ,pick.UpdateTime
-                          FROM dbo.letter_PickUp pick
-                          Inner join letter_Discuss dis on pick.PickUpId=dis.PickUpId
+                          FROM dbo.bingo_PickUp pick
+                          Inner join bingo_Discuss dis on pick.PickUpId=dis.PickUpId
                           Where MomentUId=@UId";
             using (var Db = GetDbConnection())
             {
@@ -459,15 +461,15 @@ namespace Future.Repository
 				          				 us.NickName,
                                          us.Gender,
 				          			     us.HeadPhotoPath
-                                    FROM dbo.letter_PickUp pick
+                                    FROM dbo.bingo_PickUp pick
                                     Inner join (Select row_number() over(partition by dis1.PickUpId order by dis1.CreateTime desc) as rownum,
 				          		                     dis1.PickUpId,
 				          							 dis1.CreateTime,
 				          		                     dis1.DiscussContent
-				          		              From letter_Discuss dis1) dis1Temp
+				          		              From bingo_Discuss dis1) dis1Temp
 				          				on dis1Temp.PickUpId=pick.PickUpId and dis1Temp.rownum=1
-				          		  Inner join letter_LetterUser us on us.UId=pick.MomentUId
-                                  Inner join letter_Moment moment on moment.MomentId=pick.MomentId
+				          		  Inner join bingo_UserInfo us on us.UId=pick.MomentUId
+                                  Inner join bingo_Moment moment on moment.MomentId=pick.MomentId
                                   Inner join dbo.hub_OnLineUserHub online on online.UId=pick.MomentUId
                                   Where pick.PickUpUId=@UId and pick.IsPartnerDelete=0
                           
@@ -488,15 +490,15 @@ namespace Future.Repository
 				          			     us.NickName,
                                          us.Gender,
 				          			     us.HeadPhotoPath
-                                    FROM dbo.letter_PickUp pick
+                                    FROM dbo.bingo_PickUp pick
                                     Inner join (Select row_number() over(partition by dis2.PickUpId order by dis2.CreateTime desc) as rownum,
 				          		                     dis2.PickUpId,
 				          							 dis2.CreateTime,
 				          		                     dis2.DiscussContent
-				          		              From letter_Discuss dis2) dis2Temp
+				          		              From bingo_Discuss dis2) dis2Temp
 				          				on dis2Temp.PickUpId=pick.PickUpId and dis2Temp.rownum=1
-				          		  Inner join letter_LetterUser us on us.UId=pick.PickUpUId
-                                  Inner join letter_Moment moment on moment.MomentId=pick.MomentId
+				          		  Inner join bingo_UserInfo us on us.UId=pick.PickUpUId
+                                  Inner join bingo_Moment moment on moment.MomentId=pick.MomentId
                                   Inner join dbo.hub_OnLineUserHub online on online.UId=pick.PickUpUId
                                   Where pick.MomentUId=@UId and pick.IsUserDelete=0 and pick.MomentUId!=pick.PickUpUId
                                  )temp
@@ -632,9 +634,9 @@ namespace Future.Repository
                               ,online.Longitude
                               ,online.IsOnLine
                               ,online.LastOnLineTime
-                        FROM dbo.letter_Collect collect
-                        Inner Join dbo.letter_Moment moment On collect.MomentId=moment.MomentId
-                        Inner Join dbo.letter_LetterUser us On us.UId=moment.UId
+                        FROM dbo.bingo_Collect collect
+                        Inner Join dbo.bingo_Moment moment On collect.MomentId=moment.MomentId
+                        Inner Join dbo.bingo_UserInfo us On us.UId=moment.UId
                         Inner join dbo.hub_OnLineUserHub online on online.UId=moment.UId
                         Where collect.UId=@UId
                         Order by collect.CreateTime desc 
@@ -658,12 +660,12 @@ namespace Future.Repository
                               ,moment.IsHide
                               ,moment.HidingNickName
                               ,moment.UpdateTime
-                          FROM dbo.letter_Moment moment
-                          Left join dbo.letter_PickUp pick
+                          FROM dbo.bingo_Moment moment
+                          Left join dbo.bingo_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
-                          Left join dbo.letter_Attention attention
+                          Left join dbo.bingo_Attention attention
                           ON moment.UId=attention.PartnerUId and attention.UId=@UId
-                          Inner join dbo.letter_LetterUser us On us.UId=moment.UId
+                          Inner join dbo.bingo_UserInfo us On us.UId=moment.UId
                           Where moment.UId!=@UId  
                             and moment.CreateTime<@CreateTime 
                             and pick.MomentId is Null 
@@ -710,12 +712,12 @@ namespace Future.Repository
                               ,moment.IsHide
                               ,moment.HidingNickName
                               ,moment.UpdateTime
-                          FROM dbo.letter_Moment moment
-                          Left join dbo.letter_PickUp pick
+                          FROM dbo.bingo_Moment moment
+                          Left join dbo.bingo_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
-                          Left join dbo.letter_Attention attention
+                          Left join dbo.bingo_Attention attention
                           ON moment.UId=attention.PartnerUId and attention.UId=@UId
-                          Inner join dbo.letter_LetterUser us On us.UId=moment.UId
+                          Inner join dbo.bingo_UserInfo us On us.UId=moment.UId
                           Where moment.UId!=@UId  
                             and moment.CreateTime<@CreateTime 
                             and pick.MomentId is Null 
@@ -775,10 +777,10 @@ namespace Future.Repository
                               ,moment.IsHide
                               ,moment.HidingNickName
                               ,moment.UpdateTime
-                          FROM dbo.letter_Moment moment
-                          Left join dbo.letter_PickUp pick
+                          FROM dbo.bingo_Moment moment
+                          Left join dbo.bingo_PickUp pick
                           ON moment.MomentId=pick.MomentId and pick.PickUpUId=@UId
-                          Inner join dbo.letter_LetterUser us On us.UId=moment.UId
+                          Inner join dbo.bingo_UserInfo us On us.UId=moment.UId
                           Where moment.UId!=@UId  
                             and moment.CreateTime<@CreateTime 
                             and pick.MomentId is Null 
@@ -809,11 +811,20 @@ namespace Future.Repository
             }
         }
 
+        public List<UserTagEntity> GetUserTagListByUId(long uId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = SELECT_UserTagEntity + @" Where UId=@UId ";
+                return Db.Query<UserTagEntity>(sql, new { UId = uId }).AsList();
+            }
+        }
+
         public int UnReadCount(Guid pickUpId, long uId)
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"SELECT Count(0) FROM dbo.letter_Discuss  Where PickUpId=@PickUpId and UId!=@UId and HasRead=0";
+                string sql = @"SELECT Count(0) FROM dbo.bingo_Discuss  Where PickUpId=@PickUpId and UId!=@UId and HasRead=0";
                 return Db.QueryFirstOrDefault<int>(sql, new { PickUpId = pickUpId, UId = uId });
             }
         }
@@ -823,8 +834,8 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 string sql = @"Select Count(0) 
-                               From dbo.letter_PickUp pic
-                               Inner Join dbo.letter_Discuss dis
+                               From dbo.bingo_PickUp pic
+                               Inner Join dbo.bingo_Discuss dis
                                On pic.PickUpId=dis.PickUpId 
                                Where ((pic.MomentUId=@UId and pic.IsUserDelete=0) or (pic.PickUpUId=@UId and pic.IsPartnerDelete=0 ))and dis.UId!=@UId and HasRead=0";
                 return Db.QueryFirstOrDefault<int>(sql, new {UId = uId });
@@ -836,8 +847,8 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 string sql = @"Select Count(0) 
-                               From dbo.letter_Moment moment
-                               Inner Join dbo.letter_Attention attention 
+                               From dbo.bingo_Moment moment
+                               Inner Join dbo.bingo_Attention attention 
                                On moment.UId=attention.PartnerUId 
                                Inner Join dbo.hub_OnLineUserHub userInfo
                                On userInfo.UId=attention.UId 
@@ -850,7 +861,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Moment
+                string sql = @"UPDATE dbo.bingo_Moment
                                SET ReplyCount =ReplyCount+1
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
@@ -874,7 +885,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Coin
+                string sql = @"UPDATE dbo.bingo_Coin
                                SET TotalCoin =TotalCoin + @ChangeValue
                                   ,UpdateTime = @UpdateTime
                                WHERE CoinId=@CoinId and UId=@UId ";
@@ -886,7 +897,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Discuss
+                string sql = @"UPDATE dbo.bingo_Discuss
                                SET HasRead =1
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId and UId=@UId";
@@ -898,7 +909,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsPickUpDelete =1,
                                    UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
@@ -910,7 +921,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsPickUpDelete =1,
                                    UpdateTime = @UpdateTime
                                Where PickUpUId=@UId";
@@ -925,7 +936,7 @@ namespace Future.Repository
                 string sql;
                 if (isUserDelete)
                 {
-                    sql = @"UPDATE dbo.letter_PickUp
+                    sql = @"UPDATE dbo.bingo_PickUp
                                SET IsUserDelete =1,
                                    UserLastDeleteTime = @UpdateTime,
                                    UpdateTime = @UpdateTime
@@ -933,7 +944,7 @@ namespace Future.Repository
                 }
                 else
                 {
-                    sql = @"UPDATE dbo.letter_PickUp
+                    sql = @"UPDATE dbo.bingo_PickUp
                                SET IsPartnerDelete=1,
                                    PartnerLastDeleteTime = @UpdateTime,
                                    UpdateTime = @UpdateTime
@@ -951,7 +962,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Moment
+                string sql = @"UPDATE dbo.bingo_Moment
                                SET IsReport =1
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
@@ -963,7 +974,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsUserDelete =0
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId";
@@ -975,7 +986,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsHide =@IsHide
                                   ,HidingNickName =@HidingNickName
                                   ,UpdateTime = @UpdateTime
@@ -989,7 +1000,7 @@ namespace Future.Repository
             using (var Db = GetDbConnection())
             {
                 //同步创建时间为当前
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsPickUpDelete =0,
                                    IsPartnerDelete =0,
                                    CreateTime = @UpdateTime,
@@ -1003,7 +1014,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Moment
+                string sql = @"UPDATE dbo.bingo_Moment
                                SET IsDelete =1
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
@@ -1071,7 +1082,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Moment
+                string sql = @"UPDATE dbo.bingo_Moment
                                SET IsDelete =1
                                   ,UpdateTime = @UpdateTime
                                WHERE UId=@UId";
@@ -1083,7 +1094,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_LetterUser
+                string sql = @"UPDATE dbo.bingo_UserInfo
                                SET IsDelete =1
                                   ,UpdateTime = @UpdateTime
                                WHERE UId=@UId";
@@ -1095,7 +1106,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Moment
+                string sql = @"UPDATE dbo.bingo_Moment
                                SET ImgContent =@ImgContent
                                   ,UpdateTime = @UpdateTime
                                WHERE MomentId=@MomentId";
@@ -1107,7 +1118,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_LetterUser
+                string sql = @"UPDATE dbo.bingo_UserInfo
                                SET HeadPhotoPath =@HeadPhotoPath
                                   ,UpdateTime = @UpdateTime
                                WHERE UId=@UId";
@@ -1119,7 +1130,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Discuss
+                string sql = @"UPDATE dbo.bingo_Discuss
                                SET HasRead =1
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId and UId!=@UId";
@@ -1131,7 +1142,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_Discuss
+                string sql = @"UPDATE dbo.bingo_Discuss
                                SET HasRead =1
                                   ,UpdateTime = @UpdateTime
                                WHERE PickUpId=@PickUpId and UId!=@UId and CreateTime>@ReadTime";
@@ -1143,7 +1154,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"UPDATE dbo.letter_LetterUser
+                var sql = @"UPDATE dbo.bingo_UserInfo
                             SET Gender = @Gender
                                ,SchoolType= @SchoolType
                                ,SchoolName = @SchoolName
@@ -1165,7 +1176,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"UPDATE dbo.letter_LetterUser
+                var sql = @"UPDATE dbo.bingo_UserInfo
                             SET Gender = @Gender
                                ,NickName= @NickName
                                ,HeadPhotoPath = @HeadPhotoPath
@@ -1183,7 +1194,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"UPDATE dbo.letter_LetterUser
+                var sql = @"UPDATE dbo.bingo_UserInfo
                             SET LastLoginTime= @LastLoginTime
                                ,UpdateTime= @UpdateTime
                           WHERE UId=@UId";
@@ -1195,7 +1206,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"UPDATE dbo.letter_Moment
+                var sql = @"UPDATE dbo.bingo_Moment
                             SET TextContent = @TextContent
                                ,CreateTime= @CreateTime
                                ,UpdateTime= @UpdateTime
@@ -1208,7 +1219,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"UPDATE dbo.letter_Collect
+                var sql = @"UPDATE dbo.bingo_Collect
                             SET UpdateTime= @UpdateTime
                           WHERE CollectId=@CollectId";
                 return Db.Execute(sql, entity) > 0;
@@ -1219,7 +1230,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_Moment
+                var sql = @"INSERT INTO dbo.bingo_Moment
                                   (MomentId
                                   ,UId
                                   ,TextContent
@@ -1257,7 +1268,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_PickUp
+                var sql = @"INSERT INTO dbo.bingo_PickUp
                                   (PickUpId
                                   ,MomentId
                                   ,MomentUId
@@ -1283,11 +1294,33 @@ namespace Future.Repository
             }
         }
 
+        public bool InsertUserTag(UserTagEntity tagEntity)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"INSERT INTO dbo.bingo_UserTag
+                                  (TagId
+                                  ,UId
+                                  ,TagType
+                                  ,Tag      
+                                  ,CreateTime
+                                  ,UpdateTime)
+                            VALUES
+                                  (@TagId
+                                  ,@UId
+                                  ,@TagType
+                                  ,@Tag
+                                  ,@CreateTime
+                                  ,@UpdateTime)";
+                return Db.Execute(sql, tagEntity) > 0;
+            }
+        }
+
         public bool InsertDiscuss(DiscussEntity discussEntity)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_Discuss
+                var sql = @"INSERT INTO dbo.bingo_Discuss
                                   (DiscussId
                                   ,PickUpId
                                   ,UId
@@ -1309,7 +1342,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_LetterUser
+                var sql = @"INSERT INTO dbo.bingo_UserInfo
                                   (OpenId
                                   ,Gender
                                   ,UserType
@@ -1361,7 +1394,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_Coin
+                var sql = @"INSERT INTO dbo.bingo_Coin
                                    (UId
                                    ,TotalCoin
                                    ,CreateTime
@@ -1399,7 +1432,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_Attention
+                var sql = @"INSERT INTO dbo.bingo_Attention
                                    (AttentionId
                                    ,UId
                                    ,PartnerUId
@@ -1498,7 +1531,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_CoinDetail
+                var sql = @"INSERT INTO dbo.bingo_CoinDetail
                                   (CoinDetailId
                                   ,UId
                                   ,CoinId
@@ -1526,7 +1559,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"INSERT INTO dbo.letter_Collect
+                var sql = @"INSERT INTO dbo.bingo_Collect
                                   (CollectId
                                   ,UId
                                   ,MomentId
@@ -1553,7 +1586,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsPartnerDelete =1
                                   ,PartnerLastDeleteTime = @UpdateTime
                                   ,UpdateTime = @UpdateTime
@@ -1569,7 +1602,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                string sql = @"UPDATE dbo.letter_PickUp
+                string sql = @"UPDATE dbo.bingo_PickUp
                                SET IsUserDelete =1
                                   ,UserLastDeleteTime = @UpdateTime
                                   ,UpdateTime = @UpdateTime
@@ -1582,7 +1615,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"Delete dbo.letter_Discuss Where PickUpId=@PickUpId";
+                var sql = @"Delete dbo.bingo_Discuss Where PickUpId=@PickUpId";
                 return Db.Execute(sql, new { PickUpId= pickUpId }) > 0;
             }
         }
@@ -1591,7 +1624,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"Delete dbo.letter_Moment Where MomentId=@MomentId";
+                var sql = @"Delete dbo.bingo_Moment Where MomentId=@MomentId";
                 return Db.Execute(sql, new { MomentId = momentId }) > 0;
             }
         }
@@ -1609,7 +1642,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"Delete dbo.letter_Collect Where CollectId=@CollectId";
+                var sql = @"Delete dbo.bingo_Collect Where CollectId=@CollectId";
                 return Db.Execute(sql, new { CollectId = collectId }) > 0;
             }
         }
@@ -1618,7 +1651,7 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"Delete dbo.letter_Attention Where UId=@UId and PartnerUId=@PartnerUId";
+                var sql = @"Delete dbo.bingo_Attention Where UId=@UId and PartnerUId=@PartnerUId";
                 return Db.Execute(sql, new { UId = uId, PartnerUId= partnerUId}) > 0;
             }
         }
@@ -1627,8 +1660,17 @@ namespace Future.Repository
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"Delete dbo.letter_Collect Where UId=@UId";
+                var sql = @"Delete dbo.bingo_Collect Where UId=@UId";
                 return Db.Execute(sql, new { UId = uId }) > 0;
+            }
+        }
+
+        public bool DeleteUserTag(Guid tagId)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"Delete dbo.bingo_UserTag Where TagId=@TagId";
+                return Db.Execute(sql, new { TagId = tagId }) > 0;
             }
         }
     }

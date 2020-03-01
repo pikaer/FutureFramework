@@ -2,19 +2,21 @@
 using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Hubs;
 using Future.Model.Enum.Bingo;
+using Future.Model.Utils;
 using Future.Repository;
 using Future.Service.Interface;
 using Future.Utility;
 using Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Future.Service.Implement
 {
     public class UserBiz : IUserBiz
     {
-        private readonly LetterRepository letterDal = SingletonProvider<LetterRepository>.Instance;
+        private readonly BingoRepository letterDal = SingletonProvider<BingoRepository>.Instance;
 
         public void CoinChangeAsync(long uId, CoinChangeEnum coinChangeType, string remark = "", int changeValue = 0, string operateUser = "")
         {
@@ -268,6 +270,79 @@ namespace Future.Service.Implement
                     MiniAppFactory.Factory(userInfo.Platform).SendDiscussReplyNotify(userInfo.OpenId, title, discussContent);
                 }
             });
+        }
+
+        public List<TagType> GetTagList(List<UserTagEntity>userTagList, TagTypeEnum tagType)
+        {
+            List<string> defaultTagList = null;
+            switch (tagType)
+            {
+                case TagTypeEnum.个性标签:
+                    defaultTagList = ConstUtil.CHARACTER_TAG_LIST;
+                    break;
+                case TagTypeEnum.运动标签:
+                    defaultTagList = ConstUtil.SPORT_TAG_LIST;
+                    break;
+                case TagTypeEnum.音乐标签:
+                    defaultTagList = ConstUtil.MUSIC_TAG_LIST;
+                    break;
+                case TagTypeEnum.食物标签:
+                    defaultTagList = ConstUtil.FOOD_TAG_LIST;
+                    break;
+                case TagTypeEnum.电影标签:
+                    defaultTagList = ConstUtil.MOVIE_TAG_LIST;
+                    break;
+                case TagTypeEnum.旅行标签:
+                    defaultTagList = ConstUtil.TRAVEL_TAG_LIST;
+                    break;
+                default:
+                    return null;
+            }
+            var rtnList = new List<TagType>();
+            if (userTagList.NotEmpty())
+            {
+                var selectedTagList = userTagList.Where(a => a.TagType == tagType).ToList();
+                if (selectedTagList.NotEmpty())
+                {
+                    foreach(var item in selectedTagList.OrderByDescending(a => a.CreateTime))
+                    {
+                        rtnList.Add(new TagType
+                        {
+                            Tag = item.Tag,
+                            Checked = true
+                        });
+                    }
+                    AddDefaultTag(defaultTagList, rtnList);
+                }
+                else
+                {
+                    AddDefaultTag(defaultTagList, rtnList);
+                }
+            }
+            else
+            {
+                AddDefaultTag(defaultTagList, rtnList);
+            }
+            return rtnList;
+        }
+
+        private void AddDefaultTag(List<string> defaultTagList, List<TagType> tagList)
+        {
+            foreach (var item in defaultTagList)
+            {
+                if (tagList.Any(a => a.Tag.Equals(item)))
+                {
+                    continue;
+                }
+                else
+                {
+                    tagList.Add(new TagType
+                    {
+                        Tag = item,
+                        Checked = false
+                    });
+                }
+            }
         }
     }
 }
