@@ -597,63 +597,66 @@ namespace Future.Service.Implement
                 return response;
             }
             int pickUpCount= GetPickUpCount(user.Gender);
-            var moment= bingoDal.GetMoment(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType, MomentSourceEnum.Default);
-            if (moment == null)
+            var momentList= bingoDal.GetMomentList(request.Content.UId, pickUpCount, user.Gender,request.Content.MomentType, MomentSourceEnum.Default);
+            if (momentList.IsNullOrEmpty())
             {
                 return response;
             }
-
-            var pickUp = new PickUpEntity()
+            foreach(var moment in momentList)
             {
-                PickUpId = Guid.NewGuid(),
-                MomentId = moment.MomentId,
-                MomentUId = moment.UId,
-                PickUpUId = request.Content.UId,
-                CreateTime=DateTime.Now,
-                UpdateTime= DateTime.Now
-            };
-            bool success=bingoDal.InsertPickUp(pickUp);
-            if (success)
-            {
-                bingoDal.UpdatePickCount(moment.MomentId);
-                var letterUser= userBiz.LetterUserByUId(moment.UId);
-                if (letterUser == null)
+                var pickUp = new PickUpEntity()
                 {
-                    return response;
+                    PickUpId = Guid.NewGuid(),
+                    MomentId = moment.MomentId,
+                    MomentUId = moment.UId,
+                    PickUpUId = request.Content.UId,
+                    CreateTime = DateTime.Now,
+                    UpdateTime = DateTime.Now
+                };
+                bool success = bingoDal.InsertPickUp(pickUp);
+                if (success)
+                {
+                    bingoDal.UpdatePickCount(moment.MomentId);
+                    var letterUser = userBiz.LetterUserByUId(moment.UId);
+                    if (letterUser == null)
+                    {
+                        return response;
+                    }
+                    if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
+                    {
+                        moment.TextContent = moment.TextContent.TextCut(18);
+                    }
+                    var partnerOnline = bingoDal.GetOnLineUser(pickUp.MomentUId);
+                    DateTime? datetime = null;
+                    bool isonline = false;
+                    if (partnerOnline != null)
+                    {
+                        datetime = partnerOnline.LastOnLineTime;
+                        isonline = partnerOnline.IsOnLine;
+                    }
+                    var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
+                    response.Content.PickUpList.Add(new PickUpType()
+                    {
+                        IsMyMoment = false,
+                        PickUpId = pickUp.PickUpId,
+                        MomentId = pickUp.MomentId,
+                        UId = moment.UId,
+                        OnLineDesc = datetime.GetOnlineDesc(isonline),
+                        HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
+                        IsHide = moment.IsHide,
+                        NickName = moment.IsHide ? CommonHelper.CutNickName(moment.HidingNickName, 8) : CommonHelper.CutNickName(letterUser.NickName, 8),
+                        Age = letterUser.BirthDate.HasValue ? letterUser.BirthDate.Value.GetAgeByBirthdate() : 18,
+                        Gender = letterUser.Gender,
+                        TextContent = moment.TextContent.Trim(),
+                        ImgContent = moment.ImgContent.GetImgPath(),
+                        DistanceDesc = LocationHelper.GetDistanceDesc(userOnline != null ? userOnline.Latitude : 0, userOnline != null ? userOnline.Longitude : 0, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
+                        CreateTime = moment.CreateTime.GetDateDesc()
+                    });
                 }
-                if (request.Content.MomentType == MomentTypeEnum.ImgMoment)
-                {
-                    moment.TextContent = moment.TextContent.TextCut(18);
-                }
-                var partnerOnline = bingoDal.GetOnLineUser(pickUp.MomentUId);
-                DateTime? datetime = null;
-                bool isonline = false;
-                if (partnerOnline != null)
-                {
-                    datetime = partnerOnline.LastOnLineTime;
-                    isonline = partnerOnline.IsOnLine;
-                }
-                var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
-                response.Content.PickUpList.Add(new PickUpType()
-                {
-                    IsMyMoment=false,
-                    PickUpId = pickUp.PickUpId,
-                    MomentId= pickUp.MomentId,
-                    UId = moment.UId,
-                    OnLineDesc = datetime.GetOnlineDesc(isonline),
-                    HeadImgPath = letterUser.HeadPhotoPath.GetImgPath(),
-                    IsHide=moment.IsHide,
-                    NickName=moment.IsHide? CommonHelper.CutNickName(moment.HidingNickName, 8): CommonHelper.CutNickName(letterUser.NickName, 8),
-                    Age= letterUser.BirthDate.HasValue ? letterUser.BirthDate.Value.GetAgeByBirthdate() : 18,
-                    Gender = letterUser.Gender,
-                    TextContent = moment.TextContent.Trim(),
-                    ImgContent= moment.ImgContent.GetImgPath(),
-                    DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
-                    CreateTime = moment.CreateTime.GetDateDesc()
-                });
-                
                 userBiz.CoinChangeAsync(request.Content.UId, CoinChangeEnum.PickUpDeducted, "获取动态消耗金币");
             }
+
+           
             return response;
         }
 

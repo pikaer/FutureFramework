@@ -645,11 +645,12 @@ namespace Future.Repository
             }
         }
 
-        public MomentEntity GetMoment(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType, MomentSourceEnum sourceEnum)
+        public List<MomentEntity> GetMomentList(long uId,int pickUpCount, GenderEnum gender,MomentTypeEnum momentType, MomentSourceEnum sourceEnum)
         {
             using (var Db = GetDbConnection())
             {
-                var sql = @"SELECT moment.MomentId
+                var sql = @"SELECT top(10)
+                              moment.MomentId
                               ,moment.UId
                               ,moment.TextContent
                               ,moment.ImgContent
@@ -686,14 +687,14 @@ namespace Future.Repository
                 }
 
                 sql += " Order by moment.CreateTime desc ,moment.ReplyCount ";
-                return Db.QueryFirstOrDefault<MomentEntity>(sql,new 
+                return Db.Query<MomentEntity>(sql,new 
                 { 
                     UId = uId, 
                     PickUpCount = pickUpCount, 
                     Gender = gender , 
                     CreateTime =DateTime.Now,
                     SourceFlag= sourceEnum
-                });
+                }).AsList();
             }
         }
 
