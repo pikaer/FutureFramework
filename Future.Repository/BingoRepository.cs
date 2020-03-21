@@ -4,6 +4,8 @@ using Future.Model.Entity.Bingo;
 using Future.Model.Entity.Hubs;
 using Future.Model.Enum.Bingo;
 using Future.Model.Enum.Sys;
+using Future.Model.Utils;
+using Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +18,7 @@ namespace Future.Repository
 
         private readonly string SELECT_LetterUserEntity = "SELECT UId,OpenId,Platform,UserType,Gender,NickName,BirthDate,Province,City,Area,Country,Mobile,WeChatNo,HeadPhotoPath,Signature,SchoolName,SchoolType,LiveState,EntranceDate,IsDelete,IsRegister,LastLoginTime,CreateTime,UpdateTime FROM dbo.bingo_UserInfo ";
 
-        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SourceFlag,PlayType,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.bingo_Moment ";
+        private readonly string SELECT_MomentEntity = "SELECT MomentId,UId,TextContent,ImgContent,IsDelete,IsReport,ReplyCount,IsHide,HidingNickName,SourceFlag,PlayTypeTag,StateType,SubscribeMessageOpen,CreateTime,UpdateTime FROM dbo.bingo_Moment ";
 
         private readonly string SELECT_PickUpEntity = "SELECT PickUpId,MomentId,MomentUId,PickUpUId,IsPickUpDelete,IsUserDelete,FromPage,IsHide,HidingNickName,IsPartnerDelete,UserLastDeleteTime,PartnerLastDeleteTime,CreateTime,UpdateTime FROM dbo.bingo_PickUp ";
 
@@ -118,7 +120,8 @@ namespace Future.Repository
                                                  moment.ImgContent,
                                                  moment.IsHide,
                                                  moment.HidingNickName,
-                                                 moment.PlayType,
+                                                 moment.PlayTypeTag,
+                                                 moment.StateType,
                                                  moment.CreateTime
                                           FROM dbo.bingo_PickUp pick 
                                           Inner Join bingo_Moment moment on moment.MomentId= pick.MomentId
@@ -138,6 +141,82 @@ namespace Future.Repository
                 return Db.Query<PickUpDTO>(sql).AsList();
             }
         }
+
+        public List<PickUpDTO> PlayTogetherListByPageIndex(PlayTogetherListRequest request, UserInfoEntity currentUser, int pageSize)
+        {
+            using (var Db = GetDbConnection())
+            {
+                var sql = @"SELECT useinfo.UId,
+                                  useinfo.Gender,
+                                  useinfo.BirthDate,
+                                  useinfo.NickName,
+                                  useinfo.HeadPhotoPath,
+                                  moment.UId as 'MomentUId',
+                                  moment.TextContent,
+                                  moment.ImgContent,
+                                  moment.IsHide,
+                                  moment.MomentId,
+                                  moment.HidingNickName,
+                                  moment.PlayTypeTag,
+                                  moment.StateType,
+                                  moment.CreateTime
+                           FROM  bingo_Moment moment 
+                           Inner Join bingo_UserInfo useinfo on useinfo.UId=moment.UId
+                           Where moment.IsDelete=0 and moment.IsReport=0 and moment.SourceFlag=1 ";
+                sql += string.Format(" and moment.StateType={0} ", (int)request.StateType);
+                if (request.LiveState != LiveStateEnum.Default)
+                {
+                    sql += string.Format(" and useinfo.LiveState={0} ", (int)request.LiveState);
+                }
+                if (request.Gender != GenderEnum.Default&&request.Gender != GenderEnum.All)
+                {
+                    sql += string.Format(" and useinfo.Gender={0} ", (int)request.Gender);
+                }
+                if (request.LocationType == LocationTypeEnum.RecieveProvince)
+                {
+                    sql += string.Format(" and useinfo.Province !='' and  useinfo.Province is not null and useinfo.Country={0} and  useinfo.Province={1}", currentUser.Country, currentUser.Province);
+                }
+                if (request.LocationType == LocationTypeEnum.OnlyCommonCity)
+                {
+                    sql += string.Format(" and useinfo.Province !='' and  useinfo.Province is not null and useinfo.Country={0} and  useinfo.Province={1} and  useinfo.City={2}", currentUser.Country, currentUser.Province, currentUser.City);
+                }
+                if (request.AgeRangeList.NotEmpty()&&!request.AgeRangeList.Exists(a=>a.Equals(AgeRangeEnum.Default)))
+                {
+                    
+                    foreach(AgeRangeEnum ageItem in request.AgeRangeList)
+                    {
+                        switch (ageItem)
+                        {
+                            case AgeRangeEnum.Before80:
+                                sql += "and useinfo.BirthDate<'1980-01-01' ";
+                                break;
+                            case AgeRangeEnum.After80:
+                                sql += "and useinfo.BirthDate>'1980-01-01' and useinfo.BirthDate<'1985-01-01' ";
+                                break;
+                            case AgeRangeEnum.After85:
+                                sql += "and useinfo.BirthDate>'1985-01-01' and useinfo.BirthDate<'1990-01-01' ";
+                                break;
+                            case AgeRangeEnum.After90:
+                                sql += "and useinfo.BirthDate>'1990-01-01' and useinfo.BirthDate<'1995-01-01' ";
+                                break;
+                            case AgeRangeEnum.After95:
+                                sql += "and useinfo.BirthDate>'1995-01-01' and useinfo.BirthDate<'2000-01-01' ";
+                                break;
+                            case AgeRangeEnum.After00:
+                                sql += "and useinfo.BirthDate>'2000-01-01' and useinfo.BirthDate<'2005-01-01' ";
+                                break;
+                            case AgeRangeEnum.After05:
+                                sql += "and useinfo.BirthDate>'2005-01-01' ";
+                                break;
+                        }
+                    }
+                }
+                sql += string.Format(" Order by moment.CreateTime desc  OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY ", (request.PageIndex - 1) * pageSize, pageSize);
+
+                return Db.Query<PickUpDTO>(sql).AsList();
+            }
+        }
+
 
         public List<PickUpDTO> AttentionListByPageIndex(long uId, int pageIndex, int pageSize)
         {
@@ -762,7 +841,7 @@ namespace Future.Repository
             }
         }
 
-        public List<MomentEntity> GetPlayMoments(long uId, int pickUpCount, GenderEnum gender, PlayTypeEnum playType)
+        public List<MomentEntity> GetPlayMoments(long uId, int pickUpCount, GenderEnum gender, StateTypeEnum stateType)
         {
             using (var Db = GetDbConnection())
             {
@@ -789,7 +868,7 @@ namespace Future.Repository
                             and moment.IsReport=0 
                             and moment.IsDelete=0
                             and moment.SourceFlag=1
-                            and moment.PlayType=@PlayType
+                            and moment.StateType=@StateType
                             and us.Gender!=@Gender
                          Order by moment.CreateTime desc ,moment.ReplyCount ";
                 return Db.Query<MomentEntity>(sql, new
@@ -798,7 +877,7 @@ namespace Future.Repository
                     PickUpCount = pickUpCount,
                     Gender = gender,
                     CreateTime = DateTime.Now,
-                    PlayType = playType
+                    StateType = stateType
                 }).AsList();
             }
         }
@@ -1241,7 +1320,8 @@ namespace Future.Repository
                                   ,ReplyCount  
                                   ,IsHide
                                   ,SourceFlag
-                                  ,PlayType
+                                  ,PlayTypeTag
+                                  ,StateType
                                   ,HidingNickName  
                                   ,SubscribeMessageOpen       
                                   ,CreateTime
@@ -1256,7 +1336,8 @@ namespace Future.Repository
                                   ,@ReplyCount
                                   ,@IsHide 
                                   ,@SourceFlag 
-                                  ,@PlayType
+                                  ,@PlayTypeTag
+                                  ,@StateType
                                   ,@HidingNickName
                                   ,@SubscribeMessageOpen
                                   ,@CreateTime

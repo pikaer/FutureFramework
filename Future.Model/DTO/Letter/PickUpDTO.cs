@@ -50,7 +50,9 @@ namespace Future.Model.DTO.Letter
 
         public GenderEnum Gender { get; set; }
 
-        public PlayTypeEnum PlayType { get; set; }
+        public string PlayTypeTag { get; set; }
+
+        public StateTypeEnum StateType { get; set; }
 
         /// <summary>
         /// 是否在线状态

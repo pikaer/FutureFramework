@@ -683,59 +683,28 @@ namespace Future.Model.Utils
         /// 用户Id
         /// </summary>
         public long UId { get; set; }
+
+        /// <summary>
+        /// 页码（分页传递数据）
+        /// </summary>
+        public int PageIndex { get; set; }
+
+        public StateTypeEnum StateType { get; set; }
+
+        public GenderEnum Gender { get; set; }
+
+        public LocationTypeEnum LocationType { get; set; }
+
+        public List<AgeRangeEnum> AgeRangeList { get; set; }
+
+        public List<PurposeEnum> PurposeList { get; set; }
+        
+        public LiveStateEnum LiveState { get; set; }
     }
 
     public class PlayTogetherListResponse
     {
-        /// <summary>
-        ///全部
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_Other { get; set; }
-
-        /// <summary>
-        /// 王者
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_WangZhe { get; set; }
-
-        /// <summary>
-        /// 吃鸡
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_ChiJi { get; set; }
-
-        /// <summary>
-        /// 连麦
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_LianMai { get; set; }
-
-        /// <summary>
-        /// 游戏
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_Game { get; set; }
-
-        /// <summary>
-        /// 学习
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_Learn { get; set; }
-
-        /// <summary>
-        /// 追剧
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_TVTracker { get; set; }
-
-        /// <summary>
-        /// 早起
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_Earlybird { get; set; }
-
-        /// <summary>
-        /// 散步
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_Walk { get; set; }
-
-        /// <summary>
-        /// 看电影
-        /// </summary>
-        public List<PlayTogetherType> PlayTogetherList_Movie { get; set; }
+        public List<PlayTogetherType> PlayTogetherList{ get; set; }
     }
 
     public class PlayTogetherType
@@ -810,10 +779,6 @@ namespace Future.Model.Utils
         /// </summary>
         public string CreateTime { get; set; }
 
-        public PlayTypeEnum PlayType { get; set; }
-
-        public string PlayTypeSesc { get; set; }
-
         /// <summary>
         /// 星座
         /// </summary>
@@ -825,7 +790,7 @@ namespace Future.Model.Utils
         public string AgeYear { get; set; }
 
         /// <summary>
-        /// 最近的5个一起玩动态背景图片
+        /// 最近的一起玩动态背景图片
         /// </summary>
         public List<string>RecentPlayMomentImgs { get; set; }
     }
@@ -917,7 +882,15 @@ namespace Future.Model.Utils
         /// </summary>
         public MomentSourceEnum SourceFlag { get; set; }
 
-        public PlayTypeEnum PlayType { get; set; }
+        /// <summary>
+        /// 一起玩标签
+        /// </summary>
+        public string PlayTypeTag { get; set; }
+
+        /// <summary>
+        /// //1:线上2线下
+        /// </summary>
+        public StateTypeEnum StateType { get; set; }
 
         public bool SubscribeMessageOpen { get; set; }
 

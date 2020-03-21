@@ -63,6 +63,8 @@ namespace Future.Model.Entity.Bingo
         /// </summary>
         public MomentSourceEnum SourceFlag { get; set; }
 
-        public PlayTypeEnum PlayType { get; set; }
+        public string PlayTypeTag { get; set; }
+
+        public StateTypeEnum StateType { get; set; }
     }
 }
