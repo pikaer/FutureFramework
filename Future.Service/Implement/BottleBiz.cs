@@ -231,7 +231,7 @@ namespace Future.Service.Implement
         private PickUpDTO BuildPickUpDTO(long uid, MomentEntity moment, PickUpEntity pickUp)
         {
             var user = userBiz.LetterUserByUId(uid);
-            var online = userBiz.OnLineUser(uid);
+            
             string nickName = GetHidingNickName(uid, moment, pickUp, user);
             var dto= new PickUpDTO()
             {
@@ -241,12 +241,16 @@ namespace Future.Service.Implement
                 HidingNickName = moment.UId == uid ? moment.HidingNickName : pickUp.HidingNickName,
                 HeadPhotoPath = user.HeadPhotoPath,
                 Gender = user.Gender,
-                BirthDate = user.BirthDate,
-                IsOnLine = online.IsOnLine,
-                LastOnLineTime = online.LastOnLineTime,
-                Latitude = online.Latitude,
-                Longitude = online.Longitude,
+                BirthDate = user.BirthDate
             };
+            var online = userBiz.OnLineUser(uid);
+            if (online != null)
+            {
+                dto.IsOnLine = online.IsOnLine;
+                dto.LastOnLineTime = online.LastOnLineTime;
+                dto.Latitude = online.Latitude;
+                dto.Longitude = online.Longitude;
+            }
             return dto;
         }
 
