@@ -83,5 +83,40 @@ namespace Future.Model.DTO.Letter
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
+
+        /// <summary>
+        /// 用户所在区域
+        /// </summary>
+        public string Area { get; set; }
+
+        /// <summary>
+        /// 用户所在省份
+        /// </summary>
+        public string Province { get; set; }
+
+        /// <summary>
+        /// 用户所在城市
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// 用户所在国家
+        /// </summary>
+        public string Country { get; set; }
+
+        /// <summary>
+        /// 个性签名
+        /// </summary>
+        public string Signature { get; set; }
+
+        /// <summary>
+        /// 学校名
+        /// </summary>
+        public string SchoolName { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public LiveStateEnum LiveState { get; set; }
     }
 }

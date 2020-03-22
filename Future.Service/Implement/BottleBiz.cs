@@ -406,6 +406,7 @@ namespace Future.Service.Implement
             {
                 var userOnline = bingoDal.GetOnLineUser(request.Content.UId);
                 var recentMomentImgs = RecentImgMomentImgs(pickUpList);
+                var tagList = BuildTags(pickUpList, request.Content.UId);
                 response.Content.PlayTogetherList = new List<PlayTogetherType>();
                 foreach (var item in pickUpList)
                 {
@@ -420,7 +421,6 @@ namespace Future.Service.Implement
                     var dto = new PlayTogetherType()
                     {
                         IsMyMoment = currentUser.UId == item.MomentUId,
-                        PickUpId = item.PickUpId,
                         MomentId = item.MomentId,
                         UId = item.UId,
                         OnLineDesc = datetime.GetOnlineDesc(isonline),
@@ -428,13 +428,25 @@ namespace Future.Service.Implement
                         Age = item.BirthDate.HasValue ? item.BirthDate.Value.GetAgeByBirthdate() : 18,
                         HeadImgPath = item.HeadPhotoPath.GetImgPath(),
                         IsHide = item.IsHide,
+                        Signature=item.Signature,
+                        SchoolName = item.SchoolName,
+                        LiveState = item.LiveState== LiveStateEnum.Default?"":item.LiveState.ToDescription(),
+                        Address= LocationInfo(item.Country, item.Province, item.City, item.Area),
                         TextContent = item.TextContent,
                         ImgContent = item.ImgContent.GetImgPath(),
+                        PlayTypeTag=item.PlayTypeTag,
                         DistanceDesc = LocationHelper.GetDistanceDesc(userOnline != null ? userOnline.Latitude : 0, userOnline != null ? userOnline.Longitude : 0, online != null ? online.Latitude : 0, online != null ? online.Longitude : 0),
                         CreateTime = item.CreateTime.GetDateDesc(true),
                         AgeYear = item.BirthDate.Value.GetAgeYear(),
                         Constellation = item.BirthDate.Value.GetConstellation(),
-                        RecentPlayMomentImgs = recentMomentImgs[item.UId]
+                        RecentPlayMomentImgs = recentMomentImgs[item.UId],
+                        CommonTags= tagList[item.UId].CommonTags,
+                        CharacterTags = tagList[item.UId].CharacterTags,
+                        SportTags = tagList[item.UId].SportTags,
+                        MusicTags = tagList[item.UId].MusicTags,
+                        FoodTags = tagList[item.UId].FoodTags,
+                        MovieTags = tagList[item.UId].MovieTags,
+                        TravelTags = tagList[item.UId].TravelTags
                     };
 
                     if (item.IsHide)
@@ -472,7 +484,7 @@ namespace Future.Service.Implement
                 var momentList = bingoDal.GetRecentImgMomentList(uid);
                 if (momentList.NotEmpty())
                 {
-                    foreach(var moment in momentList)
+                    foreach(var moment in momentList.OrderByDescending(a=>a.CreateTime))
                     {
                         imgList.Add(moment.ImgContent.GetImgPath());
                     }
@@ -480,6 +492,53 @@ namespace Future.Service.Implement
                 rtnList.Add(uid, imgList);
             }
             return rtnList;
+        }
+
+        private Dictionary<long, PlayTogetherType>BuildTags(List<PickUpDTO> pickUpList,long currentUId)
+        {
+            var uidList = new List<long>();
+            foreach (var pickDto in pickUpList)
+            {
+                if (uidList.Contains(pickDto.UId))
+                {
+                    continue;
+                }
+                uidList.Add(pickDto.UId);
+            }
+            var currentUserTagList = bingoDal.GetUserTagListByUId(currentUId);
+            var rtnList = new Dictionary<long, PlayTogetherType>();
+            foreach (long uid in uidList)
+            {
+                var dto = new PlayTogetherType();
+                var tagList = bingoDal.GetUserTagListByUId(uid);
+                if (tagList.NotEmpty())
+                {
+                    dto.CharacterTags = GetTagList(tagList, TagTypeEnum.个性标签);
+                    dto.SportTags = GetTagList(tagList, TagTypeEnum.运动标签);
+                    dto.MusicTags = GetTagList(tagList, TagTypeEnum.音乐标签);
+                    dto.FoodTags = GetTagList(tagList, TagTypeEnum.食物标签);
+                    dto.MovieTags = GetTagList(tagList, TagTypeEnum.电影标签);
+                    dto.TravelTags = GetTagList(tagList, TagTypeEnum.旅行标签);
+                }
+                if(currentUserTagList.NotEmpty()&& tagList.NotEmpty()&& currentUId!=uid)
+                {
+                    dto.CommonTags = new List<string>();
+                    foreach(var tagItem in tagList)
+                    {
+                        if (currentUserTagList.Exists(a => a.Tag.Equals(tagItem.Tag)))
+                        {
+                            dto.CommonTags.Add(tagItem.Tag);
+                        }
+                    }
+                }
+                rtnList.Add(uid, dto);
+            }
+            return rtnList;
+        }
+
+        private List<string>GetTagList(List<UserTagEntity>userTags, TagTypeEnum tagType)
+        {
+            return userTags.Where(a => a.TagType == tagType).Select(b => b.Tag).ToList();
         }
 
         public ResponseContext<AttentionListResponse> AttentionList(RequestContext<AttentionListRequest> request)
@@ -660,7 +719,7 @@ namespace Future.Service.Implement
                 Constellation = Convert.ToDateTime(letterUser.BirthDate).GetConstellation(),
                 AgeYear = Convert.ToDateTime(letterUser.BirthDate).GetAgeYear(),
                 Signature = letterUser.Signature.IsNullOrEmpty() ? "却道天凉好个秋~" : letterUser.Signature.Trim(),
-                PlaceInfo = PlaceInfo(letterUser),
+                PlaceInfo = LocationInfo(letterUser.Country, letterUser.Province, letterUser.City, letterUser.Area),
                 DistanceDesc = LocationHelper.GetDistanceDesc(userOnline!=null?userOnline.Latitude:0, userOnline!=null?userOnline.Longitude:0, partnerOnline != null ? partnerOnline.Latitude : 0, partnerOnline != null ? partnerOnline.Longitude : 0),
                 CreateTime = moment.CreateTime.GetDateDesc()
             };
@@ -819,9 +878,13 @@ namespace Future.Service.Implement
                     Gender=user.Gender,
                     TextContent =a.TextContent.Trim(),
                     ImgContent=a.ImgContent.GetImgPath(),
+                    PlayTypeTag=a.PlayTypeTag,
                     SourceFlag=a.SourceFlag,
                     SourceDesc=a.SourceFlag.ToDescription(),
-                    PublishTime=a.CreateTime.GetDateDesc()
+                    PublishTime=a.CreateTime.GetDateDesc(),
+                    PublishYear=a.CreateTime.Year.ToString(),
+                    PublishMonth=a.CreateTime.Month.GetMonthDesc(),
+                    PublishDay=a.CreateTime.Day.ToString()
                 }).ToList();
             }
             return response;
@@ -923,7 +986,7 @@ namespace Future.Service.Implement
                 Constellation = Convert.ToDateTime(userInfo.BirthDate).GetConstellation(),
                 AgeYear = Convert.ToDateTime(userInfo.BirthDate).GetAgeYear(),
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
-                PlaceInfo = PlaceInfo(userInfo),
+                PlaceInfo = LocationInfo(userInfo.Country, userInfo.Province, userInfo.City, userInfo.Area),
                 Signature = userInfo.Signature,
                 IsRegister= userInfo.IsRegister
             };
@@ -1103,7 +1166,7 @@ namespace Future.Service.Implement
                 AgeYear= Convert.ToDateTime(userInfo.BirthDate).GetAgeYear(),
                 HeadPhotoPath = userInfo.HeadPhotoPath.GetImgPath(),
                 Signature= userInfo.Signature.IsNullOrEmpty()? "却道天凉好个秋~" : userInfo.Signature.Trim(),
-                PlaceInfo=PlaceInfo(userInfo)
+                PlaceInfo= LocationInfo(userInfo.Country, userInfo.Province, userInfo.City, userInfo.Area)
             };
             return response;
         }
@@ -1762,33 +1825,34 @@ namespace Future.Service.Implement
             }
         }
 
-        private string PlaceInfo(UserInfoEntity userInfo)
+        private string LocationInfo(string country,string province,string city,string area)
         {
-            if (userInfo == null)
-            {
-                return null;
-            }
             var sb = new StringBuilder();
-            if (!userInfo.Province.IsNullOrEmpty()&& userInfo.Province!="全部")
+            if (!country.IsNullOrEmpty() && country != "全部")
             {
-                sb.Append(userInfo.Province);
+                sb.Append(country);
+                sb.Append("•");
+            }
+            if (!province.IsNullOrEmpty() && province != "全部")
+            {
+                sb.Append(province);
                 sb.Append("•");
             }
 
-            if (!userInfo.City.IsNullOrEmpty()&& userInfo.City.Trim()!= userInfo.Province.Trim() && userInfo.City != "全部")
+            if (!string.IsNullOrEmpty(city) && city.Trim() != province.Trim() && city != "全部")
             {
-                sb.Append(userInfo.City);
+                sb.Append(city);
                 sb.Append("•");
             }
 
-            if (!userInfo.Area.IsNullOrEmpty()&&!userInfo.City.IsNullOrEmpty() && 
-                userInfo.Area.Trim() != userInfo.City.Trim() && userInfo.Area != "全部")
+            if (!area.IsNullOrEmpty() && !city.IsNullOrEmpty() &&
+                area.Trim() != city.Trim() && area != "全部")
             {
-                sb.Append(userInfo.Area);
+                sb.Append(area);
                 sb.Append("•");
             }
 
-            var rtn= sb.ToString().TrimEnd('•');
+            var rtn = sb.ToString().TrimEnd('•');
 
             return rtn.IsNullOrEmpty() ? "远方" : rtn;
         }

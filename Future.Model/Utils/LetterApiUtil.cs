@@ -163,9 +163,7 @@ namespace Future.Model.Utils
         /// </summary>
         public GenderEnum Gender { get; set; }
 
-        public PlayTypeEnum PlayType { get; set; }
-
-        public string PlayTypeSesc { get; set; }
+        public string PlayTypeTag { get; set; }
 
         /// <summary>
         /// 动态来源
@@ -181,6 +179,12 @@ namespace Future.Model.Utils
         /// 最近一次交谈时间
         /// </summary>
         public string PublishTime { get; set; }
+
+        public string PublishYear { get; set; }
+
+        public string PublishMonth { get; set; }
+
+        public string PublishDay { get; set; }
     }
     #endregion
 
@@ -715,11 +719,6 @@ namespace Future.Model.Utils
         public bool IsMyMoment { get; set; }
 
         /// <summary>
-        /// 互动Id
-        /// </summary>
-        public Guid PickUpId { get; set; }
-
-        /// <summary>
         /// 动态Id
         /// </summary>
         public Guid MomentId { get; set; }
@@ -764,6 +763,8 @@ namespace Future.Model.Utils
         /// </summary>
         public string OnLineDesc { get; set; }
 
+        public string PlayTypeTag { get; set; }
+
         /// <summary>
         /// 是否隐身
         /// </summary>
@@ -785,6 +786,26 @@ namespace Future.Model.Utils
         public string Constellation { get; set; }
 
         /// <summary>
+        /// 个性签名
+        /// </summary>
+        public string Signature { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public string LiveState { get; set; }
+
+        /// <summary>
+        /// 学校名称
+        /// </summary>
+        public string SchoolName { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        public string Address { get; set; }
+
+        /// <summary>
         /// 如 90后、00后
         /// </summary>
         public string AgeYear { get; set; }
@@ -793,6 +814,41 @@ namespace Future.Model.Utils
         /// 最近的一起玩动态背景图片
         /// </summary>
         public List<string>RecentPlayMomentImgs { get; set; }
+
+        /// <summary>
+        /// 共同标签
+        /// </summary>
+        public List<string>CommonTags { get; set; }
+
+        /// <summary>
+        /// 用户个性标签
+        /// </summary>
+        public List<string> CharacterTags { get; set; }
+
+        /// <summary>
+        /// 运动标签
+        /// </summary>
+        public List<string> SportTags { get; set; }
+
+        /// <summary>
+        /// 音乐标签
+        /// </summary>
+        public List<string> MusicTags { get; set; }
+
+        /// <summary>
+        /// 食物标签
+        /// </summary>
+        public List<string> FoodTags { get; set; }
+
+        /// <summary>
+        /// 电影标签
+        /// </summary>
+        public List<string> MovieTags { get; set; }
+
+        /// <summary>
+        /// 旅游标签
+        /// </summary>
+        public List<string> TravelTags { get; set; }
     }
 
     #endregion

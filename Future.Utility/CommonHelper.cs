@@ -17,15 +17,8 @@ namespace Future.Utility
                 return rtn;
             }
 
-            if (shortPath.Contains("https://www.pikaer.com/common/image/"))
-            {
-                shortPath= shortPath.Replace("https://www.pikaer.com/common/image/","");
-            }
-
-            if (shortPath.Contains("https://www.puppygod.com/common/image/"))
-            {
-                shortPath = shortPath.Replace("https://www.puppygod.com/common/image/", "");
-            }
+            shortPath = shortPath.Replace("https://www.pikaer.com/common/image/", "");
+            shortPath = shortPath.Replace("https://www.puppygod.com/common/image/", "");
 
             if (shortPath.Contains("https://")|| shortPath.Contains("http://"))
             {
